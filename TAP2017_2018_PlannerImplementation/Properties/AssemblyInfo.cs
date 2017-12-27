@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Le informazioni generali relative a un assembly sono controllate dal seguente 
 // set di attributi. Modificare i valori di questi attributi per modificare le informazioni
 // associate a un assembly.
-[assembly: AssemblyTitle("tap2017-18project-N0T-A-NUMB3R")]
+[assembly: AssemblyTitle("TAP2017_2018_PlannerImplementation")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("tap2017-18project-N0T-A-NUMB3R")]
+[assembly: AssemblyProduct("TAP2017_2018_PlannerImplementation")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Se il progetto viene esposto a COM, il GUID seguente verrà utilizzato come ID della libreria dei tipi
-[assembly: Guid("a0e1df55-7301-478c-9cfc-4e3cb5a35eeb")]
+[assembly: Guid("4950c8f1-6916-4490-b3a1-2c25aad8b0f1")]
 
 // Le informazioni sulla versione di un assembly sono costituite dai seguenti quattro valori:
 //

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace tap2017_18project_N0T_A_NUMB3R
+namespace TAP2017_2018_PlannerImplementation
 {
     public class Class1
     {
