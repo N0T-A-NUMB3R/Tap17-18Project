@@ -7,7 +7,7 @@ using TAP2017_2018_TravelCompanyInterface;
 
 namespace TAP2017_2018_Implementation
 {
-    public class Leg
+    public class LegEntity
     {
 
         public int LegId { set; get; }

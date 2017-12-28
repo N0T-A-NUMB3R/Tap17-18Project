@@ -9,14 +9,14 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
     {
-        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name)
+        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) //crea una nuova TC e ne inizializza il fb
         {
             throw new NotImplementedException();
         }
 
         public ITravelCompany Get(string name)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // carica i dati di una TC già inizializzata
         }
     }
 }

@@ -12,6 +12,8 @@ namespace TAP2017_2018_Implementation
         public IReadOnlyTravelCompany Get(string name)
         {
             throw new NotImplementedException();
+            //Carica i dati di una TC già inizializzata
+
         }
     }
 }
