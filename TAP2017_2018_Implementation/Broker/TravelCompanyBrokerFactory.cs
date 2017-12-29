@@ -12,9 +12,7 @@ using TAP2017_2018_TravelCompanyInterface.Exceptions;
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyBrokerFactory : ITravelCompanyBrokerFactory
-    {
-        //Todo: Qua va messo un db? Chissa...
-        List<string> brokers = new List<string>();
+    { 
         private string dbConnectionString;
 
         public TravelCompanyBrokerFactory(string dbConnectionString)
@@ -27,19 +25,18 @@ namespace TAP2017_2018_Implementation
             // Crea un nuovo gestore e ne inizializza il db
             Utilities.CheckNull(dbConnectionString);
 
-            if (brokers.Contains(dbConnectionString))
-                throw new SameConnectionStringException();
-
             if (Database.Exists(dbConnectionString))
+            {
                 Database.Delete(dbConnectionString);
+                throw new SameConnectionStringException();
+                
+            }
             using (var c = new BrokerContext(dbConnectionString))
             {
                 c.Database.Create();
                 c.SaveChanges();
 
             }
-
-            brokers.Add(dbConnectionString);
             return new TravelCompanyBroker(dbConnectionString);
 
         }

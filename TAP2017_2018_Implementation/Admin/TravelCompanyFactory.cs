@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TAP2017_2018_TravelCompanyInterface;
+using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
 namespace TAP2017_2018_Implementation
 {
@@ -11,7 +13,22 @@ namespace TAP2017_2018_Implementation
     {
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) //crea una nuova TC e ne inizializza il fb
         {
-            throw new NotImplementedException(); // qua creo db della TRAVEL COMPANY
+            Utilities.CheckNull(travelCompanyConnectionString);
+
+            if (Database.Exists(travelCompanyConnectionString))
+            {
+                Database.Delete(travelCompanyConnectionString);
+                throw new SameConnectionStringException();
+
+            }
+            using (var c = new BrokerContext(travelCompanyConnectionString))
+            {
+                c.Database.Create();
+                c.SaveChanges();
+
+            }
+            return new TravelCompany(travelCompanyConnectionString);
+
         }
 
         public ITravelCompany Get(string name)
