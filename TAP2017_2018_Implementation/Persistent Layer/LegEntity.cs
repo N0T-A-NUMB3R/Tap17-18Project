@@ -12,6 +12,9 @@ namespace TAP2017_2018_Implementation
 
         public int LegId { set; get; }
 
+
+        //AGGIUNGERE I VINCOLI CON indice E CONTROLLARE 
+        // requiremnt nelle stringhe
         public string From { set; get; }
 
         public string To { set; get; }

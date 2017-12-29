@@ -11,7 +11,7 @@ namespace TAP2017_2018_Implementation
     {
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) //crea una nuova TC e ne inizializza il fb
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); // qua creo db della TRAVEL COMPANY
         }
 
         public ITravelCompany Get(string name)

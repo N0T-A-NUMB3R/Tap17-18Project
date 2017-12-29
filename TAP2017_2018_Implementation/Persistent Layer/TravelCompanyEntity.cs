@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace TAP2017_2018_Implementation
 {
-    class TravelCompanyEntity
+    public class TravelCompanyEntity
     {
+        public int id { get; set; }
         public string Name { set; get; }
-
         public string ConnectionString { set; get; }
     }
 }

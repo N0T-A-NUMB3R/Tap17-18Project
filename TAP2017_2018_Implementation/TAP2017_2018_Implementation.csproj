@@ -57,11 +57,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entity\TravelCompanyEntity.cs" />
+    <Compile Include="Persistent Layer\BrokerContext.cs" />
+    <Compile Include="Persistent Layer\TravelCompanyEntity.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Company.cs" />
-    <Compile Include="Entity\LegEntity.cs" />
-    <Compile Include="TravelCompanyContext.cs" />
+    <Compile Include="Persistent Layer\LegEntity.cs" />
+    <Compile Include="Persistent Layer\TravelCompanyContext.cs" />
     <Compile Include="TravelCompanyModules.cs" />
     <Compile Include="User\ReadOnlyTravelCompany.cs" />
     <Compile Include="User\ReadOnlyTravelCompanyFactory.cs" />

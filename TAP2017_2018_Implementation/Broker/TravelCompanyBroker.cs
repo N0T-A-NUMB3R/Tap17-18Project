@@ -10,19 +10,30 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
+       private string ConnectionString { get; }
+       
+
+        public TravelCompanyBroker(string connectionString)
+        {
+            ConnectionString = connectionString;
+           
+        }
+
         public ITravelCompanyFactory GetTravelCompanyFactory()
         {
-            throw new NotImplementedException();
+            return new TravelCompanyFactory();
         }
 
         public IReadOnlyTravelCompanyFactory GetReadOnlyTravelCompanyFactory()
         {
-            throw new NotImplementedException();
+            return new ReadOnlyTravelCompanyFactory();
         }
 
         public ReadOnlyCollection<string> KnownTravelCompanies()
         {
-            throw new NotImplementedException();
-        }
+            using (var c = new BrokerContext(ConnectionString))
+            {
+                return new ReadOnlyCollection<string>(c.TravelCompanies.Select(x => x.ConnectionString).ToList());
+            }
     }
 }

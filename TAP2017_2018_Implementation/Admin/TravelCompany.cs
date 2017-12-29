@@ -15,12 +15,15 @@ namespace TAP2017_2018_Implementation
 
         public TravelCompany(string connectionString)
         {
-           CheckAnyNull(connectionString);
+           Utilities.CheckNull(connectionString);
             this.connectionString = connectionString;
         }
 
+       
+
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
+            throw new NotImplementedException();
             /*
             Thrown if any of the following conditions holds:
                 • cost or distance are not strictly positive
