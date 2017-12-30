@@ -13,17 +13,19 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyBrokerFactory : ITravelCompanyBrokerFactory
     { 
-        private string dbConnectionString;
-
+    /*
+       private string dbConnectionString;
+        
         public TravelCompanyBrokerFactory(string dbConnectionString)
         {
             this.dbConnectionString = dbConnectionString;
         }
+      */
 
         public ITravelCompanyBroker CreateNewBroker(string dbConnectionString)
         {
             // Crea un nuovo gestore e ne inizializza il db
-            Utilities.CheckNull(dbConnectionString);
+            //Utilities.CheckConnectionString(dbConnectionString);
 
             if (Database.Exists(dbConnectionString))
             {
@@ -44,7 +46,7 @@ namespace TAP2017_2018_Implementation
         public ITravelCompanyBroker GetBroker(string dbConnectionString)
         {
             // carica i dati di un gestore già inizializzato
-            Utilities.CheckNull(dbConnectionString);
+            //Utilities.CheckNull(dbConnectionString);
 
             if (Database.Exists(dbConnectionString))
                 return new TravelCompanyBroker(dbConnectionString);

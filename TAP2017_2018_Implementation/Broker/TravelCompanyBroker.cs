@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,13 +11,12 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
-       private string ConnectionString { get; }
-       
+        private readonly string ConnectionString;
 
-        public TravelCompanyBroker(string connectionString)
+        public TravelCompanyBroker(string dbConnectionString)
         {
-            ConnectionString = connectionString;
-           
+            Utilities.CheckConnectionString(dbConnectionString);
+            ConnectionString = dbConnectionString;
         }
 
         public ITravelCompanyFactory GetTravelCompanyFactory()
@@ -35,5 +35,6 @@ namespace TAP2017_2018_Implementation
             {
                 return new ReadOnlyCollection<string>(c.TravelCompanies.Select(x => x.ConnectionString).ToList());
             }
+        }
     }
 }

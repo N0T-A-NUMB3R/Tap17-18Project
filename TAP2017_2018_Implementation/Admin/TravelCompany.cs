@@ -15,7 +15,7 @@ namespace TAP2017_2018_Implementation
 
         public TravelCompany(string connectionString)
         {
-           Utilities.CheckNull(connectionString);
+            //CheckConnectionString(connectionString);
             this.connectionString = connectionString;
         }
 

@@ -43,6 +43,17 @@ namespace TAP2017_2018_Implementation
             return found;
         }
 
+            public static void CheckConnectionString(String cs)
+            {
+                if (cs == null)
+                    throw new ArgumentNullException();
+                if (cs == string.Empty)
+                    throw new ArgumentException("Empty ConnectionString");
+                if (cs.Length < DomainConstraints.ConnectionStringMinLength || cs.Length > DomainConstraints.ConnectionStringMaxLength)
+                    throw new ArgumentException("Connection String is too short or too long!");
+
+        }
+
         public static void CheckNull(params object[] objects)
             {
                 if (objects.Any(o => o == null))
