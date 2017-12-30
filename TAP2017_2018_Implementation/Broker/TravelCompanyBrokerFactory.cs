@@ -8,36 +8,26 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
+using static TAP2017_2018_Implementation.Utilities;
 
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyBrokerFactory : ITravelCompanyBrokerFactory
     { 
-    /*
-       private string dbConnectionString;
-        
-        public TravelCompanyBrokerFactory(string dbConnectionString)
-        {
-            this.dbConnectionString = dbConnectionString;
-        }
-      */
-
         public ITravelCompanyBroker CreateNewBroker(string dbConnectionString)
         {
             // Crea un nuovo gestore e ne inizializza il db
-            //Utilities.CheckConnectionString(dbConnectionString);
+            CheckConnectionString(dbConnectionString);
 
             if (Database.Exists(dbConnectionString))
             {
                 Database.Delete(dbConnectionString);
-                throw new SameConnectionStringException();
-                
+                //throw new SameConnectionStringException(); 
             }
             using (var c = new BrokerContext(dbConnectionString))
             {
                 c.Database.Create();
                 c.SaveChanges();
-
             }
             return new TravelCompanyBroker(dbConnectionString);
 
@@ -46,11 +36,11 @@ namespace TAP2017_2018_Implementation
         public ITravelCompanyBroker GetBroker(string dbConnectionString)
         {
             // carica i dati di un gestore già inizializzato
-            //Utilities.CheckNull(dbConnectionString);
+            CheckConnectionString(dbConnectionString);
 
             if (Database.Exists(dbConnectionString))
                 return new TravelCompanyBroker(dbConnectionString);
-            return null;
+            throw new NonexistentObjectException();
         }
     }
 }

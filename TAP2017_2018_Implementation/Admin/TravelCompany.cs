@@ -15,7 +15,7 @@ namespace TAP2017_2018_Implementation
 
         public TravelCompany(string connectionString)
         {
-            //CheckConnectionString(connectionString);
+            CheckConnectionString(connectionString);
             this.connectionString = connectionString;
         }
 

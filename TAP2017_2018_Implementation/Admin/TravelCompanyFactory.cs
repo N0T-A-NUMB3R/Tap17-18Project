@@ -13,15 +13,15 @@ namespace TAP2017_2018_Implementation
     {
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) //crea una nuova TC e ne inizializza il fb
         {
-            Utilities.CheckNull(travelCompanyConnectionString);
+            Utilities.CheckConnectionString(travelCompanyConnectionString);
 
             if (Database.Exists(travelCompanyConnectionString))
             {
                 Database.Delete(travelCompanyConnectionString);
-                throw new SameConnectionStringException();
+               // throw new SameConnectionStringException();
 
             }
-            using (var c = new BrokerContext(travelCompanyConnectionString))
+            using (var c = new TravelCompanyContext(travelCompanyConnectionString))
             {
                 c.Database.Create();
                 c.SaveChanges();

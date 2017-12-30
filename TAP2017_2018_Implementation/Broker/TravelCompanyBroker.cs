@@ -21,7 +21,7 @@ namespace TAP2017_2018_Implementation
 
         public ITravelCompanyFactory GetTravelCompanyFactory()
         {
-            return new TravelCompanyFactory();
+            return new TravelCompanyFactory(ConnectionString);
         }
 
         public IReadOnlyTravelCompanyFactory GetReadOnlyTravelCompanyFactory()
