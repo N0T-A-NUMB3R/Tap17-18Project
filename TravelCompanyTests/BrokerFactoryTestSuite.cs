@@ -10,8 +10,6 @@ namespace TAP2017_2018_TravelCompanyTests
     [TestFixture]
     public class BrokerFactoryTestSuite : BasicTestInitializer
     {
-
-
         [Test]
         public void CreateNewBrokerReturnsOk()
         {

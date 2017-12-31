@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -45,10 +46,8 @@ namespace TAP2017_2018_Implementation
         }
 
         public static void CheckConnectionString(String cs)
-        {
-            Regex r = new Regex("^[a-zA-Z0-9]*$");
-            if (!r.IsMatch(cs))
-                throw new ArgumentException("String with no Alphanumerics chars");
+        { 
+
             if (cs == null)
                 throw new ArgumentNullException("Null connectionString");
             if (cs == string.Empty)
@@ -58,7 +57,18 @@ namespace TAP2017_2018_Implementation
 
         }
 
-        public static void CheckNull(params object[] objects)
+         public static void CheckCatalog(string cs)
+         {
+             var csb = new SqlConnectionStringBuilder(cs);
+             string dataSource = csb.DataSource;
+             String initialCatalog = csb.InitialCatalog;
+                Regex r = new Regex("^[a-zA-Z0-9]*$");
+
+             if (!r.IsMatch(initialCatalog))
+                 throw new ArgumentException("InitialCatalog with no Alphanumerics chars");
+        }
+
+         public static void CheckNull(params object[] objects)
             {
                 if (objects.Any(o => o == null))
                 {

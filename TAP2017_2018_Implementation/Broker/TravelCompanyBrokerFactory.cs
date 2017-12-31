@@ -15,20 +15,20 @@ namespace TAP2017_2018_Implementation
     public class TravelCompanyBrokerFactory : ITravelCompanyBrokerFactory
     {
         public ITravelCompanyBroker CreateNewBroker(string dbConnectionString)
-        {
+        {        
+            
             // Crea un nuovo gestore e ne inizializza il db
             CheckConnectionString(dbConnectionString);
 
             if (Database.Exists(dbConnectionString))
             {
                 Database.Delete(dbConnectionString);
-                //throw new SameConnectionStringException(); 
+                //throw new SameConnectionStringException();  // la prof parla di arrabbiarsi?!
             }
-
             using (var c = new BrokerContext(dbConnectionString))
-            {
+            {   
                 c.Database.Create();
-               // c.SaveChanges();
+                c.SaveChanges();
             }
 
             return new TravelCompanyBroker(dbConnectionString);

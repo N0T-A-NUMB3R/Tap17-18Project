@@ -12,15 +12,22 @@ namespace TAP2017_2018_Implementation
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
         private readonly string ConnectionString;
-        public ITravelCompanyFactory TravelCompanyFactory { get; }
-        public IReadOnlyTravelCompanyFactory ReadOnlyTravelCompanyFactory { get; }
+        //public ITravelCompanyFactory TravelCompanyFactory { get; }
+        //public IReadOnlyTravelCompanyFactory ReadOnlyTravelCompanyFactory { get; }
 
+        public override bool Equals(object obj)
+        {
+            TravelCompanyBroker other = obj as TravelCompanyBroker;
+            if (other == null)
+                return false;
+            return ConnectionString == other.ConnectionString;
+        }
 
         public TravelCompanyBroker(string dbConnection)
         {
             Utilities.CheckConnectionString(dbConnection);
-            TravelCompanyFactory = new TravelCompanyFactory(dbConnection);
-            ReadOnlyTravelCompanyFactory = new ReadOnlyTravelCompanyFactory(dbConnection);
+            //TravelCompanyFactory = new TravelCompanyFactory(dbConnection);
+            //ReadOnlyTravelCompanyFactory = new ReadOnlyTravelCompanyFactory(dbConnection);
         }
 
         public ITravelCompanyFactory GetTravelCompanyFactory()
