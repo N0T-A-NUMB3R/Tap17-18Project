@@ -16,8 +16,11 @@ namespace TAP2017_2018_Implementation
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
-        }
+            modelBuilder.Entity<TravelCompanyEntity>()
+                .ToTable("TravelCompany")
+                .HasKey(t => t.ID) //rindondante, bastavano le convenzioni
+                .HasIndex(t => new { t.ConnectionString, t.Name  }).IsUnique();
+         }
 
     }
 }

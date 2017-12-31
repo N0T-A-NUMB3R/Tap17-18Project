@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,16 +11,14 @@ namespace TAP2017_2018_Implementation
     public class LegEntity
     {
 
-        public int LegId { set; get; }
+        public int ID { set; get; }
 
-
-        //AGGIUNGERE I VINCOLI CON indice E CONTROLLARE 
-        // requiremnt nelle stringhe
+        [Required]
         public string From { set; get; }
-
+        [Required]
         public string To { set; get; }
 
-
+        [Required]
         public int Distance { set; get; }
 
         public int Cost { set; get; }

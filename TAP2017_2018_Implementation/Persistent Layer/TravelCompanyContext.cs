@@ -17,7 +17,10 @@ namespace TAP2017_2018_Implementation
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
+            modelBuilder.Entity<LegEntity>()
+                .ToTable("Leg")
+                .HasKey(l => l.ID) //rindondante, bastavano le convenzioni
+              
         }
 
     }

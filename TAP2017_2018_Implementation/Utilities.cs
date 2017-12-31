@@ -11,8 +11,8 @@ using TAP2017_2018_TravelCompanyInterface.Exceptions;
 namespace TAP2017_2018_Implementation
 {
     
-        public static class Utilities
-        {
+     public static class Utilities
+     {
         public class LegDTO : ILegDTO
         {
             public string From { get; set; }
@@ -23,7 +23,7 @@ namespace TAP2017_2018_Implementation
 
             public int Cost { get; set; }
 
-            public TransportType Type { get; set; }
+            public TransportType Type { get; set;}
         }
 
         public static readonly Expression<Func<LegEntity, ILegDTO>> SettingToDescribedEntityDto = x => new LegDTO
@@ -43,14 +43,14 @@ namespace TAP2017_2018_Implementation
             return found;
         }
 
-            public static void CheckConnectionString(String cs)
-            {
-                if (cs == null)
-                    throw new ArgumentNullException();
-                if (cs == string.Empty)
-                    throw new ArgumentException("Empty ConnectionString");
-                if (cs.Length < DomainConstraints.ConnectionStringMinLength || cs.Length > DomainConstraints.ConnectionStringMaxLength)
-                    throw new ArgumentException("Connection String is too short or too long!");
+        public static void CheckConnectionString(String cs)
+        {
+            if (cs == null)
+                throw new ArgumentNullException();
+            if (cs == string.Empty)
+                throw new ArgumentException("Empty ConnectionString");
+            if (cs.Length < DomainConstraints.ConnectionStringMinLength || cs.Length > DomainConstraints.ConnectionStringMaxLength)
+                throw new ArgumentException("Connection String is too short or too long!");
 
         }
 
