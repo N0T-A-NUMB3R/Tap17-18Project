@@ -10,7 +10,7 @@ namespace TAP2017_2018_Implementation
 {
     public class LegEntity
     {
-
+        [Key]
         public int ID { set; get; }
 
         [Required]

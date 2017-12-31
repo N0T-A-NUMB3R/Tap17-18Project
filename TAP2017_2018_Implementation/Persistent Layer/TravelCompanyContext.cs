@@ -19,8 +19,8 @@ namespace TAP2017_2018_Implementation
         {
             modelBuilder.Entity<LegEntity>()
                 .ToTable("Leg")
-                .HasKey(l => l.ID) //rindondante, bastavano le convenzioni
-              
+                .HasKey(l => l.ID); //rindondante, bastavano le convenzioni
+
         }
 
     }
