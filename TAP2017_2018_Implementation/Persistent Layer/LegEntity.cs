@@ -23,7 +23,6 @@ namespace TAP2017_2018_Implementation
 
         public int Cost { set; get; }
 
-
         public TransportType Type { set; get; }
     }
 }

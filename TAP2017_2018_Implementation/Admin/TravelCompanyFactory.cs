@@ -10,13 +10,7 @@ using TAP2017_2018_TravelCompanyInterface.Exceptions;
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
-    {
-        private readonly string connectionString;
-
-        public TravelCompanyFactory(string connectionString)
-        {
-            this.connectionString = connectionString;
-        }
+    {    
 
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) //crea una nuova TC e ne inizializza il fb
         {

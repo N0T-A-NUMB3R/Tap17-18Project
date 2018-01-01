@@ -16,10 +16,8 @@ namespace TAP2017_2018_Implementation
     {
         public ITravelCompanyBroker CreateNewBroker(string dbConnectionString)
         {        
-            
             // Crea un nuovo gestore e ne inizializza il db
             CheckConnectionString(dbConnectionString);
-
             if (Database.Exists(dbConnectionString))
             {
                 Database.Delete(dbConnectionString);
