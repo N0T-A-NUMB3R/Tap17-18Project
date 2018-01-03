@@ -23,16 +23,24 @@ namespace TAP2017_2018_Implementation
 
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
-            throw new NotImplementedException();
-            /*
-            Thrown if any of the following conditions holds:
-                • cost or distance are not strictly positive
-                • transportType is None
-                • from or to are not alphanumeric
-                • from and to are equal
-                AlreadyExistsException If a leg having the same values for all the parameters exists
-            */
+            CheckDescription(planDescription);
+            CheckName(planName);
+            using (var context = new Context(_connectionString))
+            {
+                context.Settings.FindElem(scheduleSettingId);
+                var plan = new Plan
+                {
+                    Name = planName,
+                    Description = planDescription,
+                    SettingId = scheduleSettingId
+                };
+                context.Plans.Add(plan);
+                context.SaveChanges();
+                return plan.PlanId;
+            }
         }
+       
+    }
 
         public void DeleteLeg(int legToBeRemovedId)
         {

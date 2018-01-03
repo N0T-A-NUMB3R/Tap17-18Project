@@ -11,6 +11,14 @@ namespace TAP2017_2018_Implementation
 {
     public class ReadOnlyTravelCompany : IReadOnlyTravelCompany
     {
+        public string Name { get; set; }
+        private readonly string connectionString;
+
+        public ReadOnlyTravelCompany(string connectionString)
+        {
+            Utilities.CheckConnectionString(connectionString);
+            this.connectionString = connectionString;
+        }
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
         {
             throw new NotImplementedException();

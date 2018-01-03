@@ -18,9 +18,13 @@ namespace TAP2017_2018_Implementation
         
         public IReadOnlyTravelCompany Get(string name)
         {
-            throw new NotImplementedException();
-            //Carica i dati di una TC già inizializzata
+            Utilities.CheckConnectionString(name);
+            using (var c = new BrokerContext(dBCONNECTION))
+            {
+                var existentTc = c.TravelCompanies.Single(tc => tc.Name == name);
 
+                return new ReadOnlyTravelCompany(existentTc.ConnectionString);
+            }
         }
     }
 }
