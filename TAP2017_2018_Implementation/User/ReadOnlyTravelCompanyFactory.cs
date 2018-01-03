@@ -18,7 +18,8 @@ namespace TAP2017_2018_Implementation
         
         public IReadOnlyTravelCompany Get(string name)
         {
-            Utilities.CheckConnectionString(name);
+            Utilities.CheckName(name);
+
             using (var c = new BrokerContext(dBCONNECTION))
             {
                 var existentTc = c.TravelCompanies.Single(tc => tc.Name == name);

@@ -18,13 +18,13 @@ namespace TAP2017_2018_Implementation
             this.dBCONNECTION = dBCONNECTION;
         }
 
-        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) // TODO sentire Angelo
+        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) // TODO sentire prof
         {
 
             Utilities.CheckConnectionString(travelCompanyConnectionString);
             Utilities.CheckConnectionString(dBCONNECTION);
             Utilities.CheckTwoConnectionString(travelCompanyConnectionString, dBCONNECTION);
-
+            Utilities.CheckName(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(dBCONNECTION);
             if (broker.KnownTravelCompanies().Contains(name)) // DEVO SOLLEVARE ALCUNE ECCEZIONI

@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NUnit.Framework;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
@@ -28,7 +29,7 @@ namespace TAP2017_2018_Implementation
             public TransportType Type { get; set;}
         }
 
-        public static readonly Expression<Func<LegEntity, ILegDTO>> SettingToDescribedEntityDto = x => new LegDTO
+        public static Expression<Func<LegEntity, LegDTO>> LegToLegDto = x => new LegDTO
         {   
             From = x.From,
             To = x.To,
@@ -86,16 +87,42 @@ namespace TAP2017_2018_Implementation
             return rg.IsMatch(strToCheck);
         }
 
-         public static void CheckId(int id)
+         public static void CheckName(string name)
          {
+             if (name == null)
+                 throw new ArgumentNullException("Name is Null");
+             if (name == string.Empty)
+                 throw new ArgumentException("Name is Empty");
+             if (!isAlphaNumeric(name))
+                 throw new ArgumentException("Name isnt Alphanumerics");
+             if (name.Length < DomainConstraints.NameMinLength)
+                 throw new ArgumentException("Name is too Short");
+             if (name.Length > DomainConstraints.NameMaxLength)
+                 throw new ArgumentException("Name is too Long");
+        }
 
-         }
+
+
          public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
          {
-             if ((cost <= 0) || (distance <= 0) || (transportType == TransportType.None) || (!isAlphaNumeric(to)) ||
-                 (!isAlphaNumeric(from)) || (from == to))
-                 throw new ArgumentException();
-         }
+             if ((cost <= 0) || (distance <= 0) )
+                 throw new ArgumentException("cost or distance is <= 0");
+             if (transportType == TransportType.None) 
+                 throw new ArgumentException("Trasport Type is null");
+             if ((!isAlphaNumeric(to)) || (!isAlphaNumeric(from))) 
+                 throw new ArgumentException("From or To isnt Alphanumerics");
+             if (from == to)
+                 throw new ArgumentException("From is equal To");
+             if ((from == null) || (to == null))
+                 throw new ArgumentNullException("To or From is null");
+             if (( from == string.Empty)||(to == string.Empty))
+                 throw new ArgumentException("Empty string");
+             if ((from.Length > TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMaxLength) || (to.Length > TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMaxLength))
+                 throw new ArgumentException("From or To is too long");
+             if ((from.Length < TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMinLength) ||
+                  (to.Length < TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMinLength))
+                 throw new ArgumentException("From or To is too short");
+        }
          
 
         public static void CheckNull(params object[] objects)
