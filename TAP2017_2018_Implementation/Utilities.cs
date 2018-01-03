@@ -74,12 +74,22 @@ namespace TAP2017_2018_Implementation
                  throw new ArgumentException("InitialCatalog with no Alphanumerics chars");
         }
 
+         public static void CheckNegative(int argument)
+         {
+             if (argument <= 0)
+                 throw new ArgumentException("l' intero è negativo");
+         }
+
         public static Boolean isAlphaNumeric(string strToCheck)
         {
             Regex rg = new Regex(@"^[a-zA-Z0-9\s,]*$");
             return rg.IsMatch(strToCheck);
         }
 
+         public static void CheckId(int id)
+         {
+
+         }
          public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
          {
              if ((cost <= 0) || (distance <= 0) || (transportType == TransportType.None) || (!isAlphaNumeric(to)) ||

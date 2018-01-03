@@ -18,7 +18,7 @@ namespace TAP2017_2018_Implementation
         public IReadOnlyTravelCompanyFactory ReadOnlyTravelCompanyFactory { get; }
 
 
-        public override bool Equals(object obj)
+        public override bool Equals(object obj) //Todo prob va aggiunta toString..
         {
             if (!(obj is TravelCompanyBroker other))
                 return false;
