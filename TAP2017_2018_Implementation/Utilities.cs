@@ -57,6 +57,12 @@ namespace TAP2017_2018_Implementation
 
         }
 
+         public static void CheckTwoConnectionString(string cs1, string cs2)
+         {
+             if (cs1 == cs2)
+                throw new SameConnectionStringException("the Cs of Travel Agency is equal to the Cs of the broker");
+         }
+
          public static void CheckCatalog(string cs)
          {
              var csb = new SqlConnectionStringBuilder(cs);

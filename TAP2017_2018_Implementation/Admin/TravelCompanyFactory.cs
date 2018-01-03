@@ -10,31 +10,54 @@ using TAP2017_2018_TravelCompanyInterface.Exceptions;
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
-    {    
-
-        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) //crea una nuova TC e ne inizializza il fb
+    {
+        private string dBCONNECTION;
+        
+        public TravelCompanyFactory(string dBCONNECTION)
         {
+            this.dBCONNECTION = dBCONNECTION;
+        }
+        
+        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) // TODO sentire Angelo
+        {
+            
             Utilities.CheckConnectionString(travelCompanyConnectionString);
+            Utilities.CheckConnectionString(dBCONNECTION);
+            Utilities.CheckTwoConnectionString(travelCompanyConnectionString, dBCONNECTION);
 
-            if (Database.Exists(travelCompanyConnectionString))
+
+            TravelCompanyBroker broker = new TravelCompanyBroker(dBCONNECTION);
+            if (broker.KnownTravelCompanies().Contains(name))  // DEVO SOLLEVARE ALCUNE ECCEZIONI
+                throw new TapDuplicatedObjectException();
+
+
+            using (var c = new BrokerContext(dBCONNECTION))
             {
-                Database.Delete(travelCompanyConnectionString);
-               // throw new SameConnectionStringException();
+               if (c.TravelCompanies.Any(agency => agency.ConnectionString == travelCompanyConnectionString))
+                   throw new SameConnectionStringException("E' gia presente una Travel Company con questa Cs");
 
+                TravelCompanyEntity tc = new TravelCompanyEntity()
+                {
+                    ConnectionString = travelCompanyConnectionString,
+                    Name = name
+                };
+                c.TravelCompanies.Add(tc);
+                c.SaveChanges();
             }
+
             using (var c = new TravelCompanyContext(travelCompanyConnectionString))
-            {
+            { 
+                c.Database.Delete(); // se ci fosse gia....
                 c.Database.Create();
                 c.SaveChanges();
-
             }
             return new TravelCompany(travelCompanyConnectionString);
-
         }
+   
 
         public ITravelCompany Get(string name)
         {
-            throw new NotImplementedException(); // carica i dati di una TC già inizializzata
+          
         }
     }
 }

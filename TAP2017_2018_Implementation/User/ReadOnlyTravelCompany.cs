@@ -16,7 +16,7 @@ namespace TAP2017_2018_Implementation
             throw new NotImplementedException();
         }
 
-        public ReadOnlyCollection<ILegDTO> FindDepartures(string @from, TransportType allowedTransportTypes)
+        public ReadOnlyCollection<ILegDTO> FindDepartures(string from, TransportType allowedTransportTypes)
         {
             throw new NotImplementedException();
         }

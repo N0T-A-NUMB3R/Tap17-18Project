@@ -9,8 +9,13 @@ namespace TAP2017_2018_Implementation
 {
     public class ReadOnlyTravelCompanyFactory : IReadOnlyTravelCompanyFactory
     {
-      
-
+        private string dBCONNECTION;
+        
+        public ReadOnlyTravelCompanyFactory(string dBCONNECTION)
+        {
+            this.dBCONNECTION = dBCONNECTION;
+        }
+        
         public IReadOnlyTravelCompany Get(string name)
         {
             throw new NotImplementedException();
