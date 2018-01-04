@@ -63,10 +63,9 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legToBeRemovedId);
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
-                if (c.Legs.Any(l => l.ID == legToBeRemovedId))
+                var legToDelete = c.Legs.SingleOrDefault(l => l.ID == legToBeRemovedId);
+                if (legToDelete == null)
                     throw new NonexistentObjectException();
-
-                var legToDelete = c.Legs.Single(l => l.ID == legToBeRemovedId);
                 c.Legs.Remove(legToDelete);
                 c.SaveChanges();
             }
@@ -77,7 +76,8 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
-                if (c.Legs.Any(l => l.ID == legId))
+                var legs = c.Legs.SingleOrDefault(l => l.ID == legId);
+                if (legs == null)
                     throw new NonexistentObjectException();
                 var t = c.Legs.Where(l => l.ID == legId).Select(LegToLegDto);
                 return t.First();
