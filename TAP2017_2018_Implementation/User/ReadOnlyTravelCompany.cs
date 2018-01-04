@@ -12,13 +12,22 @@ namespace TAP2017_2018_Implementation
     public class ReadOnlyTravelCompany : IReadOnlyTravelCompany
     {
         public string Name { get; set; }
-        private readonly string connectionString;
+        public readonly string tcCONNECTIONSTRING;
+        
 
         public ReadOnlyTravelCompany(string connectionString)
         {
             Utilities.CheckConnectionString(connectionString);
-            this.connectionString = connectionString;
+            this.tcCONNECTIONSTRING = connectionString;
         }
+
+        public override bool Equals(object obj) //Todo prob va aggiunta toString..
+        {
+            if (!(obj is ReadOnlyTravelCompany other))
+                return false;
+            return tcCONNECTIONSTRING == other.tcCONNECTIONSTRING && Name == other.Name;
+        }
+
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
         {
             throw new NotImplementedException();

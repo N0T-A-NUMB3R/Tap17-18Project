@@ -13,6 +13,7 @@ namespace TAP2017_2018_Implementation
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
         private readonly string BROKERCONNECTIONSTRING;
+        private readonly string AgencyName;
 
         public ITravelCompanyFactory TravelCompanyFactory { get; }
         public IReadOnlyTravelCompanyFactory ReadOnlyTravelCompanyFactory { get; }
@@ -29,6 +30,7 @@ namespace TAP2017_2018_Implementation
         {
             Utilities.CheckConnectionString(dbConnection);
             BROKERCONNECTIONSTRING = dbConnection;
+           // this.AgencyName = AgencyName;
 
         }
 
@@ -47,8 +49,8 @@ namespace TAP2017_2018_Implementation
             using (var c = new BrokerContext(BROKERCONNECTIONSTRING))
             {
                 IQueryable<string> travelCompanyNames = c.TravelCompanies.Select(tc => tc.Name);
-                var knownTcList= new ReadOnlyCollection<string>(travelCompanyNames.ToList());
-                return knownTcList;
+                return new ReadOnlyCollection<string>(travelCompanyNames.ToList());
+              
             }
 
         }

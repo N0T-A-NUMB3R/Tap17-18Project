@@ -10,9 +10,11 @@ namespace TAP2017_2018_Implementation
     public class ReadOnlyTravelCompanyFactory : IReadOnlyTravelCompanyFactory
     {
         private string dBCONNECTION;
+
         
         public ReadOnlyTravelCompanyFactory(string dBCONNECTION)
         {
+            Utilities.CheckConnectionString(dBCONNECTION);
             this.dBCONNECTION = dBCONNECTION;
         }
         
@@ -22,9 +24,7 @@ namespace TAP2017_2018_Implementation
 
             using (var c = new BrokerContext(dBCONNECTION))
             {
-                var existentTc = c.TravelCompanies.Single(tc => tc.Name == name);
-
-                return new ReadOnlyTravelCompany(existentTc.ConnectionString);
+                return new ReadOnlyTravelCompany(c.TravelCompanies.Single(tc => tc.Name == name).ConnectionString);
             }
         }
     }

@@ -19,10 +19,9 @@ namespace TAP2017_2018_Implementation
             // Crea un nuovo gestore e ne inizializza il db
             CheckConnectionString(dbConnectionString);
             if (Exists(dbConnectionString))
-            {
                 Delete(dbConnectionString);
                 // TODO throw new SameConnectionStringException();  // la prof parla di arrabbiarsi?!
-            }
+           
             using (var c = new BrokerContext(dbConnectionString))
             {   
                 c.Database.Create();
@@ -33,7 +32,6 @@ namespace TAP2017_2018_Implementation
 
         public ITravelCompanyBroker GetBroker(string dbConnectionString)
         {
-            // carica i dati di un gestore già inizializzato
             CheckConnectionString(dbConnectionString);
             if (Exists(dbConnectionString))
                 return new TravelCompanyBroker(dbConnectionString);

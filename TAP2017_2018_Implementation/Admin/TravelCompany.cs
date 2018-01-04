@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,15 +15,21 @@ namespace TAP2017_2018_Implementation
 {
     class TravelCompany : ITravelCompany
     {
-        public string Name { get; set; }
-        private readonly string tcCONNECTIONSTRING;
-
-        public TravelCompany(string connectionString)
+        public readonly string tcCONNECTIONSTRING;
+        public string Name { get; }
+        public TravelCompany(string connectionString, string agencyName)
         {
             CheckConnectionString(connectionString);
             this.tcCONNECTIONSTRING = connectionString;
+            Name = agencyName;
         }
 
+        public override bool Equals(object obj) //Todo prob va aggiunta toString..
+        {
+            if (!(obj is TravelCompany other))
+                return false;
+            return tcCONNECTIONSTRING == other.tcCONNECTIONSTRING && Name==other.Name;
+        }
 
 
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
@@ -56,8 +63,6 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legToBeRemovedId);
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
-                
-
                 if (c.Legs.Any(l => l.ID == legToBeRemovedId))
                     throw new NonexistentObjectException();
 
@@ -72,7 +77,6 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
-                
                 if (c.Legs.Any(l => l.ID == legId))
                     throw new NonexistentObjectException();
                 var t = c.Legs.Where(l => l.ID == legId).Select(LegToLegDto);
