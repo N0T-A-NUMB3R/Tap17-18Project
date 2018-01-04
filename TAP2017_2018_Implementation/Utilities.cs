@@ -83,7 +83,7 @@ namespace TAP2017_2018_Implementation
 
         public static Boolean isAlphaNumeric(string strToCheck)
         {
-            Regex rg = new Regex(@"^[a-zA-Z0-9\s,]*$");
+            Regex rg = new Regex(@"^[a-zA-Z0-9]*$");
             return rg.IsMatch(strToCheck);
         }
 

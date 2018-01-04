@@ -18,7 +18,7 @@ namespace TAP2017_2018_Implementation
         public TravelCompanyFactory(string dBCONNECTION)
         {
             this.dBCONNECTION = dBCONNECTION;
-           // this.agencyName = agencyName;
+            // this.agencyName = agencyName;
         }
 
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) // TODO sentire prof
@@ -28,11 +28,11 @@ namespace TAP2017_2018_Implementation
             Utilities.CheckConnectionString(dBCONNECTION);
             Utilities.CheckTwoConnectionString(travelCompanyConnectionString, dBCONNECTION);
             Utilities.CheckName(name);
-            
+
             TravelCompanyBroker broker = new TravelCompanyBroker(dBCONNECTION);
             if (broker.KnownTravelCompanies().Contains(name)) // DEVO SOLLEVARE ALCUNE ECCEZIONI
                 throw new TapDuplicatedObjectException();
-           
+
 
             using (var c = new BrokerContext(dBCONNECTION))
             {
@@ -60,16 +60,20 @@ namespace TAP2017_2018_Implementation
                 c.SaveChanges();
             }
 
-            return new TravelCompany(travelCompanyConnectionString,agencyName);
+            return new TravelCompany(travelCompanyConnectionString, agencyName);
         }
 
 
         public ITravelCompany Get(string name)
         {
-            Utilities.CheckConnectionString(name);
+            Utilities.CheckName(name);
             using (var c = new BrokerContext(dBCONNECTION))
             {
-                return new TravelCompany(c.TravelCompanies.Single(tc => tc.Name == name).ConnectionString, name);
+                var travelAgency = c.TravelCompanies.SingleOrDefault(tc => tc.Name == name);
+                if (travelAgency == null)
+                    throw new NonexistentTravelCompanyException();
+                return new TravelCompany(travelAgency.ConnectionString, name);
+
             }
         }
     }
