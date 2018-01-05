@@ -13,7 +13,7 @@ namespace TAP2017_2018_Implementation
     public class TravelCompanyFactory : ITravelCompanyFactory
     {
         private string dBCONNECTION;
-        private string agencyName;
+        //private string agencyName; //TODO ha senso?
 
         public TravelCompanyFactory(string dBCONNECTION)
         {
@@ -60,7 +60,7 @@ namespace TAP2017_2018_Implementation
                 c.SaveChanges();
             }
 
-            return new TravelCompany(travelCompanyConnectionString, agencyName);
+            return new TravelCompany(travelCompanyConnectionString, name); //usavo agency name
         }
 
 

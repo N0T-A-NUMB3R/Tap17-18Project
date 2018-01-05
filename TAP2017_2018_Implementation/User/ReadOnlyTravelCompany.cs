@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using TAP2017_2018_TravelCompanyInterface;
+using static TAP2017_2018_Implementation.LegUtilities;
+using static TAP2017_2018_Implementation.Utilities;
 
 namespace TAP2017_2018_Implementation
 {
@@ -17,7 +20,7 @@ namespace TAP2017_2018_Implementation
 
         public ReadOnlyTravelCompany(string connectionString)
         {
-            Utilities.CheckConnectionString(connectionString);
+            CheckConnectionString(connectionString);
             this.tcCONNECTIONSTRING = connectionString;
         }
 
@@ -30,12 +33,36 @@ namespace TAP2017_2018_Implementation
 
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
         {
-            throw new NotImplementedException();
+            if (predicate == null)
+                throw new ArgumentException();
+
+
+            using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
+            {
+
+                var pred = predicate.Compile();
+                var legs = c.Legs.Select(LegToLegDto.Compile()).AsQueryable().Where(x => pred(x));
+                return new ReadOnlyCollection<ILegDTO>(legs.ToList());
+;
+            }
+
         }
 
         public ReadOnlyCollection<ILegDTO> FindDepartures(string from, TransportType allowedTransportTypes)
+        //leg.tt && allowed == 1
         {
-            throw new NotImplementedException();
+            CheckDepartures(from, allowedTransportTypes);
+            return new ReadOnlyCollection<ILegDTO>(new List<ILegDTO>());
+        }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

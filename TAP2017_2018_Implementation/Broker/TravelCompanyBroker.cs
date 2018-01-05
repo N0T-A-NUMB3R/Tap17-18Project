@@ -13,7 +13,7 @@ namespace TAP2017_2018_Implementation
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
         private readonly string BROKERCONNECTIONSTRING;
-        private readonly string AgencyName;
+        
 
         public ITravelCompanyFactory TravelCompanyFactory { get; }
         public IReadOnlyTravelCompanyFactory ReadOnlyTravelCompanyFactory { get; }
@@ -62,6 +62,11 @@ namespace TAP2017_2018_Implementation
             hashCode = hashCode * -1521134295 + EqualityComparer<ITravelCompanyFactory>.Default.GetHashCode(TravelCompanyFactory);
             hashCode = hashCode * -1521134295 + EqualityComparer<IReadOnlyTravelCompanyFactory>.Default.GetHashCode(ReadOnlyTravelCompanyFactory);
             return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString();
         }
     }
 }

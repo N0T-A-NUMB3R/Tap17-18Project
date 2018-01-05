@@ -16,27 +16,7 @@ namespace TAP2017_2018_Implementation
     
      public static class Utilities
      {
-        public class LegDTO : ILegDTO
-        {
-            public string From { get; set; }
-
-            public string To { get; set; }
-
-            public int Distance { get; set; }
-
-            public int Cost { get; set; }
-
-            public TransportType Type { get; set;}
-        }
-
-        public static Expression<Func<LegEntity, LegDTO>> LegToLegDto = x => new LegDTO
-        {   
-            From = x.From,
-            To = x.To,
-            Distance = x.Distance,
-            Cost = x.Cost,
-            Type = x.Type
-         };
+       
 
         public static T FindElem<T>(this DbSet<T> table, params object[] keys) where T : class
         {
@@ -123,6 +103,23 @@ namespace TAP2017_2018_Implementation
                   (to.Length < TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMinLength))
                  throw new ArgumentException("From or To is too short");
         }
+
+         public static void CheckDepartures(string from, TransportType allowedTransportTypes)
+         {
+             if (!isAlphaNumeric(from))
+                 throw new ArgumentException("From isnt Alphanumerics");
+             if (from == null)
+                 throw new ArgumentNullException("From is Null");
+             if (from == string.Empty)
+                 throw new ArgumentException("From is Empty");
+             if (from.Length < DomainConstraints.NameMinLength)
+                 throw new ArgumentException("From is too Short");
+             if (from.Length > DomainConstraints.NameMaxLength)
+                 throw new ArgumentException("From is too Long");
+             if (allowedTransportTypes == TransportType.None)
+                 throw new ArgumentException("Trasport Type is null");
+        }
+    
          
 
         public static void CheckNull(params object[] objects)

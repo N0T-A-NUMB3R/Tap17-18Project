@@ -9,6 +9,7 @@ using Ninject.Planning;
 using NUnit.Framework;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
+using static TAP2017_2018_Implementation.LegUtilities;
 using static TAP2017_2018_Implementation.Utilities;
 
 namespace TAP2017_2018_Implementation
@@ -79,9 +80,19 @@ namespace TAP2017_2018_Implementation
                 var legs = c.Legs.SingleOrDefault(l => l.ID == legId);
                 if (legs == null)
                     throw new NonexistentObjectException();
-                var t = c.Legs.Where(l => l.ID == legId).Select(LegToLegDto);
-                return t.First();
+                return c.Legs.Where(l => l.ID == legId).Select(LegToLegDto).First(); //Todo da togliere il first, perchè non credo sia corretta
+             ;
             }
+        }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }
