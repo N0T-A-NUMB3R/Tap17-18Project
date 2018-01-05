@@ -43,15 +43,13 @@ namespace TAP2017_2018_Implementation
             {
                 return base.GetHashCode();
             }
-
-            public override string ToString()
-            {
-                return base.ToString();
-            }
         }
-
-
-
+        /*
+        public static Expression<Func<TransportType, TransportType>> Allowed(TransportType t1, TransportType t2, TransportType t3)
+        {
+            return t1 & t2 == t3;
+        } 
+        */
         public static Expression<Func<LegEntity, ILegDTO>> CastToLegDto = l => new LegDTO
         {
             From = l.From,

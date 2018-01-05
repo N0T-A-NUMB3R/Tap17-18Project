@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 using TAP2017_2018_TravelCompanyInterface;
 using static TAP2017_2018_Implementation.LegUtilities;
 using static TAP2017_2018_Implementation.Utilities;
@@ -16,7 +13,7 @@ namespace TAP2017_2018_Implementation
     {
         public string Name { get; set; }
         public readonly string tcCONNECTIONSTRING;
-        
+
 
         public ReadOnlyTravelCompany(string connectionString)
         {
@@ -35,30 +32,29 @@ namespace TAP2017_2018_Implementation
         {
             if (predicate == null)
                 throw new ArgumentException();
-
-
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
 
                 var pred = predicate.Compile();
-                var legs = c.Legs.Select(LegToLegDto.Compile()).AsQueryable().Where(x => pred(x));
-                return new ReadOnlyCollection<ILegDTO>(legs.ToList());
-;
+                var legsFound = c.Legs.Select(CastToLegDto.Compile()).AsQueryable().Where(dto => pred(dto));
+                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
+                
             }
 
         }
 
         public ReadOnlyCollection<ILegDTO> FindDepartures(string from, TransportType allowedTransportTypes)
-        //leg.tt && allowed == 1
         {
+           
             CheckDepartures(from, allowedTransportTypes);
-            return new ReadOnlyCollection<ILegDTO>(new List<ILegDTO>());
+            using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
+            {
+                var legsFound = c.Legs.Where(x => x.From == from && (x.Type & allowedTransportTypes) == x.Type);
+                var legFoundToDto = legsFound.Select(CastToLegDto.Compile()).ToList();
+             return new ReadOnlyCollection<ILegDTO>(legFoundToDto);
+            }
         }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+    
 
         public override int GetHashCode()
         {

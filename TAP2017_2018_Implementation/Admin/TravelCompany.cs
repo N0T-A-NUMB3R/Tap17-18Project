@@ -80,7 +80,7 @@ namespace TAP2017_2018_Implementation
                 var legs = c.Legs.SingleOrDefault(l => l.ID == legId);
                 if (legs == null)
                     throw new NonexistentObjectException();
-                return c.Legs.Where(l => l.ID == legId).Select(LegToLegDto).First(); //Todo da togliere il first, perchè non credo sia corretta
+                return c.Legs.Where(l => l.ID == legId).Select(CastToLegDto).First(); //Todo da togliere il first, perchè non credo sia corretta
              ;
             }
         }
