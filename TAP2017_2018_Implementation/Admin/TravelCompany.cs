@@ -21,7 +21,7 @@ namespace TAP2017_2018_Implementation
         public TravelCompany(string connectionString, string agencyName)
         {
             CheckConnectionString(connectionString);
-            this.tcCONNECTIONSTRING = connectionString;
+            tcCONNECTIONSTRING = connectionString;
             Name = agencyName;
         }
 
@@ -42,7 +42,7 @@ namespace TAP2017_2018_Implementation
                 if (c.Legs.Any(tc =>
                     tc.From == from && tc.To == to && tc.Cost == cost && tc.Distance == distance &&
                     tc.Type == transportType))
-                    throw new ArgumentException();
+                    throw new TapDuplicatedObjectException();
 
                 var legtoAdd = new LegEntity()
                 {
@@ -80,7 +80,7 @@ namespace TAP2017_2018_Implementation
                 var legs = c.Legs.SingleOrDefault(l => l.ID == legId);
                 if (legs == null)
                     throw new NonexistentObjectException();
-                return c.Legs.Where(l => l.ID == legId).Select(CastToLegDto).First(); //Todo da togliere il first, perchè non credo sia corretta
+                return c.Legs.Where(l => l.ID == legId).Select(CastToLegDtoExp).First(); //Todo da togliere il first, perchè non credo sia corretta
              ;
             }
         }

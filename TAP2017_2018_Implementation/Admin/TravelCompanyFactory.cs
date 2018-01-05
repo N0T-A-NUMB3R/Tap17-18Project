@@ -12,12 +12,12 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
     {
-        private string dBCONNECTION;
+        private readonly string BROKERCONNECTIONSTRING;
         //private string agencyName; //TODO ha senso?
 
-        public TravelCompanyFactory(string dBCONNECTION)
+        public TravelCompanyFactory(string connectionstring)
         {
-            this.dBCONNECTION = dBCONNECTION;
+            BROKERCONNECTIONSTRING = connectionstring;
             // this.agencyName = agencyName;
         }
 
@@ -25,25 +25,20 @@ namespace TAP2017_2018_Implementation
         {
 
             Utilities.CheckConnectionString(travelCompanyConnectionString);
-            Utilities.CheckConnectionString(dBCONNECTION);
-            Utilities.CheckTwoConnectionString(travelCompanyConnectionString, dBCONNECTION);
+            Utilities.CheckConnectionString(BROKERCONNECTIONSTRING);
+            Utilities.CheckTwoConnectionString(travelCompanyConnectionString,BROKERCONNECTIONSTRING);
             Utilities.CheckName(name);
 
-            TravelCompanyBroker broker = new TravelCompanyBroker(dBCONNECTION);
-            if (broker.KnownTravelCompanies().Contains(name)) // DEVO SOLLEVARE ALCUNE ECCEZIONI
+            TravelCompanyBroker broker = new TravelCompanyBroker(BROKERCONNECTIONSTRING);
+            if (broker.KnownTravelCompanies().Contains(name)) 
                 throw new TapDuplicatedObjectException();
 
 
-            using (var c = new BrokerContext(dBCONNECTION))
+            using (var c = new BrokerContext(BROKERCONNECTIONSTRING))
             {
                 if (c.TravelCompanies.Any(agency => agency.ConnectionString == travelCompanyConnectionString))
                     throw new SameConnectionStringException("E' gia presente una Travel Company con questa Cs");
-                /*
-                if (c.TravelCompanies.Any(agency => agency.Name == name))
-                    throw new TapDuplicatedObjectException("E' gia presente una Travel Company con questo nome");
-                */
-
-
+                
                 TravelCompanyEntity tc = new TravelCompanyEntity()
                 {
                     ConnectionString = travelCompanyConnectionString,
@@ -67,7 +62,7 @@ namespace TAP2017_2018_Implementation
         public ITravelCompany Get(string name)
         {
             Utilities.CheckName(name);
-            using (var c = new BrokerContext(dBCONNECTION))
+            using (var c = new BrokerContext(BROKERCONNECTIONSTRING))
             {
                 var travelAgency = c.TravelCompanies.SingleOrDefault(tc => tc.Name == name);
                 if (travelAgency == null)

@@ -44,13 +44,15 @@ namespace TAP2017_2018_Implementation
                 return base.GetHashCode();
             }
         }
-        /*
-        public static Expression<Func<TransportType, TransportType>> Allowed(TransportType t1, TransportType t2, TransportType t3)
+        
+        public static Expression<Func<LegEntity, bool>> DetechDeparturesExp(string from, TransportType allowedTransportTypes)
         {
-            return t1 & t2 == t3;
+            return l =>
+                (l.From == from)
+                && (l.Type & allowedTransportTypes) == l.Type;
         } 
-        */
-        public static Expression<Func<LegEntity, ILegDTO>> CastToLegDto = l => new LegDTO
+        
+        public static Expression<Func<LegEntity, ILegDTO>> CastToLegDtoExp = l => new LegDTO
         {
             From = l.From,
             To = l.To,

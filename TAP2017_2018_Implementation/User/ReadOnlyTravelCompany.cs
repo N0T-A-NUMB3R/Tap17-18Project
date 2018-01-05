@@ -18,7 +18,7 @@ namespace TAP2017_2018_Implementation
         public ReadOnlyTravelCompany(string connectionString)
         {
             CheckConnectionString(connectionString);
-            this.tcCONNECTIONSTRING = connectionString;
+            tcCONNECTIONSTRING = connectionString;
         }
 
         public override bool Equals(object obj) //Todo prob va aggiunta toString..
@@ -34,11 +34,10 @@ namespace TAP2017_2018_Implementation
                 throw new ArgumentException();
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
-
-                var pred = predicate.Compile();
-                var legsFound = c.Legs.Select(CastToLegDto.Compile()).AsQueryable().Where(dto => pred(dto));
-                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
                 
+                 var pred = predicate.Compile();
+                 var legsFound = c.Legs.AsQueryable().Select(CastToLegDtoExp.Compile()).Where(dto => pred(dto)); //Todo controllare se è enumerable
+                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
             }
 
         }
@@ -49,9 +48,10 @@ namespace TAP2017_2018_Implementation
             CheckDepartures(from, allowedTransportTypes);
             using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
             {
-                var legsFound = c.Legs.Where(x => x.From == from && (x.Type & allowedTransportTypes) == x.Type);
-                var legFoundToDto = legsFound.Select(CastToLegDto.Compile()).ToList();
-             return new ReadOnlyCollection<ILegDTO>(legFoundToDto);
+                var legsFound = c.Legs.Where(x => x.From == from && (x.Type & allowedTransportTypes) == x.Type)
+                    .Select(CastToLegDtoExp);
+
+                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
             }
         }
     
