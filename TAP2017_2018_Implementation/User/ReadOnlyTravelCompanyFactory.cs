@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
+using static TAP2017_2018_Implementation.Utilities;
 
 namespace TAP2017_2018_Implementation
 {
@@ -10,13 +11,13 @@ namespace TAP2017_2018_Implementation
 
         public ReadOnlyTravelCompanyFactory(string dBconnection)
         {
-            Utilities.CheckConnectionString(dBconnection);
+            CheckConnectionString(dBconnection);
             _brokerconnectionstring = dBconnection;
         }
         
         public IReadOnlyTravelCompany Get(string name)
         {
-            Utilities.CheckName(name);
+            CheckString(name);
 
             using (var c = new BrokerContext(_brokerconnectionstring))
             {

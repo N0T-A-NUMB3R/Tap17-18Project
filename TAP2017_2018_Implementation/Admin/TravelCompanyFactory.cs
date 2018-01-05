@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
+using static TAP2017_2018_Implementation.Utilities;
 
 namespace TAP2017_2018_Implementation
 {
@@ -18,10 +19,10 @@ namespace TAP2017_2018_Implementation
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) // TODO sentire prof
         {
 
-            Utilities.CheckConnectionString(travelCompanyConnectionString);
-            Utilities.CheckConnectionString(_brokerconnectionstring);
-            Utilities.CheckTwoConnectionString(travelCompanyConnectionString,_brokerconnectionstring);
-            Utilities.CheckName(name);
+            CheckConnectionString(travelCompanyConnectionString);
+            CheckConnectionString(_brokerconnectionstring);
+            CheckTwoString(travelCompanyConnectionString,_brokerconnectionstring);
+            CheckString(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);
             if (broker.KnownTravelCompanies().Contains(name)) 
@@ -55,7 +56,7 @@ namespace TAP2017_2018_Implementation
 
         public ITravelCompany Get(string name)
         {
-            Utilities.CheckName(name);
+            CheckString(name);
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
                 var travelAgency = c.TravelCompanies.SingleOrDefault(tc => tc.Name == name);

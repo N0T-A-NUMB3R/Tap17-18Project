@@ -18,7 +18,7 @@ namespace TAP2017_2018_Implementation
         public ReadOnlyTravelCompany(string connectionString)
         {
             CheckConnectionString(connectionString);
-            this.Tconnectionstring = connectionString;
+            Tconnectionstring = connectionString;
         }
 
         public override bool Equals(object obj) //Todo prob va aggiunta toString..
