@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Ninject.Planning;
-using NUnit.Framework;
+﻿using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.LegUtilities;
@@ -16,12 +8,12 @@ namespace TAP2017_2018_Implementation
 {
     class TravelCompany : ITravelCompany
     {
-        public readonly string tcCONNECTIONSTRING;
+        public readonly string TcConnectionstring;
         public string Name { get; }
         public TravelCompany(string connectionString, string agencyName)
         {
             CheckConnectionString(connectionString);
-            tcCONNECTIONSTRING = connectionString;
+            TcConnectionstring = connectionString;
             Name = agencyName;
         }
 
@@ -29,7 +21,7 @@ namespace TAP2017_2018_Implementation
         {
             if (!(obj is TravelCompany other))
                 return false;
-            return tcCONNECTIONSTRING == other.tcCONNECTIONSTRING && Name==other.Name;
+            return TcConnectionstring == other.TcConnectionstring && Name==other.Name;
         }
 
 
@@ -37,7 +29,7 @@ namespace TAP2017_2018_Implementation
         {
             CheckLeg(from, to, cost, distance, transportType);
 
-            using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
+            using (var c = new TravelCompanyContext(TcConnectionstring))
             {
                 if (c.Legs.Any(tc =>
                     tc.From == from && tc.To == to && tc.Cost == cost && tc.Distance == distance &&
@@ -62,7 +54,7 @@ namespace TAP2017_2018_Implementation
         public void DeleteLeg(int legToBeRemovedId)
         {
             CheckNegative(legToBeRemovedId);
-            using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
+            using (var c = new TravelCompanyContext(TcConnectionstring))
             {
                 var legToDelete = c.Legs.SingleOrDefault(l => l.ID == legToBeRemovedId);
                 if (legToDelete == null)
@@ -75,19 +67,14 @@ namespace TAP2017_2018_Implementation
         public ILegDTO GetLegDTOFromId(int legId)
         {
             CheckNegative(legId);
-            using (var c = new TravelCompanyContext(tcCONNECTIONSTRING))
+            using (var c = new TravelCompanyContext(TcConnectionstring))
             {
                 var legs = c.Legs.SingleOrDefault(l => l.ID == legId);
                 if (legs == null)
                     throw new NonexistentObjectException();
                 return c.Legs.Where(l => l.ID == legId).Select(CastToLegDtoExp).First(); //Todo da togliere il first, perchè non credo sia corretta
-             ;
+             
             }
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
         }
 
         public override int GetHashCode()

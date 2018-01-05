@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Ninject.Planning.Bindings;
 using TAP2017_2018_TravelCompanyInterface;
 
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
-        private readonly string BROKERCONNECTIONSTRING;
+        private readonly string _brokerconnectionstring;
         
 
         public ITravelCompanyFactory TravelCompanyFactory { get; }
@@ -23,30 +18,30 @@ namespace TAP2017_2018_Implementation
         {
             if (!(obj is TravelCompanyBroker other))
                 return false;
-            return BROKERCONNECTIONSTRING == other.BROKERCONNECTIONSTRING;
+            return _brokerconnectionstring == other._brokerconnectionstring;
         }
 
         public TravelCompanyBroker(string dbConnection)
         {
             Utilities.CheckConnectionString(dbConnection);
-            BROKERCONNECTIONSTRING = dbConnection;
+            _brokerconnectionstring = dbConnection;
            // this.AgencyName = AgencyName;
 
         }
 
         public ITravelCompanyFactory GetTravelCompanyFactory()
         {
-            return new TravelCompanyFactory(BROKERCONNECTIONSTRING); //TODO: devo valutare se va passata la cs
+            return new TravelCompanyFactory(_brokerconnectionstring); //TODO: devo valutare se va passata la cs
         }
 
         public IReadOnlyTravelCompanyFactory GetReadOnlyTravelCompanyFactory()
         {
-            return new ReadOnlyTravelCompanyFactory(BROKERCONNECTIONSTRING);
+            return new ReadOnlyTravelCompanyFactory(_brokerconnectionstring);
         }
 
         public ReadOnlyCollection<string> KnownTravelCompanies()
         {
-            using (var c = new BrokerContext(BROKERCONNECTIONSTRING))
+            using (var c = new BrokerContext(_brokerconnectionstring))
             {
                 IQueryable<string> travelCompanyNames = c.TravelCompanies.Select(tc => tc.Name);
                 return new ReadOnlyCollection<string>(travelCompanyNames.ToList());
@@ -58,15 +53,12 @@ namespace TAP2017_2018_Implementation
         public override int GetHashCode()
         {
             var hashCode = -1037104971;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(BROKERCONNECTIONSTRING);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_brokerconnectionstring);
             hashCode = hashCode * -1521134295 + EqualityComparer<ITravelCompanyFactory>.Default.GetHashCode(TravelCompanyFactory);
             hashCode = hashCode * -1521134295 + EqualityComparer<IReadOnlyTravelCompanyFactory>.Default.GetHashCode(ReadOnlyTravelCompanyFactory);
             return hashCode;
         }
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+      
     }
 }

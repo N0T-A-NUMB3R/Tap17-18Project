@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
@@ -12,12 +6,12 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
     {
-        private readonly string BROKERCONNECTIONSTRING;
+        private readonly string _brokerconnectionstring;
         //private string agencyName; //TODO ha senso?
 
         public TravelCompanyFactory(string connectionstring)
         {
-            BROKERCONNECTIONSTRING = connectionstring;
+            _brokerconnectionstring = connectionstring;
             // this.agencyName = agencyName;
         }
 
@@ -25,16 +19,16 @@ namespace TAP2017_2018_Implementation
         {
 
             Utilities.CheckConnectionString(travelCompanyConnectionString);
-            Utilities.CheckConnectionString(BROKERCONNECTIONSTRING);
-            Utilities.CheckTwoConnectionString(travelCompanyConnectionString,BROKERCONNECTIONSTRING);
+            Utilities.CheckConnectionString(_brokerconnectionstring);
+            Utilities.CheckTwoConnectionString(travelCompanyConnectionString,_brokerconnectionstring);
             Utilities.CheckName(name);
 
-            TravelCompanyBroker broker = new TravelCompanyBroker(BROKERCONNECTIONSTRING);
+            TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);
             if (broker.KnownTravelCompanies().Contains(name)) 
                 throw new TapDuplicatedObjectException();
 
 
-            using (var c = new BrokerContext(BROKERCONNECTIONSTRING))
+            using (var c = new BrokerContext(_brokerconnectionstring))
             {
                 if (c.TravelCompanies.Any(agency => agency.ConnectionString == travelCompanyConnectionString))
                     throw new SameConnectionStringException("E' gia presente una Travel Company con questa Cs");
@@ -62,7 +56,7 @@ namespace TAP2017_2018_Implementation
         public ITravelCompany Get(string name)
         {
             Utilities.CheckName(name);
-            using (var c = new BrokerContext(BROKERCONNECTIONSTRING))
+            using (var c = new BrokerContext(_brokerconnectionstring))
             {
                 var travelAgency = c.TravelCompanies.SingleOrDefault(tc => tc.Name == name);
                 if (travelAgency == null)
