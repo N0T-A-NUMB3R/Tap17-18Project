@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using TAP2017_2018_TravelCompanyInterface;
 using static TAP2017_2018_Implementation.LegUtilities;
-using static TAP2017_2018_Implementation.Utilities;
+using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
 {
@@ -12,7 +12,7 @@ namespace TAP2017_2018_Implementation
     {
         public string Name { get; set; }
 
-        public readonly string Tconnectionstring;
+        private readonly string Tconnectionstring;
 
 
         public ReadOnlyTravelCompany(string connectionString)
@@ -21,7 +21,7 @@ namespace TAP2017_2018_Implementation
             Tconnectionstring = connectionString;
         }
 
-        public override bool Equals(object obj) //Todo prob va aggiunta toString..
+        public override bool Equals(object obj) 
         {
             if (!(obj is ReadOnlyTravelCompany other))
                 return false;
@@ -30,13 +30,11 @@ namespace TAP2017_2018_Implementation
 
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
         {
-            if (predicate == null)
-                throw new ArgumentException();
+            CheckNull(predicate);     
             using (var c = new TravelCompanyContext(Tconnectionstring))
             {
-                
                  var pred = predicate.Compile();
-                 var legsFound = c.Legs.AsQueryable().Select(CastToLegDtoExp.Compile()).Where(dto => pred(dto)); //Todo controllare se Enum
+                 var legsFound = c.Legs.Select(CastToLegDtoExp).Where(dto => pred(dto)); //TODO controllare se Enum
                 return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
             }
 
@@ -56,9 +54,8 @@ namespace TAP2017_2018_Implementation
         }
     
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() => base.GetHashCode();
+
+      
     }
 }

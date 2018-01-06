@@ -17,19 +17,18 @@ namespace TAP2017_2018_Implementation
             
         }
 
-
-        public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
+         public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             
             modelBuilder.Entity<TravelCompanyEntity>()
                 .ToTable("TravelCompany")
-                .HasKey(t => t.ID) //rindondante, bastavano le convenzioni
+                .HasKey(t => t.ID) //rindondante, basta la convenzione?!
                 .HasIndex(t => new { t.ConnectionString, t.Name  }).IsUnique();
         
         }
-        public override int SaveChanges()
+        public override int SaveChanges() //Todo controllare bene i save changes
         {
             try
             {

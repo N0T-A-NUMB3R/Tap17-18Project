@@ -9,19 +9,10 @@ using TAP2017_2018_TravelCompanyInterface.Exceptions;
 namespace TAP2017_2018_Implementation
 {
     
-     public static class Utilities
+     internal static class Checker
      {
-       
 
-        public static T FindElem<T>(this DbSet<T> table, params object[] keys) where T : class
-        {
-            T found = table.Find(keys);
-            if (found == null)
-                throw new NonexistentObjectException();
-            return found;
-        }
-
-        public static void CheckConnectionString(String cs)
+        public static void CheckConnectionString(string cs)
         { 
 
             if (cs == null)
@@ -33,13 +24,13 @@ namespace TAP2017_2018_Implementation
 
         }
 
-         public static void CheckTwoString(string cs1, string cs2)
-         {
-             if (cs1 == cs2)
+        public static void CheckTwoConnString(string cs1, string cs2)
+        {
+            if (cs1 == cs2)
                 throw new SameConnectionStringException();
-         }
+        }
 
-         public static void CheckCatalog(string cs)
+        public static void CheckCatalog(string cs)
          {
              var csb = new SqlConnectionStringBuilder(cs);
              String initialCatalog = csb.InitialCatalog;
@@ -49,10 +40,11 @@ namespace TAP2017_2018_Implementation
                  throw new ArgumentException();
         }
 
-         public static void CheckNegative(int argument)
+         public static bool CheckNegative(int argument)
          {
              if (argument <= 0)
-                 throw new ArgumentException();
+                 return true;
+            return false;
          }
 
         public static Boolean IsAlphaNumeric(string strToCheck)
@@ -76,28 +68,31 @@ namespace TAP2017_2018_Implementation
                  throw new ArgumentException();
         }
 
+        public static void CheckTwoString(string s1, string s2)
+        {
+            if (s1 == s2)
+                throw new ArgumentException();
+        }
 
-         public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
+
+
+        public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
          {
-             CheckTwoString(from, to);
-
-             if ((cost <= 0) || (distance <= 0) )
-                 throw new ArgumentException();
-             if (transportType == TransportType.None) 
-                 throw new ArgumentException();
-
-             CheckString(from);
-             CheckString(to);
-                
-            
+            CheckTwoString(from, to);
+            CheckString(from);
+            CheckString(to);
+            if (CheckNegative(cost) || CheckNegative(distance))
+                throw new ArgumentException();
+           if (transportType == TransportType.None)
+                throw new ArgumentException();
         }
 
          public static void CheckDepartures(string from, TransportType allowedTransportTypes)
          {
-             if (!IsAlphaNumeric(from))
-                 throw new ArgumentException();
-             CheckString(from);
-         }
+            CheckString(from);
+            if (allowedTransportTypes == TransportType.None)
+                throw new ArgumentException();
+        }
 
 
          public static void CheckNull(params object[] objects)

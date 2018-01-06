@@ -1,7 +1,7 @@
 ﻿using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static System.Data.Entity.Database;
-using static TAP2017_2018_Implementation.Utilities;
+using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
 {

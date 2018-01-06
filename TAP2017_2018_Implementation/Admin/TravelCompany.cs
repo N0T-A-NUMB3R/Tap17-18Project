@@ -2,7 +2,7 @@
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.LegUtilities;
-using static TAP2017_2018_Implementation.Utilities;
+using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
 {
@@ -10,9 +10,11 @@ namespace TAP2017_2018_Implementation
     {
         public readonly string TcConnectionstring;
         public string Name { get; }
+
         public TravelCompany(string connectionString, string agencyName)
         {
             CheckConnectionString(connectionString);
+            CheckString(agencyName);
             TcConnectionstring = connectionString;
             Name = agencyName;
         }
@@ -77,10 +79,7 @@ namespace TAP2017_2018_Implementation
             }
         }
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
+        public override int GetHashCode() => base.GetHashCode();
     }
 }
 

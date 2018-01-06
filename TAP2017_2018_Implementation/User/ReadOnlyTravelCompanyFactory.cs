@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
-using static TAP2017_2018_Implementation.Utilities;
+using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
 {

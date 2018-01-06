@@ -1,8 +1,7 @@
 ﻿using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
-using static TAP2017_2018_Implementation.Utilities;
-
+using static TAP2017_2018_Implementation.Checker;
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
@@ -12,6 +11,7 @@ namespace TAP2017_2018_Implementation
 
         public TravelCompanyFactory(string connectionstring)
         {
+            CheckConnectionString(connectionstring);
             _brokerconnectionstring = connectionstring;
             // this.agencyName = agencyName;
         }
@@ -50,7 +50,7 @@ namespace TAP2017_2018_Implementation
                 c.SaveChanges();
             }
 
-            return new TravelCompany(travelCompanyConnectionString, name); //usavo agency name
+            return new TravelCompany(travelCompanyConnectionString, name);
         }
 
 
