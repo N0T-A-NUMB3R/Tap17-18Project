@@ -86,11 +86,11 @@ namespace TAP2017_2018_Implementation
         }
 
          public static void CheckNull(params object[] objects)
-            {
+         {
                 if (objects.Any(o => o == null))
                 {
                     throw new ArgumentNullException();
                 }
-            }
-        }
-    }
+         }
+     }
+ }

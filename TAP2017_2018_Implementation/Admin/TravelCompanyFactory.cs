@@ -45,7 +45,7 @@ namespace TAP2017_2018_Implementation
 
             using (var c = new TravelCompanyContext(travelCompanyConnectionString))
             {
-                c.Database.Delete(); // se ci fosse gia....
+                c.Database.Delete(); // come dice la prof se c' erano dati prima CIAONEEEEE
                 c.Database.Create();
                 c.SaveChanges();
             }

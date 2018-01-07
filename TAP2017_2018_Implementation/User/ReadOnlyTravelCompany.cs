@@ -11,25 +11,25 @@ namespace TAP2017_2018_Implementation
     public class ReadOnlyTravelCompany : IReadOnlyTravelCompany
     {
         public string Name { get; set; }
-        private readonly string Tconnectionstring;
+        private readonly string _tconnectionstring;
 
          public ReadOnlyTravelCompany(string connectionString)
         {
             CheckConnectionString(connectionString);
-            Tconnectionstring = connectionString;
+            _tconnectionstring = connectionString;
         }
 
         public override bool Equals(object obj) 
         {
             if (!(obj is ReadOnlyTravelCompany other))
                 return false;
-            return Tconnectionstring == other.Tconnectionstring && Name == other.Name;
+            return _tconnectionstring == other._tconnectionstring && Name == other.Name;
         }
         
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
         { //TODO non credo sia possibile farla diventare Iquerable.
             CheckNull(predicate);     
-            using (var c = new TravelCompanyContext(Tconnectionstring))
+            using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legsFound = c.Legs.Select(CastToLegDtoExp).Where(predicate.Compile());
                 return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
@@ -42,11 +42,10 @@ namespace TAP2017_2018_Implementation
             }
         }
       
-
         public ReadOnlyCollection<ILegDTO> FindDepartures(string from, TransportType allowedTransportTypes)
         {
             CheckDepartures(from, allowedTransportTypes);
-            using (var c = new TravelCompanyContext(Tconnectionstring))
+            using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legsFound = c.Legs.Where(EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(CastToLegDtoExp);
                 return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());

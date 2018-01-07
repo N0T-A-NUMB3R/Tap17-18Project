@@ -50,14 +50,18 @@ namespace TAP2017_2018_Implementation
         public static Expression<Func<LegEntity, bool>> EqualsLegExp(string from, string to, int cost, int distance, TransportType transportType)
         {
             return tc =>
-                tc.From == from && tc.To == to && tc.Cost == cost && tc.Distance == distance &&
+                tc.From == from && 
+                tc.To == to && 
+                tc.Cost == cost && 
+                tc.Distance == distance &&
                 tc.Type == transportType;
         }
 
 
         public static Expression<Func<LegEntity, bool>> EqualsIdExp(int id)
         {
-            return l => l.ID == id;
+            return l => 
+                l.ID == id;
         }
 
 

@@ -83,6 +83,7 @@
     <Compile Include="TravelCompanyFactoryTestSuite.cs" />
     <Compile Include="TravelCompanyTestInitializer.cs" />
     <Compile Include="TravelCompanyTestSuite.cs" />
+    <Compile Include="Trip.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

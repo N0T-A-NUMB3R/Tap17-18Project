@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Ninject.Modules;
 using TAP2017_2018_PlannerInterface;
 
 namespace TAP2017_2018_PlannerImplementation
 {
-    public class PlannerFactory : IPlannerFactory
+    class PlannerModules : NinjectModule
     {
-        public IPlanner CreateNew()
+        public override void Load()
         {
-            return new Planner();
+            Bind<IPlannerFactory>().To<PlannerFactory>();
         }
     }
 }

@@ -8,14 +8,14 @@ namespace TAP2017_2018_Implementation
 {
     class TravelCompany : ITravelCompany
     {
-        private readonly string TcConnectionstring;
+        private readonly string _tcConnectionstring;
         public string Name { get; }
 
         public TravelCompany(string connectionString, string agencyName)
         {
             CheckConnectionString(connectionString);
             CheckString(agencyName);
-            TcConnectionstring = connectionString;
+            _tcConnectionstring = connectionString;
             Name = agencyName;
         }
 
@@ -23,14 +23,14 @@ namespace TAP2017_2018_Implementation
         {
             if (!(obj is TravelCompany other))
                 return false;
-            return TcConnectionstring == other.TcConnectionstring && Name==other.Name;
+            return _tcConnectionstring == other._tcConnectionstring && Name==other.Name;
         }
 
 
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
             CheckLeg(from, to, cost, distance, transportType);
-            using (var c = new TravelCompanyContext(TcConnectionstring))
+            using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 if (c.Legs.Any(EqualsLegExp(from,to,cost,distance,transportType)))
                     throw new TapDuplicatedObjectException();
@@ -53,7 +53,7 @@ namespace TAP2017_2018_Implementation
         public void DeleteLeg(int legToBeRemovedId)
         {
             CheckNegative(legToBeRemovedId);
-            using (var c = new TravelCompanyContext(TcConnectionstring))
+            using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 var legToDelete = c.Legs.SingleOrDefault(EqualsIdExp(legToBeRemovedId));
                 if (legToDelete == null)
@@ -66,7 +66,7 @@ namespace TAP2017_2018_Implementation
         public ILegDTO GetLegDTOFromId(int legId)
         {
             CheckNegative(legId);
-            using (var c = new TravelCompanyContext(TcConnectionstring))
+            using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 var legs = c.Legs.SingleOrDefault(EqualsIdExp(legId));
                 if (legs == null)
