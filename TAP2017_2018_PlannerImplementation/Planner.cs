@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using TAP2017_2018_PlannerInterface;
 using TAP2017_2018_TravelCompanyInterface;
-using Ninject;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_PlannerImplementation.Utilities.Checker;
 
@@ -10,29 +10,29 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Planner : IPlanner
     {
-        private List<IReadOnlyTravelCompany> _companies;
+        private readonly List<IReadOnlyTravelCompany> _companies;
 
         public Planner(List<IReadOnlyTravelCompany> companies)
         {
             CheckList(companies);
-            this._companies = companies;
+            _companies = companies;
         }
 
         public void AddTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             CheckTc(readonlyTravelCompany);
-            if (!ContainsTravelCompany(readonlyTravelCompany))
-                _companies.Add(readonlyTravelCompany);
-            throw new TapDuplicatedObjectException();
-        }
+            ContainsToAdd(readonlyTravelCompany);
 
+            _companies.Add(readonlyTravelCompany);
+
+        }
 
         public void RemoveTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             CheckTc(readonlyTravelCompany);
-            if (ContainsTravelCompany(readonlyTravelCompany))
-                _companies.Remove(readonlyTravelCompany);
-            throw new NonexistentTravelCompanyException();
+            ContainsToRemove(readonlyTravelCompany);
+
+            _companies.Remove(readonlyTravelCompany);
         }
 
         public bool ContainsTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
@@ -41,29 +41,24 @@ namespace TAP2017_2018_PlannerImplementation
             return _companies.Contains(readonlyTravelCompany);
         }
 
-        public IEnumerable<IReadOnlyTravelCompany> KnownTravelCompanies()
+        private void ContainsToAdd(IReadOnlyTravelCompany readonlyTravelCompany)
         {
-            return _companies;
+            if (ContainsTravelCompany(readonlyTravelCompany))
+                throw new TapDuplicatedObjectException();
         }
+
+        private void ContainsToRemove(IReadOnlyTravelCompany readonlyTravelCompany)
+        {
+            if (!ContainsTravelCompany(readonlyTravelCompany))
+                throw new NonexistentTravelCompanyException();
+        }
+
+        public IEnumerable<IReadOnlyTravelCompany> KnownTravelCompanies() => _companies.Select(c => c); //Todo ma restituisco la mia lista o una copia?
+
 
         public ITrip FindTrip(string source, string destination, FindOptions options, TransportType allowedTransportTypes)
         {
             throw new NotImplementedException();
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
         }
     }
 
