@@ -11,17 +11,14 @@ namespace TAP2017_2018_Implementation
     
      internal static class Checker
      {
-
         public static void CheckConnectionString(string cs)
         { 
-
             if (cs == null)
                 throw new ArgumentNullException();
             if (cs == string.Empty)
                 throw new ArgumentException();
             if (cs.Length < DomainConstraints.ConnectionStringMinLength || cs.Length > DomainConstraints.ConnectionStringMaxLength)
                 throw new ArgumentException();
-
         }
 
         public static void CheckTwoConnString(string cs1, string cs2)
@@ -29,6 +26,11 @@ namespace TAP2017_2018_Implementation
             if (cs1 == cs2)
                 throw new SameConnectionStringException();
         }
+         public static void CheckTwoString(string s1, string s2)
+         {
+             if (s1 == s2)
+                 throw new ArgumentException();
+         }
 
         public static void CheckCatalog(string cs)
          {
@@ -42,9 +44,7 @@ namespace TAP2017_2018_Implementation
 
          public static bool CheckNegative(int argument)
          {
-             if (argument <= 0)
-                 return true;
-            return false;
+             return argument <= 0;
          }
 
         public static Boolean IsAlphaNumeric(string strToCheck)
@@ -52,7 +52,6 @@ namespace TAP2017_2018_Implementation
             Regex rg = new Regex(@"^[a-zA-Z0-9]*$");
             return rg.IsMatch(strToCheck);
         }
-
 
          public static void CheckString(string s)
          {
@@ -68,22 +67,14 @@ namespace TAP2017_2018_Implementation
                  throw new ArgumentException();
         }
 
-        public static void CheckTwoString(string s1, string s2)
-        {
-            if (s1 == s2)
-                throw new ArgumentException();
-        }
-
-
-
-        public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
+         public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
          {
-            CheckTwoString(from, to);
+            CheckTwoString(from,to);
             CheckString(from);
             CheckString(to);
             if (CheckNegative(cost) || CheckNegative(distance))
                 throw new ArgumentException();
-           if (transportType == TransportType.None)
+            if (transportType == TransportType.None)
                 throw new ArgumentException();
         }
 
@@ -93,7 +84,6 @@ namespace TAP2017_2018_Implementation
             if (allowedTransportTypes == TransportType.None)
                 throw new ArgumentException();
         }
-
 
          public static void CheckNull(params object[] objects)
             {

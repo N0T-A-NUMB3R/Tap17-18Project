@@ -73,6 +73,7 @@
     <Compile Include="BasicTestInitializer.cs" />
     <Compile Include="BrokerFactoryTestSuite.cs" />
     <Compile Include="BrokerFactoryTestSuiteNAN.cs" />
+    <Compile Include="BrokerTCTestSuiteNAN.cs" />
     <Compile Include="BrokerTestInitializer.cs" />
     <Compile Include="BrokerTravelCompanyTestSuitecs.cs" />
     <Compile Include="Class1.cs" />

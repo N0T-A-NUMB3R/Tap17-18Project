@@ -3,7 +3,7 @@ using TAP2017_2018_TravelCompanyInterface;
 
 namespace TAP2017_2018_Implementation
 {
-    public class LegEntity
+    public class LegEntity : ILegDTO
     {
         [Key]
         public int ID { set; get; }

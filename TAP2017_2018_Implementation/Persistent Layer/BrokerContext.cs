@@ -17,7 +17,7 @@ namespace TAP2017_2018_Implementation
             
         }
 
-         public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
+        public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -33,6 +33,10 @@ namespace TAP2017_2018_Implementation
             try
             {
                 return base.SaveChanges();
+            }
+            catch (DbConnectionException)
+            {
+                throw new DbConnectionException();
             }
             catch (DbUpdateConcurrencyException)
             {

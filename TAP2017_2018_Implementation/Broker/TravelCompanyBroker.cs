@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
+using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
@@ -24,7 +25,7 @@ namespace TAP2017_2018_Implementation
 
         public ITravelCompanyFactory GetTravelCompanyFactory()
         {
-            return new TravelCompanyFactory(_brokerconnectionstring); //TODO: devo valutare se va passata la cs
+            return new TravelCompanyFactory(_brokerconnectionstring);
         }
 
         public IReadOnlyTravelCompanyFactory GetReadOnlyTravelCompanyFactory()
@@ -36,7 +37,8 @@ namespace TAP2017_2018_Implementation
         {
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
-                IQueryable<string> travelCompanyNames = c.TravelCompanies.Select(tc => tc.Name); //TODO ECCEZIONE SE NON TROVA NULLA?
+                
+                var travelCompanyNames = c.TravelCompanies.Select(tc => tc.Name);
                 return new ReadOnlyCollection<string>(travelCompanyNames.ToList());
               }
         }

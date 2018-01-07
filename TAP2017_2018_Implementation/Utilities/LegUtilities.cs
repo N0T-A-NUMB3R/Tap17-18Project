@@ -7,8 +7,9 @@ namespace TAP2017_2018_Implementation
     public static class LegUtilities
     {
 
-        public class LegDto : ILegDTO  
+        public class LegDto : ILegDTO
         {
+           
             public string From { get; set; }
 
             public string To { get; set; }
@@ -32,14 +33,8 @@ namespace TAP2017_2018_Implementation
 
             public override int GetHashCode() => base.GetHashCode();
         }
-        
-        public static Expression<Func<LegEntity, bool>> DetechDeparturesExp(string from, TransportType allowedTransportTypes)
-        {
-            return l =>
-                (l.From == from)
-                && (l.Type & allowedTransportTypes) == l.Type;
-        } 
-        
+
+
         public static Expression<Func<LegEntity, ILegDTO>> CastToLegDtoExp = l => new LegDto
         {
             From = l.From,
@@ -49,6 +44,29 @@ namespace TAP2017_2018_Implementation
             Type = l.Type
 
         };
+
+
+
+        public static Expression<Func<LegEntity, bool>> EqualsLegExp(string from, string to, int cost, int distance, TransportType transportType)
+        {
+            return tc =>
+                tc.From == from && tc.To == to && tc.Cost == cost && tc.Distance == distance &&
+                tc.Type == transportType;
+        }
+
+
+        public static Expression<Func<LegEntity, bool>> EqualsIdExp(int id)
+        {
+            return l => l.ID == id;
+        }
+
+
+        public static Expression<Func<LegEntity, bool>> EqualsTypeAndFromExp(string from, TransportType type)
+        {
+            return l =>
+                ((l.Type & type) == l.Type) && l.From == from;
+        }
+
     }
 }
-
+ 

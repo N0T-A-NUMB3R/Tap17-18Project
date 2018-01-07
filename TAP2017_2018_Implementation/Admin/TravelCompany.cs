@@ -8,7 +8,7 @@ namespace TAP2017_2018_Implementation
 {
     class TravelCompany : ITravelCompany
     {
-        public readonly string TcConnectionstring;
+        private readonly string TcConnectionstring;
         public string Name { get; }
 
         public TravelCompany(string connectionString, string agencyName)
@@ -30,12 +30,9 @@ namespace TAP2017_2018_Implementation
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
             CheckLeg(from, to, cost, distance, transportType);
-
             using (var c = new TravelCompanyContext(TcConnectionstring))
             {
-                if (c.Legs.Any(tc =>
-                    tc.From == from && tc.To == to && tc.Cost == cost && tc.Distance == distance &&
-                    tc.Type == transportType))
+                if (c.Legs.Any(EqualsLegExp(from,to,cost,distance,transportType)))
                     throw new TapDuplicatedObjectException();
 
                 var legtoAdd = new LegEntity()
@@ -58,7 +55,7 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legToBeRemovedId);
             using (var c = new TravelCompanyContext(TcConnectionstring))
             {
-                var legToDelete = c.Legs.SingleOrDefault(l => l.ID == legToBeRemovedId);
+                var legToDelete = c.Legs.SingleOrDefault(EqualsIdExp(legToBeRemovedId));
                 if (legToDelete == null)
                     throw new NonexistentObjectException();
                 c.Legs.Remove(legToDelete);
@@ -71,11 +68,11 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(TcConnectionstring))
             {
-                var legs = c.Legs.SingleOrDefault(l => l.ID == legId);
+                var legs = c.Legs.SingleOrDefault(EqualsIdExp(legId));
                 if (legs == null)
                     throw new NonexistentObjectException();
-                return c.Legs.Where(l => l.ID == legId).Select(CastToLegDtoExp).First(); //Todo da togliere il first, perchè non credo sia corretta
-             
+                return c.Legs.Where(EqualsIdExp(legId)).Select(CastToLegDtoExp).First();
+                //Todo da togliere il first, funziona eh ma non credo sia corretta
             }
         }
 
