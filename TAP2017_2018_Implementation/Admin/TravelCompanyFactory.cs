@@ -21,7 +21,7 @@ namespace TAP2017_2018_Implementation
 
             CheckConnectionString(travelCompanyConnectionString);
             CheckConnectionString(_brokerconnectionstring);
-            CheckTwoString(travelCompanyConnectionString,_brokerconnectionstring);
+            CheckTwoStringEquals(travelCompanyConnectionString,_brokerconnectionstring);
             CheckString(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);

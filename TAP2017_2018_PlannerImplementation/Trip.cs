@@ -24,8 +24,7 @@ namespace TAP2017_2018_PlannerImplementation
 
         public override bool Equals(object obj)
         {
-            var trip = obj as Trip;
-            return trip != null &&
+            return obj is Trip trip &&
                    From == trip.From &&
                    To == trip.To &&
                    EqualityComparer<ReadOnlyCollection<ILegDTO>>.Default.Equals(Path, trip.Path) &&

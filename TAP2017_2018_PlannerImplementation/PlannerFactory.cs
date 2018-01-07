@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TAP2017_2018_PlannerInterface;
+using Ninject;
+using TAP2017_2018_TravelCompanyInterface;
 
 namespace TAP2017_2018_PlannerImplementation
 {
@@ -11,7 +13,8 @@ namespace TAP2017_2018_PlannerImplementation
     {
         public IPlanner CreateNew()
         {
-            return new Planner();
+            List<IReadOnlyTravelCompany> companies = new List<IReadOnlyTravelCompany>();
+            return new Planner(companies);
         }
     }
 }

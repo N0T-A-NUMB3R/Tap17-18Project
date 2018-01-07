@@ -6,7 +6,7 @@ namespace TAP2017_2018_Implementation
     public class LegEntity : ILegDTO
     {
         [Key]
-        public int ID { set; get; }
+        public int Id { set; get; }
 
         [Required]
         public string From { set; get; }

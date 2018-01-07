@@ -61,7 +61,7 @@ namespace TAP2017_2018_Implementation
         public static Expression<Func<LegEntity, bool>> EqualsIdExp(int id)
         {
             return l => 
-                l.ID == id;
+                l.Id == id;
         }
 
 

@@ -22,7 +22,7 @@ namespace TAP2017_2018_Implementation
         {
             modelBuilder.Entity<LegEntity>()
                 .ToTable("Leg")
-                .HasKey(l => l.ID);
+                .HasKey(l => l.Id);
             // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); Todo controllare vincolo unique
 
         }

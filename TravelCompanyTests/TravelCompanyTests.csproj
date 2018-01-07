@@ -76,7 +76,6 @@
     <Compile Include="BrokerTCTestSuiteNAN.cs" />
     <Compile Include="BrokerTestInitializer.cs" />
     <Compile Include="BrokerTravelCompanyTestSuitecs.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadOnlyTravelCompanyFactoryTestSuite.cs" />
     <Compile Include="ReadOnlyTravelCompanyTestSuite.cs" />

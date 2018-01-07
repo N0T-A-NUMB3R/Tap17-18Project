@@ -19,7 +19,7 @@ namespace TAP2017_2018_Implementation
             Name = agencyName;
         }
 
-        public override bool Equals(object obj) //Todo prob va aggiunta toString..
+        public override bool Equals(object obj)
         {
             if (!(obj is TravelCompany other))
                 return false;
@@ -46,7 +46,7 @@ namespace TAP2017_2018_Implementation
 
                 c.Legs.Add(legtoAdd);
                 c.SaveChanges();
-                return legtoAdd.ID;
+                return legtoAdd.Id;
             }
         }
 
@@ -71,11 +71,13 @@ namespace TAP2017_2018_Implementation
                 var legs = c.Legs.SingleOrDefault(EqualsIdExp(legId));
                 if (legs == null)
                     throw new NonexistentObjectException();
+
                 return c.Legs.Where(EqualsIdExp(legId)).Select(CastToLegDtoExp).First();
-                //Todo da togliere il first, funziona eh ma non credo sia corretta
+                //Todo da togliere il first, funziona eh ma non credo sia corretta a livello di semantica in quanto forzo il first su una cosa che so gia sia una
             }
         }
 
+        // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
         public override int GetHashCode() => base.GetHashCode();
     }
 }

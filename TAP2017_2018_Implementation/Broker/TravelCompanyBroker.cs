@@ -10,13 +10,14 @@ namespace TAP2017_2018_Implementation
     {
         private readonly string _brokerconnectionstring;
       
-        public override bool Equals(object obj) //Todo prob va aggiunta toString..
+        public override bool Equals(object obj)
         {
             if (!(obj is TravelCompanyBroker other))
                 return false;
             return _brokerconnectionstring == other._brokerconnectionstring;
         }
 
+        
         public TravelCompanyBroker(string dbConnection)
         {
             CheckConnectionString(dbConnection);
@@ -44,5 +45,7 @@ namespace TAP2017_2018_Implementation
         }
 
         public override int GetHashCode() => base.GetHashCode();
+
+       
     }
 }

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
 namespace TAP2017_2018_Implementation
@@ -24,7 +19,7 @@ namespace TAP2017_2018_Implementation
             
             modelBuilder.Entity<TravelCompanyEntity>()
                 .ToTable("TravelCompany")
-                .HasKey(t => t.ID) //rindondante, basta la convenzione?!
+                .HasKey(t => t.Id) //rindondante, basta la convenzione?!
                 .HasIndex(t => new { t.ConnectionString, t.Name  }).IsUnique();
         
         }

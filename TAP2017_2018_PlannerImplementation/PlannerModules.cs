@@ -9,7 +9,7 @@ using TAP2017_2018_PlannerInterface;
 
 namespace TAP2017_2018_PlannerImplementation
 {
-    class PlannerModules : NinjectModule
+    public class PlannerModules : NinjectModule
     {
         public override void Load()
         {

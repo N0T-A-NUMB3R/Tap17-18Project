@@ -26,7 +26,7 @@ namespace TAP2017_2018_Implementation
             if (cs1 == cs2)
                 throw new SameConnectionStringException();
         }
-         public static void CheckTwoString(string s1, string s2)
+         public static void CheckTwoStringEquals(string s1, string s2)
          {
              if (s1 == s2)
                  throw new ArgumentException();
@@ -68,17 +68,22 @@ namespace TAP2017_2018_Implementation
         }
 
          public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
-         {
-            CheckTwoString(from,to);
-            CheckString(from);
-            CheckString(to);
+        {
+            CheckTwoString(from, to);
             if (CheckNegative(cost) || CheckNegative(distance))
                 throw new ArgumentException();
             if (transportType == TransportType.None)
                 throw new ArgumentException();
         }
 
-         public static void CheckDepartures(string from, TransportType allowedTransportTypes)
+        private static void CheckTwoString(string from, string to)
+        {
+            CheckTwoStringEquals(from, to);
+            CheckString(from);
+            CheckString(to);
+        }
+
+        public static void CheckDepartures(string from, TransportType allowedTransportTypes)
          {
             CheckString(from);
             if (allowedTransportTypes == TransportType.None)

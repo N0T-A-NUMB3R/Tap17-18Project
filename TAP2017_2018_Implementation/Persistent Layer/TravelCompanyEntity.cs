@@ -9,7 +9,7 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyEntity
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMaxLength)]

@@ -13,7 +13,6 @@ namespace TAP2017_2018_Implementation
             CheckConnectionString(dbConnectionString);
             if (Exists(dbConnectionString))
                 Delete(dbConnectionString);
-                // TODO throw new SameConnectionStringException();  // la prof parla di arrabbiarsi?!
            
             using (var c = new BrokerContext(dbConnectionString))
             {   
