@@ -5,7 +5,7 @@ namespace TAP2017_2018_Implementation
 {
     public class LegEntity : ILegDTO
     {
-        [Key]
+        
         public int Id { set; get; }
 
         [Required]
@@ -14,7 +14,7 @@ namespace TAP2017_2018_Implementation
         [Required]
         public string To { set; get; }
 
-        [Required]
+        //todo ?
         public int Distance { set; get; }
 
         public int Cost { set; get; }

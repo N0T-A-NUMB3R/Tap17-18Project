@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using TAP2017_2018_PlannerInterface;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
@@ -53,12 +54,16 @@ namespace TAP2017_2018_PlannerImplementation
                 throw new NonexistentTravelCompanyException();
         }
 
-        public IEnumerable<IReadOnlyTravelCompany> KnownTravelCompanies() => _companies.Select(c => c); //Todo ma restituisco la mia lista o una copia?
+        public IEnumerable<IReadOnlyTravelCompany> KnownTravelCompanies() => _companies.Select(tc => tc);
 
 
         public ITrip FindTrip(string source, string destination, FindOptions options, TransportType allowedTransportTypes)
         {
-            throw new NotImplementedException();
+           
+            var graph = new Graph();
+            graph.InitGraph(_companies, x => x.Type == allowedTransportTypes, options);
+
+
         }
     }
 

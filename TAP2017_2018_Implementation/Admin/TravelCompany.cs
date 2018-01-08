@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.LegUtilities;
@@ -6,7 +7,7 @@ using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
 {
-    class TravelCompany : ITravelCompany
+    internal class TravelCompany : ITravelCompany
     {
         private readonly string _tcConnectionstring;
         public string Name { get; }
@@ -15,6 +16,7 @@ namespace TAP2017_2018_Implementation
         {
             CheckConnectionString(connectionString);
             CheckString(agencyName);
+
             _tcConnectionstring = connectionString;
             Name = agencyName;
         }
@@ -56,28 +58,25 @@ namespace TAP2017_2018_Implementation
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 var legToDelete = c.Legs.SingleOrDefault(EqualsIdExp(legToBeRemovedId));
-                if (legToDelete == null)
-                    throw new NonexistentObjectException();
-                c.Legs.Remove(legToDelete);
+                c.Legs.Remove(legToDelete ?? throw new NonexistentObjectException());
                 c.SaveChanges();
             }
         }
+
 
         public ILegDTO GetLegDTOFromId(int legId)
         {
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                var legs = c.Legs.SingleOrDefault(EqualsIdExp(legId));
-                if (legs == null)
-                    throw new NonexistentObjectException();
+                var leg = c.Legs.SingleOrDefault(EqualsIdExp(legId));
+                CheckLegEntity(leg);
 
                 return c.Legs.Where(EqualsIdExp(legId)).Select(CastToLegDtoExp).First();
                 //Todo da togliere il first, funziona eh ma non credo sia corretta a livello di semantica in quanto forzo il first su una cosa che so gia sia una
             }
         }
 
-        // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
         public override int GetHashCode() => base.GetHashCode();
     }
 }

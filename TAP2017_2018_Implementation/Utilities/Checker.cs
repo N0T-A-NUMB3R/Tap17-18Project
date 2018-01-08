@@ -15,7 +15,7 @@ namespace TAP2017_2018_Implementation
         { 
             if (cs == null)
                 throw new ArgumentNullException();
-            if (cs == string.Empty)
+            if (cs == String.Empty)
                 throw new ArgumentException();
             if (cs.Length < DomainConstraints.ConnectionStringMinLength || cs.Length > DomainConstraints.ConnectionStringMaxLength)
                 throw new ArgumentException();
@@ -57,7 +57,7 @@ namespace TAP2017_2018_Implementation
          {
              if (s == null)
                  throw new ArgumentNullException();
-             if (s == string.Empty)
+             if (s == String.Empty)
                  throw new ArgumentException();
              if (!IsAlphaNumeric(s))
                  throw new ArgumentException();
@@ -69,23 +69,29 @@ namespace TAP2017_2018_Implementation
 
          public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
-            CheckTwoString(from, to);
+            CheckTwoString(@from, to);
             if (CheckNegative(cost) || CheckNegative(distance))
                 throw new ArgumentException();
             if (transportType == TransportType.None)
                 throw new ArgumentException();
         }
 
-        private static void CheckTwoString(string from, string to)
+         public static void CheckLegEntity(LegEntity leg)
+         {
+             if (leg == null)
+                 throw new NonexistentObjectException();
+         }
+
+         private static void CheckTwoString(string from, string to)
         {
-            CheckTwoStringEquals(from, to);
-            CheckString(from);
+            CheckTwoStringEquals(@from, to);
+            CheckString(@from);
             CheckString(to);
         }
 
         public static void CheckDepartures(string from, TransportType allowedTransportTypes)
          {
-            CheckString(from);
+            CheckString(@from);
             if (allowedTransportTypes == TransportType.None)
                 throw new ArgumentException();
         }

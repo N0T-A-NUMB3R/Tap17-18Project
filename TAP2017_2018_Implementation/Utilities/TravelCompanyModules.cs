@@ -5,25 +5,16 @@ namespace TAP2017_2018_Implementation
 {
     public class ReadOnlyTravelCompanyModule : NinjectModule
     {
-        public override void Load()
-        {
-            Bind<IReadOnlyTravelCompanyFactory>().To<ReadOnlyTravelCompanyFactory>();
-        }
+        public override void Load() => Bind<IReadOnlyTravelCompanyFactory>().To<ReadOnlyTravelCompanyFactory>();
     }
 
     public class TravelCompanyBrokerModule : NinjectModule
     {
-        public override void Load()
-        {
-            Bind<ITravelCompanyBrokerFactory>().To<TravelCompanyBrokerFactory>();
-        }
+        public override void Load() => Bind<ITravelCompanyBrokerFactory>().To<TravelCompanyBrokerFactory>();
     }
 
     public class TravelCompanyModule : NinjectModule
     {
-        public override void Load()
-        {
-            Bind<ITravelCompanyFactory>().To<TravelCompanyFactory>();
-        }
+        public override void Load() => Bind<ITravelCompanyFactory>().To<TravelCompanyFactory>();
     }
 }

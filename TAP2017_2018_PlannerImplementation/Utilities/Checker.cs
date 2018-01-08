@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using TAP2017_2018_TravelCompanyInterface;
-using TAP2017_2018_TravelCompanyInterface.Exceptions;
+
 
 namespace TAP2017_2018_PlannerImplementation.Utilities
 {
@@ -15,6 +11,10 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         {
             if (companies == null)
                 throw new ArgumentNullException();
+            /*
+            if ((companies.Select(c => c.GetType()).Distinct().Count() != 1))
+                throw new ArgumentException();
+            */
         }
 
         public static void CheckTc(IReadOnlyTravelCompany company)

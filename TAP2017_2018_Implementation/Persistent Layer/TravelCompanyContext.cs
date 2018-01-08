@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
 namespace TAP2017_2018_Implementation
@@ -16,6 +13,7 @@ namespace TAP2017_2018_Implementation
         public TravelCompanyContext(string connectionString) : base(connectionString)
         {
         }
+
         public virtual DbSet<LegEntity> Legs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -23,11 +21,11 @@ namespace TAP2017_2018_Implementation
             modelBuilder.Entity<LegEntity>()
                 .ToTable("Leg")
                 .HasKey(l => l.Id);
-            // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); Todo controllare vincolo unique
-
+            // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); 
         }
+
         public override int SaveChanges()
-        {
+        { //todo
             try
             {
                 return base.SaveChanges();

@@ -2,6 +2,8 @@
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.Checker;
+using static TAP2017_2018_Implementation.LegUtilities;
+
 namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
@@ -25,14 +27,17 @@ namespace TAP2017_2018_Implementation
             CheckString(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);
+            
+            
             if (broker.KnownTravelCompanies().Contains(name)) 
-                throw new TapDuplicatedObjectException();
-
-
+                throw new TapDuplicatedObjectException(); //todo
+            
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
-                if (c.TravelCompanies.Any(agency => agency.ConnectionString == travelCompanyConnectionString))
-                    throw new SameConnectionStringException("E' gia presente una Travel Company con questa Cs");
+                
+                if (c.TravelCompanies.Any(EqualsCsExp(travelCompanyConnectionString)))
+                    throw new SameConnectionStringException();
+                
                 
                 TravelCompanyEntity tc = new TravelCompanyEntity()
                 {
@@ -59,7 +64,7 @@ namespace TAP2017_2018_Implementation
             CheckString(name);
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
-                var travelAgency = c.TravelCompanies.SingleOrDefault(tc => tc.Name == name);
+                var travelAgency = c.TravelCompanies.SingleOrDefault(EqualsNameExp(name));
                 if (travelAgency == null)
                     throw new NonexistentTravelCompanyException();
                 return new TravelCompany(travelAgency.ConnectionString, name);

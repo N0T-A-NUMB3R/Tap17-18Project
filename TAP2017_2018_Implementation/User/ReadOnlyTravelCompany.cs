@@ -27,11 +27,12 @@ namespace TAP2017_2018_Implementation
         }
         
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
-        { //TODO non credo sia possibile farla diventare Iquerable.
+        { //TODO non credo sia possibile farla diventare Iqueryable.
             CheckNull(predicate);     
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legsFound = c.Legs.Select(CastToLegDtoExp).Where(predicate.Compile());
+
                 return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
                 /*
                 Expression<Func<LegEntity, bool>> exp2 =
@@ -48,6 +49,7 @@ namespace TAP2017_2018_Implementation
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legsFound = c.Legs.Where(EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(CastToLegDtoExp);
+
                 return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
             }
         }
