@@ -21,6 +21,12 @@ namespace TAP2017_2018_PlannerImplementation
         //public List<string> Nodes { get; set; }
         public Dictionary<string, List<Edge>> Edges { get; set; }
 
+        public List<Edge> GetNeighbour(string node)
+        {
+            return Edges[node];
+        }
+
+
 
         public void InitGraph(List<IReadOnlyTravelCompany> companies,Expression<Func<ILegDTO,bool>> filter, FindOptions options)
         {
@@ -51,6 +57,11 @@ namespace TAP2017_2018_PlannerImplementation
             }
             
             
+        }
+
+        public List<string> Get_nodes()
+        {
+            return Edges.Keys.ToList();
         }
 
     }

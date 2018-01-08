@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography.X509Certificates;
 using TAP2017_2018_TravelCompanyInterface;
 using static TAP2017_2018_Implementation.LegUtilities;
 using static TAP2017_2018_Implementation.Checker;
@@ -25,21 +26,18 @@ namespace TAP2017_2018_Implementation
                 return false;
             return _tconnectionstring == other._tconnectionstring && Name == other.Name;
         }
-        
+
+    
+
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
-        { //TODO non credo sia possibile farla diventare Iqueryable.
-            CheckNull(predicate);     
+        { 
+            CheckNull(predicate);
+           
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
-                var legsFound = c.Legs.Select(CastToLegDtoExp).Where(predicate.Compile());
+                var legsFounds = c.Legs.Select(CastToLegDtoExp).Where(predicate);
 
-                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
-                /*
-                Expression<Func<LegEntity, bool>> exp2 =
-                Expression.Lambda<Func<LegEntity, bool>>(predicate.Body, predicate.Parameters);
-                var legsFound = c.Legs.Where(exp2).Select(CastToLegDtoExp);
-                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
-                */
+                return new ReadOnlyCollection<ILegDTO>(legsFounds.ToList());
             }
         }
       
@@ -54,7 +52,13 @@ namespace TAP2017_2018_Implementation
             }
         }
        
-        public override int GetHashCode() => base.GetHashCode();
 
+
+
+        public override int GetHashCode() => base.GetHashCode();
+        /*
+         * A = b
+         * B = predicate(x)
+         */
     }
 }

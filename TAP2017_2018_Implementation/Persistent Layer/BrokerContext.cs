@@ -11,7 +11,6 @@ namespace TAP2017_2018_Implementation
         { 
             
         }
-
         public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)

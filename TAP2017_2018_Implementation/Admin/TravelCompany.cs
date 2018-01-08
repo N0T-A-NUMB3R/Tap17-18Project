@@ -25,7 +25,7 @@ namespace TAP2017_2018_Implementation
         {
             if (!(obj is TravelCompany other))
                 return false;
-            return _tcConnectionstring == other._tcConnectionstring && Name==other.Name;
+            return _tcConnectionstring == other._tcConnectionstring && Name == other.Name;
         }
 
 
@@ -69,11 +69,10 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                var leg = c.Legs.SingleOrDefault(EqualsIdExp(legId));
-                CheckLegEntity(leg);
-
-                return c.Legs.Where(EqualsIdExp(legId)).Select(CastToLegDtoExp).First();
-                //Todo da togliere il first, funziona eh ma non credo sia corretta a livello di semantica in quanto forzo il first su una cosa che so gia sia una
+                CheckLegEntity(c.Legs.SingleOrDefault(EqualsIdExp(legId)));
+            
+                return c.Legs.Where(EqualsIdExp(legId)).Select(CastToLegDtoExp).First(); //todo
+               
             }
         }
 

@@ -14,6 +14,7 @@ namespace TAP2017_2018_Implementation
             if (Exists(dbConnectionString))
                 Delete(dbConnectionString);
            
+
             using (var c = new BrokerContext(dbConnectionString))
             {   
                 c.Database.Create();

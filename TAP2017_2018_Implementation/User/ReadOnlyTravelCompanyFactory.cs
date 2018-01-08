@@ -18,6 +18,7 @@ namespace TAP2017_2018_Implementation
         public IReadOnlyTravelCompany Get(string name)
         {
             CheckString(name);
+            //todo andrebbe fatto il controllo se esiste la corrisponte TC
 
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
