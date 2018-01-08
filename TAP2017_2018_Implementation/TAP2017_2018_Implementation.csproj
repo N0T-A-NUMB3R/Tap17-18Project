@@ -57,6 +57,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Utilities\ConvertPredicate.cs" />
     <Compile Include="Utilities\LegUtilities.cs" />
     <Compile Include="Persistent Layer\BrokerContext.cs" />
     <Compile Include="Persistent Layer\TravelCompanyEntity.cs" />

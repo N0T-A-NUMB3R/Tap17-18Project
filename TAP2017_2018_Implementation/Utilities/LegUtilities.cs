@@ -45,11 +45,16 @@ namespace TAP2017_2018_Implementation
 
         };
 
+        public static Expression<Func<T, bool>> FuncToExpression<T>(Func<T, bool> f)
+        {
+            return x => f(x);
+        }
+
 
         public static Expression<Func<LegEntity, bool>> EqualsLegExp(string from, string to, int cost, int distance, TransportType transportType)
         {
             return tc =>
-                tc.From == from && 
+                tc.From == @from && 
                 tc.To == to && 
                 tc.Cost == cost && 
                 tc.Distance == distance &&
@@ -67,7 +72,7 @@ namespace TAP2017_2018_Implementation
         public static Expression<Func<LegEntity, bool>> EqualsTypeAndFromExp(string from, TransportType type)
         {
             return l =>
-                ((l.Type & type) == l.Type) && l.From == from;
+                ((l.Type & type) == l.Type) && l.From == @from;
         }
 
         public static Expression<Func<TravelCompanyEntity, bool>> EqualsCsExp(String cs)
@@ -81,7 +86,6 @@ namespace TAP2017_2018_Implementation
             return tc =>
                 tc.Name == name;
         }
-
     }
 }
  
