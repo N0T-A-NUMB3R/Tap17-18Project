@@ -18,8 +18,8 @@ namespace TAP2017_2018_Implementation
             
             modelBuilder.Entity<TravelCompanyEntity>()
                 .ToTable("TravelCompany")
-                .HasKey(t => t.Id) //rindondante, basta la convenzione?!
-                .HasIndex(t => new { t.ConnectionString, t.Name  }).IsUnique(); //todo mettere chiave composta
+                .HasKey(t => t.Name) //rindondante, basta la convenzione?!
+                .HasIndex(t => new { t.ConnectionString}).IsUnique(); //todo mettere chiave composta
         
         }
         public override int SaveChanges() //Todo controllare bene i save changes

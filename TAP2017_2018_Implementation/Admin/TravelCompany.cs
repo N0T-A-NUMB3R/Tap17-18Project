@@ -70,8 +70,12 @@ namespace TAP2017_2018_Implementation
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 CheckLegEntity(c.Legs.SingleOrDefault(EqualsIdExp(legId)));
+                var x = c.Legs.Find(legId);
+                if (x == null)
+                    throw new NonexistentObjectException();
+                return CastToLegDtoExp.Compile()(x);
             
-                return c.Legs.Where(EqualsIdExp(legId)).Select(CastToLegDtoExp).First(); //todo
+        
                
             }
         }

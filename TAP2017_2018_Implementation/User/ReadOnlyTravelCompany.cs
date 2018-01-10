@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Cryptography.X509Certificates;
+using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using static TAP2017_2018_Implementation.LegUtilities;
 using static TAP2017_2018_Implementation.Checker;
-using static TAP2017_2018_Implementation.Utilities.ConvertPredicate;
+
 
 namespace TAP2017_2018_Implementation
 {
@@ -28,20 +30,34 @@ namespace TAP2017_2018_Implementation
             return _tconnectionstring == other._tconnectionstring && Name == other.Name;
         }
 
-       
+
+        
+
+
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
-        { 
+        {
             CheckNull(predicate);
-           
+
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
-                var convertedPred = FuncToExpression(MyExpressionVisitor.Convert(predicate));
-                var legsFound = c.Legs.Where(convertedPred).Select(CastToLegDtoExp);
-               
-                return new ReadOnlyCollection<ILegDTO>(legsFound.ToList());
+                
+                Expression<Func<LegEntity, bool>> newpredicate = CastToLegDtoExp.Compose(predicate);
+
+                var legs = c.Legs.Select(CastToLegDtoExp).AsEnumerable().Where(predicate.Compile());
+               // var legs = c.Legs.Where(newpredicate).AsEnumerable().ToList();
+               // var s  = legs.Select(CastToLegDtoExp.Compile());//.ToList();
+               // legs = legs.ToList();
+                //var legss = legs.AsReadOnly();
+                return legs.ToList().AsReadOnly();
+
+                // https://stackoverflow.com/questions/27302204/proper-way-to-convert-an-expressionfuncfoo-bool-to-another-expressionfunc
+ 
+
             }
         }
-      
+
+       
+
         public ReadOnlyCollection<ILegDTO> FindDepartures(string from, TransportType allowedTransportTypes)
         {
             CheckDepartures(from, allowedTransportTypes);

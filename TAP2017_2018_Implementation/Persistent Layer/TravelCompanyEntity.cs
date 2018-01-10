@@ -9,9 +9,9 @@ namespace TAP2017_2018_Implementation
 {
     public class TravelCompanyEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
 
-        [Required]
+        
         [MaxLength(TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMaxLength)]
         [MinLength(TAP2017_2018_TravelCompanyInterface.DomainConstraints.NameMinLength)]
         public string Name { set; get; }
@@ -19,6 +19,7 @@ namespace TAP2017_2018_Implementation
         [Required]
         [MaxLength(TAP2017_2018_TravelCompanyInterface.DomainConstraints.ConnectionStringMaxLength)]
         [MinLength(TAP2017_2018_TravelCompanyInterface.DomainConstraints.ConnectionStringMinLength)]
+        //aggiungere unique
         public string ConnectionString { set; get; }
     }
 }

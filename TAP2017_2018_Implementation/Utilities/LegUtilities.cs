@@ -6,10 +6,11 @@ namespace TAP2017_2018_Implementation
 {
     public static class LegUtilities
     {
-
+        
         public class LegDto : ILegDTO
         {
            
+
             public string From { get; set; }
 
             public string To { get; set; }
@@ -37,6 +38,7 @@ namespace TAP2017_2018_Implementation
 
         public static Expression<Func<LegEntity, ILegDTO>> CastToLegDtoExp = l => new LegDto
         {
+           
             From = l.From,
             To = l.To,
             Distance = l.Distance,
@@ -45,10 +47,17 @@ namespace TAP2017_2018_Implementation
 
         };
 
-        public static Expression<Func<T, bool>> FuncToExpression<T>(Func<T, bool> f)
+
+        public static Expression<Func<ILegDTO, LegEntity>> CastToLegEntityExp = l => new LegEntity()
         {
-            return x => f(x);
-        }
+
+            From = l.From,
+            To = l.To,
+            Distance = l.Distance,
+            Cost = l.Cost,
+            Type = l.Type
+
+        };
 
 
         public static Expression<Func<LegEntity, bool>> EqualsLegExp(string from, string to, int cost, int distance, TransportType transportType)

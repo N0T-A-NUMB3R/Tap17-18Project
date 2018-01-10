@@ -16,6 +16,12 @@ namespace TAP2017_2018_PlannerImplementation
             TotalDistance = totalDistance;
         }
 
+       
+
+        public Trip()
+        {
+        }
+
         public string From { get; }
         public string To { get; }
         public ReadOnlyCollection<ILegDTO> Path { get; }

@@ -12,16 +12,11 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Graph
     {
-        public class Edge
-        {
-            public string To { get; set; }
-            public int Cost { get; set; }
-        }
-
+       
         //public List<string> Nodes { get; set; }
-        public Dictionary<string, List<Edge>> Edges { get; set; }
+        public Dictionary<string, List<ILegDTO>> Edges { get; set; }
 
-        public List<Edge> GetNeighbour(string node)
+        public List<ILegDTO> GetNeighbour(string node)
         {
             return Edges[node];
         }
@@ -31,28 +26,16 @@ namespace TAP2017_2018_PlannerImplementation
         public void InitGraph(List<IReadOnlyTravelCompany> companies,Expression<Func<ILegDTO,bool>> filter, FindOptions options)
         {
             //Nodes = new List<string>();
-            Edges = new Dictionary<string, List<Edge>>();
+            Edges = new Dictionary<string, List<ILegDTO>>();
             foreach (var c in companies)
             {
                 foreach (var l in c.FindLegs(filter)) //integrare nella query...
                 {
                     if (!Edges.ContainsKey(l.From))
-                       Edges.Add(l.From, new List<Edge>());
-                    var edge = new Edge()
-                    {
-                        To = l.To,
-                        Cost = 1, // di default Hop...
-                    };
-                    switch (options)
-                    {
-                        case FindOptions.MinimumCost:
-                            edge.Cost = l.Cost;
-                            break;
-                        case FindOptions.MinimumDistance:
-                            edge.Cost = l.Distance;
-                            break;
-                    }
-                    Edges[l.From].Add(edge);
+                       Edges.Add(l.From, new List<ILegDTO>());
+                    if (!Edges.ContainsKey(l.To))
+                        Edges.Add(l.To, new List<ILegDTO>());
+                    Edges[l.From].Add(l);
                 }
             }
             
