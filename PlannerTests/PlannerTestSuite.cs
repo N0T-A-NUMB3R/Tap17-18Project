@@ -297,7 +297,6 @@ namespace TAP2017_2018_PlannerTests
         [Test]
         public void FindTripMinHopSimpleGraphOneHopReturnOk()
         {
-            
             planner.AddTravelCompany(rotcB);
             
             var trip = planner.FindTrip(A, E, FindOptions.MinimumHops, TransportType.Plane);

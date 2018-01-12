@@ -9,8 +9,7 @@ namespace TAP2017_2018_Implementation
         
         public class LegDto : ILegDTO
         {
-           
-
+            //todo costruttutore  con check
             public string From { get; set; }
 
             public string To { get; set; }

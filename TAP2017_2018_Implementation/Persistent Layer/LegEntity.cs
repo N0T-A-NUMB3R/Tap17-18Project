@@ -3,7 +3,7 @@ using TAP2017_2018_TravelCompanyInterface;
 
 namespace TAP2017_2018_Implementation
 {
-    public class LegEntity  //todo è sbagliato perchè accoppio fortemente al db
+    public class LegEntity
     {
         
         public int Id { set; get; }

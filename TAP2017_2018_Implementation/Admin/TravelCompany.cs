@@ -69,13 +69,12 @@ namespace TAP2017_2018_Implementation
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                CheckLegEntity(c.Legs.SingleOrDefault(EqualsIdExp(legId)));
-                var x = c.Legs.Find(legId);
-                if (x == null)
-                    throw new NonexistentObjectException();
-                return CastToLegDtoExp.Compile()(x);
-            
-        
+                CheckLegEntity(c.Legs.SingleOrDefault(EqualsIdExp(legId))); 
+                //todo da mettere su linea unica
+                var leg = c.Legs.Find(legId);
+                CheckNull(leg);
+               return CastToLegDtoExp.Compile()(leg);
+          
                
             }
         }
@@ -83,4 +82,9 @@ namespace TAP2017_2018_Implementation
         public override int GetHashCode() => base.GetHashCode();
     }
 }
+
+/*
+ *  class DbConnectionException Thrown to notify connection errors • class NonexistentObjectException Thrown if the code try to access a nonexistent object • class NonexistentTravelCompanyException Thrown if the code try to get a nonexistent (read only) travel company • class SameConnectionStringException Thrown to notify that the connection string is already in use for a different purpose • class TapDuplicatedObjectException Thrown to notify the attempt to create two instances of the same object • class TapException Superclass of most exceptions for the component
+   
+ */
 

@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
-using TAP2017_2018_TravelCompanyInterface;
-using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using TAP2017_2018_TravelCompanyTests;
 
 namespace TravelCompanyTests

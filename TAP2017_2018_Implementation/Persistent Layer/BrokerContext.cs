@@ -18,8 +18,8 @@ namespace TAP2017_2018_Implementation
             
             modelBuilder.Entity<TravelCompanyEntity>()
                 .ToTable("TravelCompany")
-                .HasKey(t => t.Name) //rindondante, basta la convenzione?!
-                .HasIndex(t => new { t.ConnectionString}).IsUnique(); //todo mettere chiave composta
+                .HasKey(t => t.Name) 
+                .HasIndex(t => new { t.ConnectionString}).IsUnique(); 
         
         }
         public override int SaveChanges() //Todo controllare bene i save changes
@@ -32,12 +32,12 @@ namespace TAP2017_2018_Implementation
             {
                 throw new DbConnectionException();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new DBConcurrencyException();
-            }
             catch (DbUpdateException)
             {
+
+                //creati due test in cui ricrei la situazione che porta all'errore
+                //controlla l'eccezione lanciata per capire come distinguere un caso dall'altro
+                //implementalo
                 throw new TapDuplicatedObjectException();
             }
             

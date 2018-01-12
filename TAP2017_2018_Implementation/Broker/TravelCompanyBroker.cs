@@ -40,8 +40,8 @@ namespace TAP2017_2018_Implementation
             {
                 
                 var travelCompanyNames = c.TravelCompanies.Select(tc => tc.Name);
-                return new ReadOnlyCollection<string>(travelCompanyNames.ToList());
-              }
+                return travelCompanyNames.ToList().AsReadOnly();
+            }
         }
 
         public override int GetHashCode() => base.GetHashCode();

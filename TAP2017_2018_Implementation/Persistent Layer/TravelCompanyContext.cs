@@ -20,25 +20,14 @@ namespace TAP2017_2018_Implementation
         {
             modelBuilder.Entity<LegEntity>()
                 .ToTable("Leg")
-                .HasKey(l => l.Id);
+                .HasKey(l => l.Id); //rindondante per via della convenzione.
             // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); 
+            //non ha senso perchè il campo Id mi fa si che non possono esistere Leg uguali
         }
 
         public override int SaveChanges()
-        { //todo
-            try
-            {
+        { 
                 return base.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new DBConcurrencyException();
-            }
-            catch (DbUpdateException)
-            {
-                throw new TapDuplicatedObjectException();
-            }
-
         }
 
     }
