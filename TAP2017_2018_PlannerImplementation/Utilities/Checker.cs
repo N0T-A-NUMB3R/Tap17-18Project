@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using TAP2017_2018_PlannerInterface;
-using TAP2017_2018_TravelCompanyInterface;
+using TAP2017_2018_TravelCompanyInterface; 
 
 
 namespace TAP2017_2018_PlannerImplementation.Utilities
 {
-    class Checker
+    internal class Checker 
     {
+        //ho preferito duplicare il codice, anzichè utilizzare gli stessi cheker per entrambi i progetti proprio perchè essendo 2 libreria stagne create da 2 sviluppatori diversi non si dovrebbero conoscere.
+
         public static void CheckList(List<IReadOnlyTravelCompany> companies)
         {
             if (companies == null)

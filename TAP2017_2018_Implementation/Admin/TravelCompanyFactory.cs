@@ -27,8 +27,6 @@ namespace TAP2017_2018_Implementation
             CheckString(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);
-            
-            
             if (broker.KnownTravelCompanies().Contains(name)) 
                 throw new TapDuplicatedObjectException(); //todo
             
@@ -36,7 +34,7 @@ namespace TAP2017_2018_Implementation
             {
                 
                 if (c.TravelCompanies.Any(EqualsCsExp(travelCompanyConnectionString)))
-                    throw new SameConnectionStringException();
+                    throw new SameConnectionStringException(); //todo
                 
                 
                 TravelCompanyEntity tc = new TravelCompanyEntity()

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.SqlClient;
+using NUnit.Framework;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
+
 
 namespace TAP2017_2018_Implementation
 {
-    
-    public  class TravelCompanyContext : DbContext
+
+    public class TravelCompanyContext : DbContext
     {
         public TravelCompanyContext(string connectionString) : base(connectionString)
         {
@@ -24,11 +24,34 @@ namespace TAP2017_2018_Implementation
             // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); 
             //non ha senso perchè il campo Id mi fa si che non possono esistere Leg uguali
         }
-
         public override int SaveChanges()
-        { 
+        {
+            try
+            {
                 return base.SaveChanges();
-        }
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.InnerException != null && e.InnerException.InnerException != null &&
+                    e.InnerException.InnerException is SqlException sqlException && sqlException.Number == 2601)
+                {
+             
+                            if (sqlException.Message.Contains(GlobalRequirementClass.GetCompanyNameIndex()))
+                            {
+                                throw new TapDuplicatedObjectException(e.Message);
+                            }
+                            else if (sqlException.Message.Contains(GlobalRequirementClass
+                                .GetCompanyConnectionStringIndex()))
+                            {
+                                throw new SameConnectionStringException(e.Message);
+                            }
+                   
+                
 
+                throw e;
+
+            }
+
+        }
     }
 }

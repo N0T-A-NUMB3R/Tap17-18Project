@@ -12,16 +12,13 @@ namespace TAP2017_2018_PlannerImplementation
         {
             Utilities.Checker.CheckString(to);
             Utilities.Checker.CheckString(from);
-            
-
-
+            //todo
             From = @from;
             To = to;
             Path = path;
             TotalCost = totalCost;
             TotalDistance = totalDistance;
         }
-
 
         public string From { get; }
         public string To { get; }
