@@ -9,16 +9,23 @@ namespace TAP2017_2018_Implementation
     public class TravelCompanyFactory : ITravelCompanyFactory
     {
         private readonly string _brokerconnectionstring;
-        //private string agencyName; //TODO ha senso?
-
+        /// <summary>
+        ///  Initializes a new instance of the TravelCompany Factory
+        /// </summary>
+        /// <param name="connectionstring"></param>
         public TravelCompanyFactory(string connectionstring)
         {
             CheckConnectionString(connectionstring);
             _brokerconnectionstring = connectionstring;
-            // this.agencyName = agencyName;
+            
         }
-
-        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) // TODO sentire prof
+        /// <summary>
+        /// Creates new travelcompany. The data of the newly created travel company are permanently stored by the component. 
+        /// </summary>
+        /// <param name="travelCompanyConnectionString"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) 
         {
 
             CheckConnectionString(travelCompanyConnectionString);
@@ -56,7 +63,12 @@ namespace TAP2017_2018_Implementation
             return new TravelCompany(travelCompanyConnectionString, name);
         }
 
+        /// <summary>
+        /// Load the speciﬁed TravelCompany from a Name
 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public ITravelCompany Get(string name)
         {
             CheckString(name);

@@ -8,7 +8,7 @@ namespace TAP2017_2018_PlannerImplementation
     {
         public IPlanner CreateNew()
         {
-            List<IReadOnlyTravelCompany> companies = new List<IReadOnlyTravelCompany>();
+            var companies = new List<IReadOnlyTravelCompany>();
             return new Planner(companies);
         }
     }

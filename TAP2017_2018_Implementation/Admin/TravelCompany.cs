@@ -6,11 +6,19 @@ using static TAP2017_2018_Implementation.Checker;
 
 namespace TAP2017_2018_Implementation
 {
+    /// <summary>
+    /// ADMIN LAYER
+    /// </summary>
     internal class TravelCompany : ITravelCompany
     {
         private readonly string _tcConnectionstring;
         public string Name { get; }
 
+        /// <summary>
+        ///  Initializes a new instance of the TravelCompany 
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="agencyName"></param>
         public TravelCompany(string connectionString, string agencyName)
         {
             CheckConnectionString(connectionString);
@@ -19,14 +27,26 @@ namespace TAP2017_2018_Implementation
             _tcConnectionstring = connectionString;
             Name = agencyName;
         }
-
+        /// <summary>
+        ///  Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             if (!(obj is TravelCompany other))
                 return false;
             return _tcConnectionstring == other._tcConnectionstring && Name == other.Name;
         }
-
+        /// <summary>
+        /// Creates an ILeg which connects two cities. 
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="cost"></param>
+        /// <param name="distance"></param>
+        /// <param name="transportType "></param>
+        /// <returns></returns>
 
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
@@ -50,7 +70,10 @@ namespace TAP2017_2018_Implementation
                 return legtoAdd.Id;
             }
         }
-
+        /// <summary>
+        /// Deletes the leg from an Id
+        /// </summary>
+        /// <param name="an ID"></param>
         public void DeleteLeg(int legToBeRemovedId)
         {
             CheckNegative(legToBeRemovedId);
@@ -62,7 +85,11 @@ namespace TAP2017_2018_Implementation
             }
         }
 
-
+        /// <summary>
+        /// Gets a leg DTO from an Leg Id
+        /// </summary>
+        /// <param name="legId"></param>
+        /// <returns></returns>
         public ILegDTO GetLegDTOFromId(int legId)
         {
             CheckNegative(legId);
@@ -77,7 +104,10 @@ namespace TAP2017_2018_Implementation
                
             }
         }
-
+        /// <summary>
+        /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode() => base.GetHashCode();
     }
 }

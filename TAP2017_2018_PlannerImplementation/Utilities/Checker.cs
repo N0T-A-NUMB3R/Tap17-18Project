@@ -11,7 +11,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
     internal class Checker 
     {
         //ho preferito duplicare il codice, anzichè utilizzare gli stessi cheker per entrambi i progetti proprio perchè essendo 2 libreria stagne create da 2 sviluppatori diversi non si dovrebbero conoscere.
-
+        
         public static void CheckList(List<IReadOnlyTravelCompany> companies)
         {
             if (companies == null)
@@ -21,7 +21,15 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
                 throw new ArgumentException();
             */
         }
-
+        public static void CheckList(IEnumerable<IReadOnlyTravelCompany> companies)
+        {
+            if (companies == null)
+                throw new ArgumentNullException();
+            /*
+            if ((companies.Select(c => c.GetType()).Distinct().Count() != 1))
+                throw new ArgumentException();
+            */
+        }
         public static Boolean IsAlphaNumeric(string strToCheck)
         {
             Regex rg = new Regex(@"^[a-zA-Z0-9]*$");

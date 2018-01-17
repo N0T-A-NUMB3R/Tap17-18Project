@@ -52,11 +52,6 @@ namespace TAP2017_2018_PlannerImplementation
 
 
 
-
-
-
-
-
 /*
  public static List<Node> FindRoute(Map map, Node sourceNode, Node destinationNode, double transmissionRange)
  {
