@@ -65,7 +65,6 @@ namespace TAP2017_2018_Implementation
         {
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
-                
                 var travelCompanyNames = c.TravelCompanies.Select(tc => tc.Name);
                 return travelCompanyNames.ToList().AsReadOnly();
             }

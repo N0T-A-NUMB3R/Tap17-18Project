@@ -24,6 +24,8 @@ namespace TAP2017_2018_Implementation
             // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); 
             //non ha senso perchè il campo Id mi fa si che non possono esistere Leg uguali
         }
+
+        /*
         public override int SaveChanges()
         {
             try
@@ -53,5 +55,8 @@ namespace TAP2017_2018_Implementation
             }
 
         }
+    }
+}
+*/
     }
 }

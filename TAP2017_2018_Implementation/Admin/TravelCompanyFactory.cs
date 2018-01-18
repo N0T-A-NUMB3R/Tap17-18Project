@@ -30,12 +30,14 @@ namespace TAP2017_2018_Implementation
 
             CheckConnectionString(travelCompanyConnectionString);
             CheckConnectionString(_brokerconnectionstring);
-            CheckTwoStringEquals(travelCompanyConnectionString,_brokerconnectionstring);
+            CheckTwoConnString(travelCompanyConnectionString,_brokerconnectionstring);
             CheckString(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);
             if (broker.KnownTravelCompanies().Contains(name)) 
                 throw new TapDuplicatedObjectException(); //todo
+            if(_brokerconnectionstring == travelCompanyConnectionString)
+                throw new SameConnectionStringException();
             
             using (var c = new BrokerContext(_brokerconnectionstring))
             {

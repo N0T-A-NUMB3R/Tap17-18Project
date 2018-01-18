@@ -47,7 +47,7 @@ namespace TAP2017_2018_PlannerImplementation
             return hashCode;
         }
 
-        public static ITrip FindShortFindTrip(string source, string destination, FindOptions options, List<string> nodes,
+        public static ITrip FindTripV1(string source, string destination, FindOptions options, List<string> nodes,
             Dictionary<string, int> Dist, Graph graph, Dictionary<string, ILegDTO> Prec)
         {
             // This is a implementation of Dijkstra’s algorithm, its finds a shortest path tree from a single source node, by building a set of nodes that have minimum distance from the source.

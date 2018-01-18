@@ -10,6 +10,14 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
 {
    public static class ReadOnlyTravelCompanyExtensions
     {
+        /// <summary>
+        /// Using a method of the IreadOnlyTravelCompany interface called FindDeprtures 
+        /// we get step by step the neighbors graph and return them with an iterator
+        /// </summary>
+        /// <param name="companies"></param>
+        /// <param name="from"></param>
+        /// <param name="allowedTransportTypes"></param>
+        /// <returns></returns>
         public static IEnumerable<ILegDTO> GetNeighborsDtos(this IEnumerable<IReadOnlyTravelCompany> companies, string from, TransportType allowedTransportTypes)
         {
             CheckList(companies.ToList());

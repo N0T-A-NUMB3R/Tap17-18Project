@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAP2017_2018_PlannerImpleme
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TAP2017_2018_Implementation", "TAP2017_2018_Implementation\TAP2017_2018_Implementation.csproj", "{3F67D2B5-089C-4AD9-A67A-E52D842D1057}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NANTravelCompanyTests", "NANTravelCompanyTests\NANTravelCompanyTests.csproj", "{25F0A072-00A3-48DF-A8F5-4676E6230DAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3F67D2B5-089C-4AD9-A67A-E52D842D1057}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F67D2B5-089C-4AD9-A67A-E52D842D1057}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F67D2B5-089C-4AD9-A67A-E52D842D1057}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25F0A072-00A3-48DF-A8F5-4676E6230DAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25F0A072-00A3-48DF-A8F5-4676E6230DAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25F0A072-00A3-48DF-A8F5-4676E6230DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25F0A072-00A3-48DF-A8F5-4676E6230DAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

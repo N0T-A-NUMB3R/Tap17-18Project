@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8EF0CCC7-4C17-45F2-8E59-BDBD578DA987}</ProjectGuid>
+    <ProjectGuid>{25F0A072-00A3-48DF-A8F5-4676E6230DAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TravelCompanyTests</RootNamespace>
-    <AssemblyName>TravelCompanyTests</AssemblyName>
+    <RootNamespace>NANTravelCompanyTests</RootNamespace>
+    <AssemblyName>NANTravelCompanyTests</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,18 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Moq, Version=4.8.0.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.8.0\lib\net45\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
     </Reference>
@@ -50,36 +37,26 @@
       <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.1.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.4.0\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="TAP2017_2018_PlannerInterface">
-      <HintPath>..\TAP2017_2018_PlannerInterface.dll</HintPath>
-    </Reference>
     <Reference Include="TAP2017_2018_Travel">
       <HintPath>..\TAP2017_2018_Travel.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BasicTestInitializer.cs" />
-    <Compile Include="BrokerFactoryTestSuite.cs" />
-    <Compile Include="BrokerTestInitializer.cs" />
-    <Compile Include="BrokerTravelCompanyTestSuitecs.cs" />
+    <Compile Include="Inizialiazer\BasicTestInitializer.cs" />
+    <Compile Include="BrokerFactoryTestSuiteNan.cs" />
+    <Compile Include="BrokerTCTestsuiteNAN.cs" />
+    <Compile Include="Inizialiazer\BrokerTestInitializer.cs" />
+    <Compile Include="Inizialiazer\TravelCompanyTestInizializerNan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadOnlyTravelCompanyFactoryTestSuite.cs" />
-    <Compile Include="ReadOnlyTravelCompanyTestSuite.cs" />
-    <Compile Include="TravelCompanyFactoryTestSuite.cs" />
-    <Compile Include="TravelCompanyTestInitializer.cs" />
-    <Compile Include="TravelCompanyTestSuite.cs" />
+    <Compile Include="Inizialiazer\TravelCompanyTestInitializer.cs" />
+    <Compile Include="TravelCompanyFactoryTestSuiteNAN.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

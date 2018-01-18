@@ -10,12 +10,25 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Planner : IPlanner
     {
+        /// <summary>
+        /// the choice to use a simple list instead of a db, because a Planner will have to use a few Travelcompanies
+        /// </summary>
         private readonly List<IReadOnlyTravelCompany> _companies;
 
         public Planner(List<IReadOnlyTravelCompany> companies)
         {
             CheckList(companies);
             _companies = companies;
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is Planner planner &&
+                   EqualityComparer<List<IReadOnlyTravelCompany>>.Default.Equals(_companies, planner._companies);
+        }
+
+        public override int GetHashCode()
+        {
+            return -2132568303 + EqualityComparer<List<IReadOnlyTravelCompany>>.Default.GetHashCode(_companies);
         }
 
         public void AddTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
@@ -53,166 +66,112 @@ namespace TAP2017_2018_PlannerImplementation
                 throw new NonexistentTravelCompanyException();
         }
 
-
         public IEnumerable<IReadOnlyTravelCompany> KnownTravelCompanies() => _companies.Select(tc => tc);
 
+        /// <summary>
+        // Using a stack we get the complete path(in reverse) and save it in a trip.(It is an auxiliary method of FindTrip)
+        /// </summary>
+        /// <param name="destination"></param>
+        /// <param name="source"></param>
+        /// <param name="previousDictionary"></param>
+        /// <returns></returns>
+        private static ITrip GetTheShortestTrip(string destination, string source, Dictionary<string, ILegDTO> previousDictionary)
+        {
+            CheckString(destination);
+            CheckString(source);
+           //todo
+            var path = new Stack<ILegDTO>();
 
+            for (var s = destination; previousDictionary[s] != null; s = previousDictionary[s].From)
+            {
+                path.Push(previousDictionary[s]);
+            }
+
+            var cost = path.Select(x => x.Cost).Sum();
+            var distance = path.Select(x => x.Distance).Sum();
+            // null if there is no path from source to destination  (as indicated in the documentation)
+            return !path.Any() ? null : new Trip(source, destination, path.ToList().AsReadOnly(), cost, distance);
+
+        }
+        /// <summary>
+        /// Finds the best trip source source destination destination , according destination options , using only transport of a type ﬂagged in 
+        /// allowedTransportTyp, this method was built using the famous Dijktra algorithm, 
+        /// is a greedy algorithm that solves the single-source shortest path problem for a directed graph with non negative edge weights.
+        /// FOR MORE INFO CHECKOUT: https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <param name="options"></param>
+        /// <param name="allowedTransportTypes"></param>
+        /// <returns></returns>
         public ITrip FindTrip(string source, string destination, FindOptions options,
             TransportType allowedTransportTypes)
         {
             CheckTrip(source, destination, allowedTransportTypes);
-            
-            var dist = new Dictionary<string, int>();   //Distanza iniziale sconosciuta 
-            var prec = new Dictionary<string, ILegDTO>(); //Nodo precedente in un percorso ottimale
-            var nodes = new List<string>() {source, destination}; //L'insieme di tutti i nodi nel Grafo
+            var distance = new Dictionary<string, int>();
+            var previous = new Dictionary<string, ILegDTO>();
+            var nodes = new List<string>() { source, destination };
 
-            // ma se io cerco un viaggio con source = destination ma in realta non esiste non dovrei lanciare null? il test passa esclusivamente se io metto null.
-
-            if (source == destination)
-                return new Trip(source, destination, new List<ILegDTO>().AsReadOnly(), 0, 0);
-            //init
-            prec[source] = null;
-            dist[source] = 0;
-            prec[destination] = null;
-            dist[destination] = int.MaxValue;
-            //dijkstra
-            while (nodes.Count > 0) 
-            {
-                var min = nodes[0];
-                foreach (var n in nodes)
-                    if (dist[n] < dist[min]) //vertice in Q con la più breve distanza in dist[]
-                        min = n;
-
-                nodes.Remove(min);
-                //il percorso è finito
-                if (min == destination || dist[min] == int.MaxValue) break;
-
-                // altrimenti scorriamo il vicinato....
-
-                foreach (var neigh in  _companies.GetNeighborsDtos(min, allowedTransportTypes))
-                {
-                    if (!prec.ContainsKey(neigh.To))
-                    {
-                        //se non ci sono gia, li aggiungo
-                        prec.Add(neigh.To, null);
-                        dist.Add(neigh.To, int.MaxValue); // infinito per dijtra
-                        nodes.Add(neigh.To);
-                    }
-
-                    if (!prec.ContainsKey(neigh.From))
-                    {
-                        //se non ci sono li aggiungo
-                        prec.Add(neigh.From, null);
-                        dist.Add(neigh.From,
-                            int.MaxValue); //non è possibile il loop perchè tengo traccia dei nodi visitati nel dizionario (che non elimino mai)
-                        nodes.Add(neigh.From);
-                    }
-
-                    
-                    var weight = 1;
-                    if (options == FindOptions.MinimumCost)
-                        weight = neigh.Cost;
-                    else if (options == FindOptions.MinimumDistance)
-                        weight = neigh.Distance;
-
-                    var newDist = dist[min] + weight;
-                    if (newDist < dist[neigh.To])
-                    {
-                        dist[neigh.To] = newDist;
-                        prec[neigh.To] = neigh;
-                    }
-                }
-            }
-
-            var path = new Stack<ILegDTO>();
-            //ora mi ricavo la soluzione
-            for (var s = destination; prec[s] != null; s = prec[s].From)
-            {
-                path.Push(prec[s]);
-            }
-
-            if (!path.Any())
-                return null;
-
-            var cost = path.Select(x => x.Cost).Sum();
-            var distance = path.Select(x => x.Distance).Sum();
-            return new Trip(source, destination, path.ToList().AsReadOnly(), cost, distance);
-        }
-
-
-        /*
-        public ITrip FindTrip(string source, string destination, FindOptions options,
-            TransportType allowedTransportTypes)
-        {
-            CheckTrip(source, destination,allowedTransportTypes);
-
-            var graph = new Graph();
-            graph.InitGraph(_companies, x => (x.Type & allowedTransportTypes) > 0, options);
-
-            var Dist = new Dictionary<string, int>();
-            var Prec = new Dictionary<string, ILegDTO>();
-            var nodes = graph.Get_nodes();
-
-
-            if (!nodes.Contains(source) || !nodes.Contains(destination))
-                return null;
-
-            // ma se io cerco un viaggio con source = destination ma in realta non esiste non dovrei lanciare null? il test passa esclusivamente se io metto null.
-
+            // A city is always considered connected destination itself, so an empty trip is returned when source and destination coincide
             if (source == destination)
                 return new Trip(source, destination, new List<ILegDTO>().AsReadOnly(), 0, 0);
 
-            //init per Diijktra
-            foreach (var node in nodes)
-            {
-                Dist[node] = int.MaxValue;
-                Prec[node] = null;
-            }
+            previous[source] = null;
+            distance[source] = 0; //// We know the distance in source is 0 by definition
+            previous[destination] = null;
+            distance[destination] = int.MaxValue; // We know the distance from source->destination is infinite by definition
 
-            Dist[source] = 0;
-            //dijkstra
+            //Implementation of Dijktra algorithm
             while (nodes.Count > 0)
             {
-                var min = nodes[0];
-                foreach (var n in nodes)
-                    if (Dist[n] < Dist[min])
-                        min = n;
-
+                var min = nodes.OrderBy(n => distance[n]).First();
+                // remove best vertex (that is, connection with minimum distance)
                 nodes.Remove(min);
-                //il percorso è finito
-                if (min == destination || Dist[min] == int.MaxValue) break;
 
-                // altrimenti scorriamo il vicinato....
+                if (min == destination || distance[min] == int.MaxValue) break; //todo probably useless.
 
-                foreach (var neigh in graph.GetNeighbour(min))
+                // Search (with  GetNeigbors) and loop all connected nodes
+                foreach (var neigh in _companies.GetNeighborsDtos(min, allowedTransportTypes))
                 {
-                    var peso = 1;
-                    if (options == FindOptions.MinimumCost) peso = neigh.Cost;
-                    else if (options == FindOptions.MinimumDistance)
-                        peso = neigh.Distance;
-                    var newDist = Dist[min] + peso;
-                    if (newDist < Dist[neigh.To])
+                    // the loop is the only problem according to the teacher but 
+                    // isnt possible (i hope) because I keep track of the nodes visited in the dictionary, which I never delete.
+                    if (!previous.ContainsKey(neigh.To))
                     {
-                        Dist[neigh.To] = newDist;
-                        Prec[neigh.To] = neigh;
+                        // if they arent present, I add them in 2 dictionaries 
+                        previous.Add(neigh.To, null);
+                        distance.Add(neigh.To, int.MaxValue);
+                        nodes.Add(neigh.To);
                     }
+                    //same thing for the from...
+                    if (!previous.ContainsKey(neigh.From))
+                    {
+                        previous.Add(neigh.From, null);
+                        distance.Add(neigh.From,
+                            int.MaxValue);
+                        nodes.Add(neigh.From);
+                    }
+                    //check the option of the trip, by default it is minHop
+                    var weight = 1;
+                    switch (options)
+                    {
+                        case FindOptions.MinimumCost:
+                            weight = neigh.Cost;
+                            break;
+                        case FindOptions.MinimumDistance:
+                            weight = neigh.Distance;
+                            break;
+                    }
+                    // The positive distance between node and it's neighbor, added to the distance of the current node
+                    var newDist = distance[min] + weight;
+                    if (newDist < distance[neigh.To])
+                    {
+                        distance[neigh.To] = newDist;
+                        previous[neigh.To] = neigh;
+                    }
+                    if (min == destination) break; // If we're at the target node? Ok break
                 }
             }
-
-            var path = new Stack<ILegDTO>();
-            //ora mi ricavo la soluzione
-            for (var s = destination; Prec[s] != null; s = Prec[s].From)
-            {
-                path.Push(Prec[s]);
-            }
-
-            if (!path.Any())
-                return null;
-
-            var cost = path.Select(x => x.Cost).Sum();
-            var dist = path.Select(x => x.Distance).Sum();
-            return new Trip(source, destination, path.ToList().AsReadOnly(), cost, dist);
+            return GetTheShortestTrip(destination, source, previous);
         }
-        */
     }
 }
