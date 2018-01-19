@@ -11,6 +11,10 @@ namespace TAP2017_2018_Implementation
     
      internal static class Checker
      {
+         /// <summary>
+         /// Check 
+         /// </summary>
+         /// <param name="cs"></param>
         public static void CheckConnectionString(string cs)
         { 
             if (cs == null)

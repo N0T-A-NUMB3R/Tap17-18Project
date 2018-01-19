@@ -27,7 +27,6 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) 
         {
-
             CheckConnectionString(travelCompanyConnectionString);
             CheckConnectionString(_brokerconnectionstring);
             CheckTwoConnString(travelCompanyConnectionString,_brokerconnectionstring);
