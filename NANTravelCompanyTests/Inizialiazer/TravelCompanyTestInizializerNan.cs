@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 namespace NANTravelCompanyTests.Inizialiazer
 {
-    class TravelCompanyTestInizializerNan
+   public  class TravelCompanyTestInizializerNan
     {
         private string TheSameCompanyName { get; set; }
         private string CompanyName { get; set; }

@@ -1,685 +1,878 @@
-﻿using Moq;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Linq.Expressions;
+using NUnit.Framework;
 using TAP2017_2018_PlannerInterface;
 using TAP2017_2018_TravelCompanyInterface;
-using TAP2017_2018_TravelCompanyInterface.Exceptions;
+using Moq;
+using NUnit.Framework.Internal;
 using Key = System.Tuple<string, string, string>;
-using System.Linq;
-/*
-G1 = grafo semplice
-G2 = grafo con camminimi paralleli
-G3 = Grafo semplice con cicli
-G4 = Grafo con camminimi paralleli e cicli
- 
-*/
+using static TAP2017_2018_TravelCompanyInterface.TransportType;
+using static TAP2017_2018_PlannerInterface.FindOptions;
+
 namespace NanPlannerTests
 {
+
+    /// <summary>
+    /// Basata sui Test messi sul Forum da Alessio Annibali
+    /// </summary>
+
     [TestFixture]
+
     public class NanPlannerTestSuite : NANTestInitializer
     {
+        protected IPlanner Planner;
 
-        IPlanner planner;
+        public struct Trip : ITrip
+        {
+            private string a1;
+            private string a2;
+            private ReadOnlyCollection<ILegDTO> readOnlyCollection;
+            private int v1;
+            private int v2;
 
-        protected string s,u,v,x,y;
+            public Trip(string a1, string a2, ReadOnlyCollection<ILegDTO> readOnlyCollection, int v1, int v2) : this()
+            {
+                this.a1 = a1;
+                this.a2 = a2;
+                this.readOnlyCollection = readOnlyCollection;
+                this.v1 = v1;
+                this.v2 = v2;
+            }
 
-        protected List<string> allDestinations =
-            new List<string>(new String[] {"s","u","v","x","y"});
+            public string From { get; }
+            public string To { get; }
+            public ReadOnlyCollection<ILegDTO> Path { get; }
+            public int TotalCost { get; }
+            public int TotalDistance { get; }
+        }
 
-        protected IReadOnlyTravelCompany rotcG1;
 
-        protected Dictionary<Key, ILegDTO> createdLegs;
-        string G1Name = "Multy Graph with loops and parallel edges";
-        
+        protected TransportType AllTransports = Train | Plane | Ship;
+        protected TransportType NoPlane = Train | Ship;
 
-        protected Mock<IReadOnlyTravelCompany> mockRotcA;
+        protected IReadOnlyTravelCompany Trenord, Alitalia, Costa;
+        protected Mock<IReadOnlyTravelCompany> MockTrenord, MockAlitalia, MockCosta;
 
-        protected ILegDTO getMockedLegDTO(string from, string to, int distance, int cost, TransportType type)
+        protected string trenord = nameof(trenord);
+        protected string alitalia = nameof(alitalia);
+        protected string costa = nameof(costa);
+
+        protected string A, B, C, D, E, F, U;
+        protected List<string> Cities = new List<string>(new[] { "A", "B", "C", "D", "E", "F", "U" });
+
+        protected Dictionary<Key, ILegDTO> CreatedLegs;
+
+        protected ILegDTO GetMockLegDTO(string from, string to, int cost, int distance, TransportType type)
         {
             var mock = new Mock<ILegDTO>();
-            mock.Setup(l => l.Cost).Returns(cost);
-            mock.Setup(l => l.Distance).Returns(distance);
-            mock.Setup(l => l.From).Returns(from);
-            mock.Setup(l => l.To).Returns(to);
-            mock.Setup(l => l.Type).Returns(type);
+            mock.Setup(m => m.From).Returns(from);
+            mock.Setup(m => m.To).Returns(to);
+            mock.Setup(m => m.Cost).Returns(cost);
+            mock.Setup(m => m.Distance).Returns(distance);
+            mock.Setup(m => m.Type).Returns(type);
             return mock.Object;
         }
 
-
-       
-
-        protected List<ILegDTO> getLegsFromChosenDestination(string rotcName, string from,
-            Dictionary<Key, ILegDTO> dictionary,TransportType allowedTransportTypes)
+        protected List<ILegDTO> GetDepartures(string company, string city, TransportType allowedTransportTypes)
         {
-            var rotcLegs = new List<ILegDTO>();
-            foreach (var k in createdLegs)
-            {
-                if (k.Key.Item1.Equals(rotcName) && k.Key.Item2.Equals(from) &&
-                    (k.Value.Type & allowedTransportTypes) == k.Value.Type)
-                    rotcLegs.Add(createdLegs[k.Key]);
+            var departures = new List<ILegDTO>();
 
+            foreach (var leg in CreatedLegs)
+            {
+                if (leg.Key.Item1 == company && leg.Key.Item2 == city &&
+                        (leg.Value.Type & allowedTransportTypes) == leg.Value.Type)
+                    departures.Add(CreatedLegs[leg.Key]);
             }
-            return rotcLegs;
+
+            return departures;
         }
+
 
         [SetUp]
-        public void PlannerInit()
+        public void SetUp()
         {
-            planner = plannerFactory.CreateNew();
-            s = allDestinations[0];
-            u = allDestinations[1];
-            v = allDestinations[2];
-            x = allDestinations[3];
-            y = allDestinations[4];
-            
-            //my new  simple Graph
-            createdLegs = new Dictionary<Key, ILegDTO>
+            Planner = plannerFactory.CreateNew();
+
+            A = Cities[0];
+            B = Cities[1];
+            C = Cities[2];
+            D = Cities[3];
+            E = Cities[4];
+            F = Cities[5];
+            U = Cities[6];
+
+            CreatedLegs = new Dictionary<Key, ILegDTO>
             {
-                //from s to (u and x)
-                [new Key(G1Name,s,u)] = getMockedLegDTO(s,u,10,100,TransportType.Ship),
-                [new Key(G1Name,u,s)] = getMockedLegDTO(s,u,100,1000,TransportType.Ship),
-                [new Key(G1Name,s,x)] = getMockedLegDTO(s,x,5,50,TransportType.Bus),
+                [new Key(trenord, A, B)] = GetMockLegDTO(A, B, 5, 2, Train),
+                [new Key(alitalia, A, B)] = GetMockLegDTO(A, B, 10, 1, Plane),
 
-                //from u to (v and x)
-                [new Key(G1Name,u,v)] = getMockedLegDTO(u,v,1,10,TransportType.Plane),
-                [new Key(G1Name,v, u)] = getMockedLegDTO(u, v, 2, 20, TransportType.Plane),
-                [new Key(G1Name,u,x)] = getMockedLegDTO(u,x,2,20,TransportType.Bus),
-                
-                //from x to (u and y and v)
-                [new Key(G1Name,x,u)] = getMockedLegDTO(x,u,3,30,TransportType.Bus),
-                [new Key(G1Name,x,y)] = getMockedLegDTO(x,y,2,20,TransportType.Bus),
-                [new Key(G1Name,x,v)] = getMockedLegDTO(x,v,9,90,TransportType.Bus),
+                [new Key(costa, A, F)] = GetMockLegDTO(A, F, 20, 10, Ship),
 
-                //from v to y
-                [new Key(G1Name,v,y)] = getMockedLegDTO(v,y,4,40,TransportType.Train),
+                [new Key(alitalia, B, D)] = GetMockLegDTO(B, D, 5, 1, Plane),
+                [new Key(trenord, B, D)] = GetMockLegDTO(B, D, 4, 2, Train),
 
-                //from y to (v and s)
-                [new Key(G1Name,y,v)] = getMockedLegDTO(y,v,6,60,TransportType.Train),
-                [new Key(G1Name,y,s)] = getMockedLegDTO(y,s,7,70,TransportType.Bus),
-                [new Key(G1Name,s,y)] = getMockedLegDTO(y,s,100,1000,TransportType.Bus)
+                [new Key(alitalia, B, E)] = GetMockLegDTO(B, E, 50, 5, Plane),
 
-                
-               
-      
+                [new Key(costa, D, F)] = GetMockLegDTO(D, F, 5, 4, Ship),
+
+                [new Key(trenord, A, C)] = GetMockLegDTO(A, C, 6, 3, Train),
+
+                [new Key(trenord, C, A)] = GetMockLegDTO(C, A, 6, 3, Train),
+                [new Key(trenord, C, E)] = GetMockLegDTO(C, E, 7, 4, Train),
+
+                [new Key(trenord, E, F)] = GetMockLegDTO(E, F, 8, 20, Train),
+                [new Key(alitalia, E, D)] = GetMockLegDTO(E, D, 50, 10, Plane),
+
+                [new Key(trenord, F, E)] = GetMockLegDTO(F, E, 4, 20, Train),
+                [new Key(costa, F, D)] = GetMockLegDTO(F, D, 5, 4, Ship)
             };
 
-           
 
+            var trenordOffers = new List<ILegDTO>();
+            var alitaliaOffers = new List<ILegDTO>();
+            var costaOffers = new List<ILegDTO>();
 
-            var rotcAList = new List<ILegDTO>();
-            foreach (var v in createdLegs)
+            foreach (var leg in CreatedLegs)
             {
-                if (v.Key.Item1.Equals(G1Name)) rotcAList.Add((v.Value));
+                if (leg.Key.Item1 == trenord)
+                    trenordOffers.Add(leg.Value);
+                if (leg.Key.Item1 == alitalia)
+                    alitaliaOffers.Add(leg.Value);
+                if (leg.Key.Item1 == costa)
+                    costaOffers.Add(leg.Value);
             }
 
-            var queryableA = rotcAList.AsQueryable();
+            var trenordLegs = trenordOffers.AsQueryable();
+            var alitaliaLegs = alitaliaOffers.AsQueryable();
+            var costaLegs = costaOffers.AsQueryable();
 
-            mockRotcA = new Mock<IReadOnlyTravelCompany>(MockBehavior.Strict);
 
+            /********************************* TRENORD ************************************/
 
-            foreach (var destination in allDestinations)
+            MockTrenord = new Mock<IReadOnlyTravelCompany>(MockBehavior.Strict);
+
+            foreach (var city in new[] { "A", "B", "C", "D", "E", "F" })
             {
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, Bus))
+                    .Returns(GetDepartures(trenord, city, Bus).AsReadOnly);
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, Train))
+                    .Returns(GetDepartures(trenord, city, Train).AsReadOnly);
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, Ship))
+                    .Returns(GetDepartures(trenord, city, Ship).AsReadOnly);
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, Plane))
+                    .Returns(GetDepartures(trenord, city, Plane).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Train))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Train)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Train))
+                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Train).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Ship))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Ship)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Plane))
+                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Plane).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Plane))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Plane)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Ship))
+                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Ship).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus | TransportType.Train))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus | TransportType.Train)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Train | Plane))
+                    .Returns(GetDepartures(trenord, city, TransportType.Train | Plane).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus | TransportType.Plane))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus | TransportType.Plane)));
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus | TransportType.Ship))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus | TransportType.Ship)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Train | Ship))
+                    .Returns(GetDepartures(trenord, city, TransportType.Train | Ship).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Train | TransportType.Plane))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Train | TransportType.Plane)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Ship))
+                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Ship).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Train | TransportType.Ship))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Train | TransportType.Ship)));
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Plane | TransportType.Ship))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Plane | TransportType.Ship)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Ship | Train))
+                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Ship | Train).AsReadOnly);
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Ship | Bus))
+                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Ship | Bus).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus | TransportType.Train | TransportType.Ship))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus | TransportType.Train | TransportType.Ship)));
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus | TransportType.Train | TransportType.Plane))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus | TransportType.Train | TransportType.Plane)));
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Bus | Train))
+                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Bus | Train).AsReadOnly);
 
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Bus | TransportType.Ship | TransportType.Plane))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Bus | TransportType.Ship | TransportType.Plane)));
-
-                mockRotcA.Setup(l => l.FindDepartures(destination, TransportType.Plane | TransportType.Train | TransportType.Ship))
-                    .Returns(new ReadOnlyCollection<ILegDTO>(
-                        getLegsFromChosenDestination(G1Name, destination, createdLegs,
-                            TransportType.Plane | TransportType.Train | TransportType.Ship)));
-
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Ship | Train))
+                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Ship | Train).AsReadOnly);
 
             }
 
+            MockTrenord
+                .Setup(m => m.FindLegs(It.IsAny<Expression<Func<ILegDTO, bool>>>()))
+                .Returns((Expression<Func<ILegDTO, bool>> p) =>
+                    trenordLegs.AsEnumerable().Where(p.Compile()).ToList().AsReadOnly());
 
 
-            
+            /********************************* ALITALIA ************************************/
 
-            mockRotcA
-                .Setup(lst => lst.FindLegs(It.IsAny<Expression<Func<ILegDTO, bool>>>()))
-                .Returns(
-                    (Expression<Func<ILegDTO, bool>> p) =>
-                    {
-                        return new ReadOnlyCollection<ILegDTO>(queryableA.Where(p.Compile()).ToList());
-                    });
+            MockAlitalia = new Mock<IReadOnlyTravelCompany>(MockBehavior.Strict);
 
-         
+            foreach (var city in new[] { "A", "B", "C", "D", "E", "F" })
+            {
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Bus))
+                    .Returns(GetDepartures(alitalia, city, Bus).AsReadOnly);
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Train))
+                    .Returns(GetDepartures(alitalia, city, Train).AsReadOnly);
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Plane))
+                    .Returns(GetDepartures(alitalia, city, Plane).AsReadOnly);
 
-            rotcG1 = mockRotcA.Object;
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Ship))
+                    .Returns(GetDepartures(alitalia, city, Ship).AsReadOnly);
 
 
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Bus | Train))
+                    .Returns(GetDepartures(alitalia, city, Bus | Train).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Bus | Plane))
+                    .Returns(GetDepartures(alitalia, city, Bus | Plane).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Bus | Ship))
+                    .Returns(GetDepartures(alitalia, city, Bus | Ship).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Train | Plane))
+                    .Returns(GetDepartures(alitalia, city, Train | Plane).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Train | Ship))
+                    .Returns(GetDepartures(alitalia, city, Train | Ship).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Plane | Ship))
+                    .Returns(GetDepartures(alitalia, city, Plane | Ship).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Plane | Ship | Train))
+                    .Returns(GetDepartures(alitalia, city, Plane | Ship | Train).AsReadOnly);
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Plane | Ship | Bus))
+                    .Returns(GetDepartures(alitalia, city, Plane | Ship | Bus).AsReadOnly);
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Train | Ship | Bus))
+                    .Returns(GetDepartures(alitalia, city, Train | Ship | Bus).AsReadOnly);
+
+                MockAlitalia
+                    .Setup(m => m.FindDepartures(city, Train | Plane | Bus))
+                    .Returns(GetDepartures(alitalia, city, Train | Plane | Bus).AsReadOnly);
+
+
+
+            }
+
+            MockAlitalia
+                .Setup(m => m.FindLegs(It.IsAny<Expression<Func<ILegDTO, bool>>>()))
+                .Returns((Expression<Func<ILegDTO, bool>> p) =>
+                    alitaliaLegs.AsEnumerable().Where(p.Compile()).ToList().AsReadOnly());
+
+
+            /********************************* COSTA ************************************/
+
+            MockCosta = new Mock<IReadOnlyTravelCompany>(MockBehavior.Strict);
+
+            foreach (var city in new[] { "A", "B", "C", "D", "E", "F" })
+            {
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Bus))
+                    .Returns(GetDepartures(costa, city, Bus).AsReadOnly);
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Train))
+                    .Returns(GetDepartures(costa, city, Train).AsReadOnly);
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Plane))
+                    .Returns(GetDepartures(costa, city, Plane).AsReadOnly);
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Ship))
+                    .Returns(GetDepartures(costa, city, Ship).AsReadOnly);
+
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Bus | Train))
+                    .Returns(GetDepartures(costa, city, Bus | Train).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Bus | Plane))
+                    .Returns(GetDepartures(costa, city, Bus | Plane).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Bus | Ship))
+                    .Returns(GetDepartures(costa, city, Bus | Ship).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Train | Plane))
+                    .Returns(GetDepartures(costa, city, Train | Plane).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Train | Ship))
+                    .Returns(GetDepartures(costa, city, Train | Ship).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Plane | Ship))
+                    .Returns(GetDepartures(costa, city, Plane | Ship).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Plane | Ship | Train))
+                    .Returns(GetDepartures(costa, city, Plane | Ship | Train).AsReadOnly);
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Plane | Ship | Bus))
+                    .Returns(GetDepartures(costa, city, Plane | Ship | Bus).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Plane | Bus | Train))
+                    .Returns(GetDepartures(costa, city, Plane | Bus | Train).AsReadOnly);
+
+                MockCosta
+                    .Setup(m => m.FindDepartures(city, Bus | Ship | Train))
+                    .Returns(GetDepartures(costa, city, Bus | Ship | Train).AsReadOnly);
+            }
+
+            MockCosta
+                .Setup(m => m.FindLegs(It.IsAny<Expression<Func<ILegDTO, bool>>>()))
+                .Returns((Expression<Func<ILegDTO, bool>> p) =>
+                    costaLegs.AsEnumerable().Where(p.Compile()).ToList().AsReadOnly());
+
+
+            Trenord = MockTrenord.Object;
+            Alitalia = MockAlitalia.Object;
+            Costa = MockCosta.Object;
         }
 
 
-        [TestCase(TransportType.Bus)]
-        [TestCase(TransportType.Ship)]
-        [TestCase(TransportType.Train)]
-        [TestCase(TransportType.Plane)]
-
-        [TestCase(TransportType.Bus | TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Ship)]
-        [TestCase(TransportType.Bus | TransportType.Train)]
-        [TestCase(TransportType.Train | TransportType.Ship)]
-        [TestCase(TransportType.Train | TransportType.Plane)]
-        [TestCase(TransportType.Ship | TransportType.Plane)]
-
-        [TestCase(TransportType.Bus | TransportType.Train | TransportType.Ship)]
-        [TestCase(TransportType.Bus | TransportType.Train | TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Ship | TransportType.Plane)]
-        [TestCase(TransportType.Train | TransportType.Ship | TransportType.Plane)]
-
-        public void Should_FindTrip_With_MinCost_And_OnlyOneVehicle_In_SimpleGraphMoreHopReturnOk(TransportType vehicle)
+        [Test]
+        public void FindTripFromEqualsEmptyMinHop()
         {
-
-            planner.AddTravelCompany(rotcG1);
-            ITrip trip;
-            ILegDTO sx, su, ux, uv, vy, xu, xv, xy, yv;
-            sx = createdLegs[new Key(G1Name, s, x)];
-            xu = createdLegs[new Key(G1Name, x, u)];
-            uv = createdLegs[new Key(G1Name, u, v)];
-            xv = createdLegs[new Key(G1Name, x, v)];
-            su = createdLegs[new Key(G1Name, s, u)];
-            yv = createdLegs[new Key(G1Name, y, v)];
-            ux = createdLegs[new Key(G1Name, u, x)];
-            xy = createdLegs[new Key(G1Name, x, y)];
-            vy = createdLegs[new Key(G1Name, v, y)];
-
-            switch (vehicle)
-            {
-                case TransportType.Bus:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    sx = createdLegs[new Key(G1Name, s, x)];
-                    xv = createdLegs[new Key(G1Name, x, v)];
-                    Assert.AreEqual(sx.Cost + xv.Cost, trip.TotalCost);
-                    Assert.AreEqual(sx.Distance + xv.Distance, trip.TotalDistance);
-                    Assert.AreEqual(s, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-                    break;
-
-                case TransportType.Ship:
-                     trip = planner.FindTrip(s, u, FindOptions.MinimumCost, vehicle);
-                    su = createdLegs[new Key(G1Name, s, u)];
-                    Assert.AreEqual(su.Cost, trip.TotalCost);
-                    Assert.AreEqual(su.Distance, trip.TotalDistance);
-                    Assert.AreEqual(s, trip.From);
-                    Assert.AreEqual(u, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { su }));
-                    break;
-
-                case TransportType.Plane:
-                    trip = planner.FindTrip(u, v, FindOptions.MinimumCost, vehicle);
-                    uv = createdLegs[new Key(G1Name, u, v)];
-                    Assert.AreEqual(uv.Cost, trip.TotalCost);
-                    Assert.AreEqual(uv.Distance, trip.TotalDistance);
-                    Assert.AreEqual(u, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { uv }));
-                    break;
-
-                case TransportType.Train:
-                    trip = planner.FindTrip(y, v, FindOptions.MinimumCost, vehicle);
-                    yv = createdLegs[new Key(G1Name, y, v)];
-                    Assert.AreEqual(yv.Cost, trip.TotalCost);
-                    Assert.AreEqual(yv.Distance, trip.TotalDistance);
-                    Assert.AreEqual(y, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { yv }));
-
-                    break;
-
-                case TransportType.Bus | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    sx = createdLegs[new Key(G1Name, s, x)];
-                    xu = createdLegs[new Key(G1Name, x, u)];
-                    uv = createdLegs[new Key(G1Name, u, v)];
-                    Assert.That(sx.Cost + xu.Cost + uv.Cost , Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xu.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v,Is.EqualTo(trip.To));
-                    Assert.That(trip.Path,Is.EquivalentTo(new[]{sx,xu,uv}));
-
-                    break;
-
-                case TransportType.Bus | TransportType.Ship:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    Assert.That(sx.Cost + xv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-
-                    break;
-
-
-                case TransportType.Bus | TransportType.Train:
-                    trip = planner.FindTrip(u, v, FindOptions.MinimumCost, vehicle);
-                    Assert.That(ux.Cost + xy.Cost + yv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(ux.Distance + xy.Distance + yv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(u, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { ux, xy, yv }));
-
-                    break;
-
-                case TransportType.Train | TransportType.Ship:
-                    trip = planner.FindTrip(s, y, FindOptions.MinimumCost, vehicle);
-                    Assert.That(trip, Is.Null);
-                    break;
-
-                case TransportType.Train | TransportType.Plane:
-                    trip = planner.FindTrip(u, y, FindOptions.MinimumCost, vehicle);
-                    Assert.That(uv.Cost + vy.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(uv.Distance + vy.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(u, Is.EqualTo(trip.From));
-                    Assert.That(y, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { uv, vy }));
-                    break;
-
-                case TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    Assert.That(su.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(su.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { su, uv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Train | TransportType.Ship:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(sx.Cost + xy.Cost + yv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xy.Distance + yv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xy, yv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Train | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(sx.Cost + xu.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xu.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xu, uv }));
-                    break;
-                case TransportType.Bus | TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumCost, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(sx.Cost + xu.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xu.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xu, uv }));
-                    break;
-                case TransportType.Train | TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(v, u, FindOptions.MinimumCost, vehicle);
-                    Assert.That(trip, Is.Null);
-                    break;
-            }
-
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Bus);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
         }
-
-
-        [TestCase(TransportType.Bus)]
-        [TestCase(TransportType.Ship)]
-        [TestCase(TransportType.Train)]
-        [TestCase(TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Ship)]
-        [TestCase(TransportType.Bus | TransportType.Train)]
-        [TestCase(TransportType.Train | TransportType.Ship)]
-        [TestCase(TransportType.Train | TransportType.Plane)]
-        [TestCase(TransportType.Ship | TransportType.Plane)]
-
-        [TestCase(TransportType.Bus | TransportType.Train | TransportType.Ship)]
-        [TestCase(TransportType.Bus | TransportType.Train | TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Ship | TransportType.Plane)]
-        [TestCase(TransportType.Train | TransportType.Ship | TransportType.Plane)]
-
-        public void Should_FindTrip_With_MinDistance_And_OnlyOneVehicle_In_SimpleGraphMoreHopReturnOk(TransportType vehicle)
+        [Test]
+        public void FindTripFromEqualsEmptyMinDistanceMinDistance()
         {
-
-            planner.AddTravelCompany(rotcG1);
-            ITrip trip;
-            ILegDTO sx, su,ux, uv, vy ,xu, xv,xy, yv;
-            sx = createdLegs[new Key(G1Name, s, x)];
-            xu = createdLegs[new Key(G1Name, x, u)];
-            uv = createdLegs[new Key(G1Name, u, v)];
-            xv = createdLegs[new Key(G1Name, x, v)];
-            su = createdLegs[new Key(G1Name, s, u)];
-            yv = createdLegs[new Key(G1Name, y, v)];
-            ux = createdLegs[new Key(G1Name, u, x)];
-            xy = createdLegs[new Key(G1Name, x, y)];
-            vy = createdLegs[new Key(G1Name, v, y)];
-
-
-            switch (vehicle)
-            {
-                case TransportType.Bus:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                    
-                    Assert.AreEqual(sx.Cost + xv.Cost, trip.TotalCost);
-                    Assert.AreEqual(sx.Distance + xv.Distance, trip.TotalDistance);
-                    Assert.AreEqual(s, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-                    break;
-                case TransportType.Ship:
-                    trip = planner.FindTrip(s, u, FindOptions.MinimumDistance, vehicle);
-                   
-                    Assert.AreEqual(su.Cost, trip.TotalCost);
-                    Assert.AreEqual(su.Distance, trip.TotalDistance);
-                    Assert.AreEqual(s, trip.From);
-                    Assert.AreEqual(u, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { su }));
-                    break;
-                case TransportType.Plane:
-                    trip = planner.FindTrip(u, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.AreEqual(uv.Cost, trip.TotalCost);
-                    Assert.AreEqual(uv.Distance, trip.TotalDistance);
-                    Assert.AreEqual(u, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { uv }));
-                    break;
-                case TransportType.Train:
-                    trip = planner.FindTrip(y, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.AreEqual(yv.Cost, trip.TotalCost);
-                    Assert.AreEqual(yv.Distance, trip.TotalDistance);
-                    Assert.AreEqual(y, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { yv }));
-                    break;
-                case TransportType.Bus | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                 
-                    Assert.That(sx.Cost + xu.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xu.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xu, uv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Ship:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(sx.Cost + xv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xv.Distance , Is.EqualTo(trip.TotalDistance));
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-
-                    break;
-
-
-                case TransportType.Bus | TransportType.Train:
-                    trip = planner.FindTrip(u, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(ux.Cost + xy.Cost + yv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(ux.Distance + xy.Distance +yv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(u, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] {ux,xy,yv }));
-
-                    break;
-
-                case TransportType.Train | TransportType.Ship:
-                    trip = planner.FindTrip(s, y, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(trip, Is.Null);
-                    break;
-
-                case TransportType.Train | TransportType.Plane:
-                    trip = planner.FindTrip(u, y, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(uv.Cost + vy.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(uv.Distance + vy.Distance , Is.EqualTo(trip.TotalDistance));
-                    Assert.That(u, Is.EqualTo(trip.From));
-                    Assert.That(y, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { uv,vy }));
-                    break;
-
-                case TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(su.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(su.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] {su,uv }));
-                    break;
-
-
-                case TransportType.Bus | TransportType.Train | TransportType.Ship:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(sx.Cost + xy.Cost + yv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xy.Distance + yv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xy,yv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Train | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(sx.Cost + xu.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xu.Distance + uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xu,uv }));
-                    break;
-                case TransportType.Bus | TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(sx.Cost + xu.Cost + uv.Cost, Is.EqualTo(trip.TotalCost));
-                    Assert.That(sx.Distance + xu.Distance+ uv.Distance, Is.EqualTo(trip.TotalDistance));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx,xu,uv }));
-                    break;
-                case TransportType.Train | TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(v, u, FindOptions.MinimumDistance, vehicle);
-                    Assert.That(trip, Is.Null);
-                    break;
-
-            }
-
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Bus);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
         }
 
-
-        [TestCase(TransportType.Bus)]
-        [TestCase(TransportType.Ship)]
-        [TestCase(TransportType.Train)]
-        [TestCase(TransportType.Plane)]
-
-        [TestCase(TransportType.Bus | TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Ship)]
-        [TestCase(TransportType.Bus | TransportType.Train)]
-        [TestCase(TransportType.Train | TransportType.Ship)]
-        [TestCase(TransportType.Train | TransportType.Plane)]
-        [TestCase(TransportType.Ship|TransportType.Plane)]
-
-        [TestCase(TransportType.Bus | TransportType.Train | TransportType.Ship)]
-        [TestCase(TransportType.Bus | TransportType.Train | TransportType.Plane)]
-        [TestCase(TransportType.Bus | TransportType.Ship | TransportType.Plane)]
-        [TestCase(TransportType.Train | TransportType.Ship | TransportType.Plane)]
-
-        public void Should_FindTrip_With_MinHops_And_OnlyOneVehicle_In_SimpleGraphMoreHopReturnOk(TransportType vehicle)
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinCostTrain()
         {
-
-            planner.AddTravelCompany(rotcG1);
-            ITrip trip;
-            ILegDTO sx, su, ux, uv, vy, xu, xv, xy, yv ,ys;
-            sx = createdLegs[new Key(G1Name, s, x)];
-            xu = createdLegs[new Key(G1Name, x, u)];
-            uv = createdLegs[new Key(G1Name, u, v)];
-            xv = createdLegs[new Key(G1Name, x, v)];
-            su = createdLegs[new Key(G1Name, s, u)];
-            yv = createdLegs[new Key(G1Name, y, v)];
-            ux = createdLegs[new Key(G1Name, u, x)];
-            xy = createdLegs[new Key(G1Name, x, y)];
-            vy = createdLegs[new Key(G1Name, v, y)];
-            ys = createdLegs[new Key(G1Name, y, s)];
-
-            switch (vehicle)
-            {
-                case TransportType.Bus:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-                    Assert.AreEqual(s, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-                    break;
-                case TransportType.Ship:
-                    trip = planner.FindTrip(s, u, FindOptions.MinimumHops, vehicle);
-                    Assert.AreEqual(s, trip.From);
-                    Assert.AreEqual(u, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { su }));
-                    break;
-                case TransportType.Plane:
-                    trip = planner.FindTrip(u, v, FindOptions.MinimumHops, vehicle);
-                    Assert.AreEqual(u, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { uv }));
-                    break;
-                case TransportType.Train:
-                    trip = planner.FindTrip(y, v, FindOptions.MinimumHops, vehicle);
-                   
-                    Assert.AreEqual(y, trip.From);
-                    Assert.AreEqual(v, trip.To);
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { yv }));
-                    break;
-                    //
-                case TransportType.Bus | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-                    
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Ship:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Train:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx, xv }));
-                    break;
-
-                case TransportType.Train | TransportType.Ship:
-                    trip = planner.FindTrip(s, y, FindOptions.MinimumCost, vehicle);
-                    Assert.That(trip, Is.Null);
-                    break;
-
-                case TransportType.Train | TransportType.Plane:
-                    trip = planner.FindTrip(u, y, FindOptions.MinimumHops, vehicle);
-                    Assert.That(u, Is.EqualTo(trip.From));
-                    Assert.That(y, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { uv, vy }));
-                    break;
-
-                case TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { su,uv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Train | TransportType.Ship:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx,xv }));
-                    break;
-
-                case TransportType.Bus | TransportType.Train | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { sx,xv }));
-                    break;
-                case TransportType.Bus | TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(s, v, FindOptions.MinimumHops, vehicle);
-                    Assert.That(s, Is.EqualTo(trip.From));
-                    Assert.That(v, Is.EqualTo(trip.To));
-                    Assert.That(trip.Path, Is.EquivalentTo(new[] { su, uv }));
-                    break;
-                case TransportType.Train | TransportType.Ship | TransportType.Plane:
-                    trip = planner.FindTrip(v, u, FindOptions.MinimumHops, vehicle);
-                    Assert.That(trip, Is.Null);
-                    break;
-            }
-
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Train);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
         }
 
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinCostTrainBus()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Bus);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinCostTrainShip()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Train);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinCostShip()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Ship);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinHopTrain()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Train);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinDistanceTrainBus()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Bus);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinDistanceTrainShip()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Train);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinDisranceShip()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Ship);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinDistanceTrain()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Train);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinHopTrainBus()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Bus);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinHopTrainShip()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Train);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+        [Test, Category("FromEquals")]
+        public void FindTripFromEqualsEmptyMinHopShip()
+        {
+            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Ship);
+            Assert.IsEmpty(trip.Path);
+            Assert.AreEqual(0, trip.TotalCost);
+            Assert.AreEqual(0, trip.TotalDistance);
+            Assert.AreEqual(A, trip.From);
+            Assert.AreEqual(A, trip.To);
+        }
+
+
+        //-----------------------------
+        [Test]
+        public void A_F_Train_OK()
+        {
+            Planner.AddTravelCompany(Trenord);
+
+            var trip = Planner.FindTrip(A, F, MinimumHops, Train);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, A, C)],
+                    CreatedLegs[new Key(trenord, C, E)],
+                    CreatedLegs[new Key(trenord, E, F)]
+                };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+
+        [Test]
+        public void A_E_Train_OK()
+        {
+            Planner.AddTravelCompany(Trenord);
+
+            var trip = Planner.FindTrip(A, E, MinimumHops, Train);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, C)],
+                CreatedLegs[new Key(trenord, C, E)],
+               
+            };
+
+            MakeAssertions(A, E, trip, legs);
+        }
+        [Test]
+        public void C_F_Train_OK()
+        {
+            Planner.AddTravelCompany(Trenord);
+
+            var trip = Planner.FindTrip(C, F, MinimumHops, Train);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, C, E)],
+                CreatedLegs[new Key(trenord, E, F)],
+
+            };
+
+            MakeAssertions(C, F, trip, legs);
+        }
+
+
+        [Test]
+        public void FindTripMinDistanceFromAtoD()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+            var trip = Planner.FindTrip(A, D, MinimumDistance, AllTransports);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(alitalia,A,B)],
+                CreatedLegs[new Key(alitalia,B,D)],
+
+            };
+            MakeAssertions(A, D, trip, legs);
+        }
 
         
+        [Test]
+        public void FindTripMinCostFromAtoD()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+            var trip = Planner.FindTrip(A, D, MinimumCost, AllTransports);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord,A,B)],
+                CreatedLegs[new Key(trenord,B,D)],
 
-   
+            };
+            MakeAssertions(A, D, trip, legs);
+        }
+
+        [Test]
+        public void A_F_Plane_Unreachable()
+        {
+            Planner.AddTravelCompany(Alitalia);
+            var trip = Planner.FindTrip(A, F, MinimumHops, Plane);
+            Assert.IsNull(trip);
+        }
+        [Test]
+        public void E_A_MinHop_Plane_Unreachable()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+            var trip = Planner.FindTrip(E, A, MinimumHops, Plane);
+            Assert.IsNull(trip);
+        }
+        [Test]
+        public void E_A_MinHop_Ship_Unreachable()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+            var trip = Planner.FindTrip(E, A, MinimumHops, Ship);
+            Assert.IsNull(trip);
+        }
+        [Test]
+        public void E_A_MinHop_Train_Unreachable()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+            var trip = Planner.FindTrip(E, A, MinimumHops, Train);
+            Assert.IsNull(trip);
+        }
+        [Test]
+        public void A_F_MinDistance_PlanePlaneShip()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumDistance, AllTransports);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(alitalia, A, B)],
+                    CreatedLegs[new Key(alitalia, B, D)],
+                    CreatedLegs[new Key(costa, D, F)]
+                };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+
+        [Test]
+        public void A_F_MinDistance_NoPlane()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumDistance, NoPlane);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, A, B)],
+                    CreatedLegs[new Key(trenord, B, D)],
+                    CreatedLegs[new Key(costa, D, F)]
+                };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+
+        [Test]
+        public void A_F_MinCost_NoPlane()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumCost, NoPlane);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, B)],
+                CreatedLegs[new Key(trenord, B, D)],
+                CreatedLegs[new Key(costa, D, F)]
+            };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+
+        [Test]
+        public void A_D_MinCost_SHIP()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, D, MinimumCost, Ship);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(costa, A, F)],
+                CreatedLegs[new Key(costa, F, D)],
+                
+            };
+
+            MakeAssertions(A, D, trip, legs);
+        }
+        [Test]
+        public void A_D_MinDist_SHIP()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, D, MinimumDistance, Ship);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(costa, A, F)],
+                CreatedLegs[new Key(costa, F, D)],
+
+            };
+
+            MakeAssertions(A, D, trip, legs);
+        }
+
+        [Test]
+        public void A_D_MinHop_SHIP()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, D, MinimumHops, Ship);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(costa, A, F)],
+                CreatedLegs[new Key(costa, F, D)],
+
+            };
+
+            MakeAssertions(A, D, trip, legs);
+        }
+        [Test]
+        public void A_F_MinDist_Plane_Train()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumCost, NoPlane);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, B)],
+                CreatedLegs[new Key(trenord, B, D)],
+                CreatedLegs[new Key(costa, D, F)]
+            };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+
+        [Test]
+        public void A_F_MinDist_OnlyTrain()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumCost, Train);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, C)],
+                CreatedLegs[new Key(trenord, C, E)],
+                CreatedLegs[new Key(trenord, E, F)]
+            };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+
+        [Test]
+        public void A_F_MinHop_OnlyTrain()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumHops, Train);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, C)],
+                CreatedLegs[new Key(trenord, C, E)],
+                CreatedLegs[new Key(trenord, E, F)]
+            };
+
+            MakeAssertions(A, F, trip, legs);
+        }
 
 
+        [Test]
+        public void A_F_MincCost_OnlyTrain()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, F, MinimumHops, Train);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, C)],
+                CreatedLegs[new Key(trenord, C, E)],
+                CreatedLegs[new Key(trenord, E, F)]
+            };
+
+            MakeAssertions(A, F, trip, legs);
+        }
+        [Test]
+        public void B_E_MinCost_TrainShipTrain()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(B, E, MinimumCost, AllTransports);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, B, D)],
+                    CreatedLegs[new Key(costa, D, F)],
+                    CreatedLegs[new Key(trenord, F, E)]
+                };
+
+            MakeAssertions(B, E, trip, legs);
+        }
 
 
+        [Test]
+        public void C_D_MinHops_TrainPlane()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(C, D, MinimumHops, AllTransports);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, C, E)],
+                    CreatedLegs[new Key(alitalia, E, D)]
+                };
+
+            MakeAssertions(C, D, trip, legs);
+        }
+
+
+        [Test]
+        public void E_D_NoPlane_NoParty()
+        {
+            Planner.AddCompanies(Trenord, Costa);
+
+            var trip = Planner.FindTrip(E, D, MinimumHops, AllTransports);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, E, F)],
+                    CreatedLegs[new Key(costa, F, D)]
+                };
+
+            MakeAssertions(E, D, trip, legs);
+        }
+
+
+        [Test]
+        public void B_E_MinDistance_NoPlane()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(B, E, MinimumDistance, NoPlane);
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, B, D)],
+                    CreatedLegs[new Key(costa, D, F)],
+                    CreatedLegs[new Key(trenord, F, E)]
+                };
+
+            MakeAssertions(B, E, trip, legs);
+        }
+
+
+        [Test]
+        public void A_Departures()
+        {
+            var departures = Trenord.FindDepartures(A, Train)
+                .Concat(Alitalia.FindDepartures(A, Plane))
+                .Concat(Costa.FindDepartures(A, Ship)).ToList();
+
+            var legs = new List<ILegDTO>
+                {
+                    CreatedLegs[new Key(trenord, A, B)],
+                    CreatedLegs[new Key(alitalia, A, B)],
+                    CreatedLegs[new Key(trenord, A, C)],
+                    CreatedLegs[new Key(costa, A, F)]
+                };
+
+            Assert.That(departures, Is.EquivalentTo(legs));
+        }
+
+
+        private static void MakeAssertions(string from, string to, ITrip trip, List<ILegDTO> legs)
+        {
+            Assert.AreEqual(legs.Sum(l => l.Cost), trip.TotalCost);
+            Assert.AreEqual(legs.Sum(l => l.Distance), trip.TotalDistance);
+            Assert.AreEqual(from, trip.From);
+            Assert.AreEqual(to, trip.To);
+            Assert.That(trip.Path, Is.EquivalentTo(legs.AsReadOnly()));
+        }
+    }
+
+
+    public static class PlannerExtension
+    {
+        public static void AddCompanies(this IPlanner planner, params IReadOnlyTravelCompany[] companies)
+        {
+            foreach (var company in companies)
+                planner.AddTravelCompany(company);
+        }
     }
 }
+

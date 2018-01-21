@@ -11,7 +11,7 @@ using TAP2017_2018_TravelCompanyInterface.Exceptions;
 namespace NANTravelCompanyTests
 {
     [TestFixture]
-    public class TravelCompanyFactoryTestSuite : TravelCompanyTestInitializer
+    public class TravelCompanyFactoryTestSuiteNAN : TravelCompanyTestInizializerNan
     {
         private string TheSameCompanyName { get; set; }
         private string CompanyName { get; set; }

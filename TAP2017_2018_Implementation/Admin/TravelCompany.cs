@@ -100,8 +100,6 @@ namespace TAP2017_2018_Implementation
                 var leg = c.Legs.Find(legId);
                 CheckNull(leg);
                return CastToLegDtoExp.Compile()(leg);
-          
-               
             }
         }
         /// <summary>

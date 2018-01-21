@@ -70,7 +70,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="PlannerFactoryTestSuite.cs" />
     <Compile Include="PlannerTestInitializer.cs" />
     <Compile Include="PlannerTestSuite.cs" />

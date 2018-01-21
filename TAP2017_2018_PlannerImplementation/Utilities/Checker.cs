@@ -21,6 +21,12 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
                 throw new ArgumentException();
             */
         }
+
+        public static void CheckDictionary(Dictionary<string, ILegDTO> previousDictionary)
+        {
+            if (previousDictionary== null)
+                throw new ArgumentException();
+        }
         public static void CheckList(IEnumerable<IReadOnlyTravelCompany> companies)
         {
             if (companies == null)

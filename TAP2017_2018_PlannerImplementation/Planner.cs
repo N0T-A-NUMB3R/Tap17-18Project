@@ -79,7 +79,7 @@ namespace TAP2017_2018_PlannerImplementation
         {
             CheckString(destination);
             CheckString(source);
-           //todo
+            CheckDictionary(previousDictionary);
             var path = new Stack<ILegDTO>();
 
             for (var s = destination; previousDictionary[s] != null; s = previousDictionary[s].From)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using TAP2017_2018_TravelCompanyInterface;
 
@@ -44,7 +45,19 @@ namespace TAP2017_2018_Implementation
             ///  Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
             /// </summary>
             /// <returns></returns>
-            public override int GetHashCode() => base.GetHashCode();
+            public override int GetHashCode()
+            {
+                var hashCode = 807214720;
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(From);
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(To);
+                hashCode = hashCode * -1521134295 + Distance.GetHashCode();
+                hashCode = hashCode * -1521134295 + Cost.GetHashCode();
+                hashCode = hashCode * -1521134295 + Type.GetHashCode();
+                return hashCode;
+            }
+
+          
+
         }
         /// <summary>
         /// a simple expression that converts from  leg Entity to Leg Dto

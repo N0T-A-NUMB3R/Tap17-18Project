@@ -67,13 +67,14 @@
   <ItemGroup>
     <Compile Include="Inizializer\NanPlannerFactoryTestSuite.cs" />
     <Compile Include="Inizializer\NanPlannerTestInitializer.cs" />
-    <Compile Include="NanPlannerTestSuite.cs" />
-    <Compile Include="TestByIvoLazzarino.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestsByAlessioAnnibali.cs" />
+    <Compile Include="NanPlannerTestSuite.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="TAP2017_2018_PlannerInterface\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
