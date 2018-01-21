@@ -7,6 +7,14 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Trip : ITrip
     {
+        /// <summary>
+        /// A trip is represented as a list of subsequent hops between cities, a cost and a distance.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="path"></param>
+        /// <param name="totalCost"></param>
+        /// <param name="totalDistance"></param>
         public Trip(string @from, string to, ReadOnlyCollection<ILegDTO> path, int totalCost, int totalDistance)
         {
             Utilities.Checker.CheckString(to);
@@ -25,6 +33,10 @@ namespace TAP2017_2018_PlannerImplementation
         public int TotalCost { get; }
         public int TotalDistance { get; }
 
+        // <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is Trip trip &&
@@ -35,6 +47,11 @@ namespace TAP2017_2018_PlannerImplementation
                    TotalDistance == trip.TotalDistance;
         }
 
+
+        /// <summary>
+        /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             var hashCode = 1548407081;

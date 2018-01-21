@@ -6,6 +6,10 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class PlannerFactory : IPlannerFactory
     {
+        /// <summary>
+        /// Creates a new IPlanner.
+        /// </summary>
+        /// <returns></returns>
         public IPlanner CreateNew()
         {
             var companies = new List<IReadOnlyTravelCompany>();

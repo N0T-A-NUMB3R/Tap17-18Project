@@ -1,9 +1,13 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using TAP2017_2018_Implementation.Admin;
+using TAP2017_2018_Implementation.Persistent_Layer;
+using TAP2017_2018_Implementation.User;
+using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
-using static TAP2017_2018_Implementation.Checker;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Broker
 {
     /// <summary>
     /// BROKER
@@ -30,7 +34,7 @@ namespace TAP2017_2018_Implementation
         /// <param name="dbConnection"></param>
         public TravelCompanyBroker(string dbConnection)
         {
-            CheckConnectionString(dbConnection);
+            Checker.CheckConnectionString(dbConnection);
             _brokerconnectionstring = dbConnection;
         }
         /// <summary>
@@ -69,9 +73,13 @@ namespace TAP2017_2018_Implementation
                 return travelCompanyNames.ToList().AsReadOnly();
             }
         }
-
-        public override int GetHashCode() => base.GetHashCode();
-
-       
+        /// <summary>
+        /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return -472179866 + EqualityComparer<string>.Default.GetHashCode(_brokerconnectionstring);
+        }
     }
 }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using TAP2017_2018_TravelCompanyInterface.Exceptions;
-
+﻿using NUnit.Framework;
 
 namespace NANTravelCompanyTests
 {

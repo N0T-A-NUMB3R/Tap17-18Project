@@ -1,7 +1,10 @@
 ﻿using Ninject.Modules;
+using TAP2017_2018_Implementation.Admin;
+using TAP2017_2018_Implementation.Broker;
+using TAP2017_2018_Implementation.User;
 using TAP2017_2018_TravelCompanyInterface;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Utilities
 {
     /// <summary>
     /// This binding means that whenever Ninject encounters a dependency on IReadOnlyTravelCompanyFactory, it will resolve an instance of 

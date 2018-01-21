@@ -1,11 +1,6 @@
 ﻿using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.SqlClient;
-using NUnit.Framework;
-using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
-
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Persistent_Layer
 {
 
     public class TravelCompanyContext : DbContext

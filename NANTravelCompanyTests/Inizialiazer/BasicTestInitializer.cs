@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Ninject;
 using NUnit.Framework;
 using TAP2017_2018_TravelCompanyInterface;
@@ -8,7 +6,7 @@ using TAP2017_2018_TravelCompanyInterface;
 namespace NANTravelCompanyTests
 {
 
-        [TestFixture()]
+        [TestFixture]
         public class BasicTestInitializer
         {
 
@@ -16,9 +14,9 @@ namespace NANTravelCompanyTests
             protected IReadOnlyTravelCompanyFactory readOnlyTravelCompanyFactory;
             protected ITravelCompanyBrokerFactory brokerFactory;
 
-            protected string AllTravelCompaniesConnectionString = BasicTestInitializer.CreateConnectionString("ALLTC");
-            protected string ExampleConnectionString = BasicTestInitializer.CreateConnectionString("TCITravel");
-            protected string ExampleConnectionString2 = BasicTestInitializer.CreateConnectionString("differentTC2");
+            protected string AllTravelCompaniesConnectionString = CreateConnectionString("ALLTC");
+            protected string ExampleConnectionString = CreateConnectionString("TCITravel");
+            protected string ExampleConnectionString2 = CreateConnectionString("differentTC2");
             protected string ExampleName = "TestTravelCompany";
             internal const string ImplementationAssembly = @"..\..\..\TAP2017_2018_Implementation\bin\Debug\TAP2017_2018_Implementation.dll";
 

@@ -1,9 +1,10 @@
-﻿using TAP2017_2018_TravelCompanyInterface;
+﻿using System.Data.Entity;
+using TAP2017_2018_Implementation.Persistent_Layer;
+using TAP2017_2018_Implementation.Utilities;
+using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
-using static System.Data.Entity.Database;
-using static TAP2017_2018_Implementation.Checker;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Broker
 {
     public class TravelCompanyBrokerFactory : ITravelCompanyBrokerFactory
     {
@@ -16,9 +17,9 @@ namespace TAP2017_2018_Implementation
         public ITravelCompanyBroker CreateNewBroker(string dbConnectionString)
         {        
             
-            CheckConnectionString(dbConnectionString);
-            if (Exists(dbConnectionString))
-                Delete(dbConnectionString);
+            Checker.CheckConnectionString(dbConnectionString);
+            if (Database.Exists(dbConnectionString))
+                Database.Delete(dbConnectionString);
            
 
             using (var c = new BrokerContext(dbConnectionString))
@@ -38,8 +39,8 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public ITravelCompanyBroker GetBroker(string dbConnectionString)
         {
-            CheckConnectionString(dbConnectionString);
-            if (Exists(dbConnectionString))
+            Checker.CheckConnectionString(dbConnectionString);
+            if (Database.Exists(dbConnectionString))
                 return new TravelCompanyBroker(dbConnectionString);
             throw new NonexistentObjectException();
         }

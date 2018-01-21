@@ -2,10 +2,11 @@
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Utilities
 {
 
     internal static class Checker

@@ -1,15 +1,16 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using TAP2017_2018_Implementation.Persistent_Layer;
+using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
-using static TAP2017_2018_Implementation.LegUtilities;
-using static TAP2017_2018_Implementation.Checker;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Admin
 {
     /// <summary>
     /// ADMIN LAYER
     /// </summary>
-    internal class TravelCompany : ITravelCompany
+    public class TravelCompany : ITravelCompany
     {
         private readonly string _tcConnectionstring;
         public string Name { get; }
@@ -21,8 +22,8 @@ namespace TAP2017_2018_Implementation
         /// <param name="agencyName"></param>
         public TravelCompany(string connectionString, string agencyName)
         {
-            CheckConnectionString(connectionString);
-            CheckString(agencyName);
+            Checker.CheckConnectionString(connectionString);
+            Checker.CheckString(agencyName);
 
             _tcConnectionstring = connectionString;
             Name = agencyName;
@@ -38,6 +39,7 @@ namespace TAP2017_2018_Implementation
                 return false;
             return _tcConnectionstring == other._tcConnectionstring && Name == other.Name;
         }
+
         /// <summary>
         /// Creates an ILeg which connects two cities. 
         /// </summary>
@@ -45,15 +47,15 @@ namespace TAP2017_2018_Implementation
         /// <param name="to"></param>
         /// <param name="cost"></param>
         /// <param name="distance"></param>
-        /// <param name="transportType "></param>
+        
+        /// <param name="transportType"></param>
         /// <returns></returns>
-
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
-            CheckLeg(from, to, cost, distance, transportType);
+            Checker.CheckLeg(from, to, cost, distance, transportType);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                if (c.Legs.Any(EqualsLegExp(from,to,cost,distance,transportType)))
+                if (c.Legs.Any(LegUtilities.EqualsLegExp(from,to,cost,distance,transportType)))
                     throw new TapDuplicatedObjectException();
 
                 var legtoAdd = new LegEntity()
@@ -70,16 +72,17 @@ namespace TAP2017_2018_Implementation
                 return legtoAdd.Id;
             }
         }
+
         /// <summary>
         /// Deletes the leg from an Id
         /// </summary>
-        /// <param name="an ID"></param>
+        /// <param name="legToBeRemovedId"></param>
         public void DeleteLeg(int legToBeRemovedId)
         {
-            CheckNegative(legToBeRemovedId);
+            Checker.CheckNegative(legToBeRemovedId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                var legToDelete = c.Legs.SingleOrDefault(EqualsIdExp(legToBeRemovedId));
+                var legToDelete = c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legToBeRemovedId));
                 c.Legs.Remove(legToDelete ?? throw new NonexistentObjectException());
                 c.SaveChanges();
             }
@@ -92,21 +95,30 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public ILegDTO GetLegDTOFromId(int legId)
         {
-            CheckNegative(legId);
+            Checker.CheckNegative(legId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                CheckLegEntity(c.Legs.SingleOrDefault(EqualsIdExp(legId))); 
+                Checker.CheckLegEntity(c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legId))); 
                 //todo da mettere su linea unica
                 var leg = c.Legs.Find(legId);
-                CheckNull(leg);
-               return CastToLegDtoExp.Compile()(leg);
+                Checker.CheckNull(leg);
+               return LegUtilities.CastToLegDtoExp.Compile()(leg);
             }
         }
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode()
+        {
+            var hashCode = 1386540176;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_tcConnectionstring);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            return hashCode;
+        }
+
+        
+
     }
 }
 

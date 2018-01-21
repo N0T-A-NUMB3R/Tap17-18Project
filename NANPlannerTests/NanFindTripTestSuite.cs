@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
+using Moq;
 using NUnit.Framework;
 using TAP2017_2018_PlannerInterface;
 using TAP2017_2018_TravelCompanyInterface;
-using Moq;
-using NUnit.Framework.Internal;
 using Key = System.Tuple<string, string, string>;
 using static TAP2017_2018_TravelCompanyInterface.TransportType;
 using static TAP2017_2018_PlannerInterface.FindOptions;
@@ -21,7 +20,7 @@ namespace NanPlannerTests
 
     [TestFixture]
 
-    public class NanPlannerTestSuite : NANTestInitializer
+    public class NanFindTripTestSuite: NANTestInitializer
     {
         protected IPlanner Planner;
 
@@ -106,7 +105,7 @@ namespace NanPlannerTests
 
             CreatedLegs = new Dictionary<Key, ILegDTO>
             {
-                [new Key(trenord, A, B)] = GetMockLegDTO(A, B, 5, 2, Train),
+                [new Key(trenord, A, B)] = GetMockLegDTO(A, B, 5, 1, Train), //da 2 a i
                 [new Key(alitalia, A, B)] = GetMockLegDTO(A, B, 10, 1, Plane),
 
                 [new Key(costa, A, F)] = GetMockLegDTO(A, F, 20, 10, Ship),
@@ -170,45 +169,45 @@ namespace NanPlannerTests
                     .Returns(GetDepartures(trenord, city, Plane).AsReadOnly);
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Train))
-                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Train).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Bus | Train))
+                    .Returns(GetDepartures(trenord, city, Bus | Train).AsReadOnly);
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Plane))
-                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Plane).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Bus | Plane))
+                    .Returns(GetDepartures(trenord, city, Bus | Plane).AsReadOnly);
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Ship))
-                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Ship).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Bus | Ship))
+                    .Returns(GetDepartures(trenord, city, Bus | Ship).AsReadOnly);
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Train | Plane))
-                    .Returns(GetDepartures(trenord, city, TransportType.Train | Plane).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Train | Plane))
+                    .Returns(GetDepartures(trenord, city, Train | Plane).AsReadOnly);
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Train | Ship))
-                    .Returns(GetDepartures(trenord, city, TransportType.Train | Ship).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Train | Ship))
+                    .Returns(GetDepartures(trenord, city, Train | Ship).AsReadOnly);
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Ship))
-                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Ship).AsReadOnly);
-
-
-                MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Ship | Train))
-                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Ship | Train).AsReadOnly);
-                MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Ship | Bus))
-                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Ship | Bus).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Plane | Ship))
+                    .Returns(GetDepartures(trenord, city, Plane | Ship).AsReadOnly);
 
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Plane | Bus | Train))
-                    .Returns(GetDepartures(trenord, city, TransportType.Plane | Bus | Train).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Plane | Ship | Train))
+                    .Returns(GetDepartures(trenord, city, Plane | Ship | Train).AsReadOnly);
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, Plane | Ship | Bus))
+                    .Returns(GetDepartures(trenord, city, Plane | Ship | Bus).AsReadOnly);
+
 
                 MockTrenord
-                    .Setup(m => m.FindDepartures(city, TransportType.Bus | Ship | Train))
-                    .Returns(GetDepartures(trenord, city, TransportType.Bus | Ship | Train).AsReadOnly);
+                    .Setup(m => m.FindDepartures(city, Plane | Bus | Train))
+                    .Returns(GetDepartures(trenord, city, Plane | Bus | Train).AsReadOnly);
+
+                MockTrenord
+                    .Setup(m => m.FindDepartures(city, Bus | Ship | Train))
+                    .Returns(GetDepartures(trenord, city, Bus | Ship | Train).AsReadOnly);
 
             }
 
@@ -360,9 +359,9 @@ namespace NanPlannerTests
 
 
         [Test]
-        public void FindTripFromEqualsEmptyMinHop()
+        public void FromEqualsToEmpty_MinHop()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Bus);
+            ITrip trip = Planner.FindTrip(A, A, MinimumHops, Bus);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -370,9 +369,9 @@ namespace NanPlannerTests
             Assert.AreEqual(A, trip.To);
         }
         [Test]
-        public void FindTripFromEqualsEmptyMinDistanceMinDistance()
+        public void FromEqualsToEmpty_MinDistance_Bus()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Bus);
+            ITrip trip = Planner.FindTrip(A, A, MinimumDistance, Bus);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -381,9 +380,9 @@ namespace NanPlannerTests
         }
 
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinCostTrain()
+        public void FromEqualsToEmpty_MinCost_Train()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Train);
+            ITrip trip = Planner.FindTrip(A, A, MinimumCost, Train);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -392,29 +391,21 @@ namespace NanPlannerTests
         }
 
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinCostTrainBus()
+        public void FromEqualsToEmpty_MinCost_Bus()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Bus);
+            ITrip trip = Planner.FindTrip(A, A, MinimumCost, Bus);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
             Assert.AreEqual(A, trip.From);
             Assert.AreEqual(A, trip.To);
         }
+    
+        
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinCostTrainShip()
+        public void FromEqualsToEmpty_MinCost_Ship()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Train);
-            Assert.IsEmpty(trip.Path);
-            Assert.AreEqual(0, trip.TotalCost);
-            Assert.AreEqual(0, trip.TotalDistance);
-            Assert.AreEqual(A, trip.From);
-            Assert.AreEqual(A, trip.To);
-        }
-        [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinCostShip()
-        {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumCost, TransportType.Ship);
+            ITrip trip = Planner.FindTrip(A, A, MinimumCost, Ship);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -423,9 +414,9 @@ namespace NanPlannerTests
         }
 
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinHopTrain()
+        public void FromEqualsToEmpty_MinHop_Train()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Train);
+            ITrip trip = Planner.FindTrip(A, A, MinimumHops, Train);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -434,9 +425,9 @@ namespace NanPlannerTests
         }
 
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinDistanceTrainBus()
+        public void romEqualsToEmpty_MinDistance_Bus()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Bus);
+            ITrip trip = Planner.FindTrip(A, A, MinimumDistance, Bus);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -444,9 +435,9 @@ namespace NanPlannerTests
             Assert.AreEqual(A, trip.To);
         }
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinDistanceTrainShip()
+        public void FromEqualsToEmpty_MinDistance_Train()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Train);
+            ITrip trip = Planner.FindTrip(A, A, MinimumDistance, Train);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -454,50 +445,32 @@ namespace NanPlannerTests
             Assert.AreEqual(A, trip.To);
         }
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinDisranceShip()
+        public void FromEqualsTo_Empty_MinDistance_Ship()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Ship);
+            ITrip trip = Planner.FindTrip(A, A, MinimumDistance, Ship);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
             Assert.AreEqual(A, trip.From);
             Assert.AreEqual(A, trip.To);
         }
-        [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinDistanceTrain()
-        {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumDistance, TransportType.Train);
-            Assert.IsEmpty(trip.Path);
-            Assert.AreEqual(0, trip.TotalCost);
-            Assert.AreEqual(0, trip.TotalDistance);
-            Assert.AreEqual(A, trip.From);
-            Assert.AreEqual(A, trip.To);
-        }
+       
 
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinHopTrainBus()
+        public void FromEqualsToEmpty_MinHop_Bus()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Bus);
+            ITrip trip = Planner.FindTrip(A, A, MinimumHops, Bus);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
             Assert.AreEqual(A, trip.From);
             Assert.AreEqual(A, trip.To);
         }
+       
         [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinHopTrainShip()
+        public void FromToEqualsEmpty_MinHop_Ship()
         {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Train);
-            Assert.IsEmpty(trip.Path);
-            Assert.AreEqual(0, trip.TotalCost);
-            Assert.AreEqual(0, trip.TotalDistance);
-            Assert.AreEqual(A, trip.From);
-            Assert.AreEqual(A, trip.To);
-        }
-        [Test, Category("FromEquals")]
-        public void FindTripFromEqualsEmptyMinHopShip()
-        {
-            ITrip trip = Planner.FindTrip(A, A, FindOptions.MinimumHops, TransportType.Ship);
+            ITrip trip = Planner.FindTrip(A, A, MinimumHops, Ship);
             Assert.IsEmpty(trip.Path);
             Assert.AreEqual(0, trip.TotalCost);
             Assert.AreEqual(0, trip.TotalDistance);
@@ -522,6 +495,22 @@ namespace NanPlannerTests
 
             MakeAssertions(A, F, trip, legs);
         }
+        
+        [Test]
+        public void A_B_MinCost_AllType_PickTrain()
+        {
+            Planner.AddCompanies(Trenord, Alitalia, Costa);
+
+            var trip = Planner.FindTrip(A, B, MinimumDistance, AllTransports);
+            var legs = new List<ILegDTO>
+            {
+                CreatedLegs[new Key(trenord, A, B)]
+                // CreatedLegs[new Key(alitalia, A, B)] se uguali si prende Cost minore
+
+            };
+
+            MakeAssertions(A, B, trip, legs);
+        }
 
         [Test]
         public void A_E_Train_OK()
@@ -532,7 +521,7 @@ namespace NanPlannerTests
             var legs = new List<ILegDTO>
             {
                 CreatedLegs[new Key(trenord, A, C)],
-                CreatedLegs[new Key(trenord, C, E)],
+                CreatedLegs[new Key(trenord, C, E)]
                
             };
 
@@ -547,7 +536,7 @@ namespace NanPlannerTests
             var legs = new List<ILegDTO>
             {
                 CreatedLegs[new Key(trenord, C, E)],
-                CreatedLegs[new Key(trenord, E, F)],
+                CreatedLegs[new Key(trenord, E, F)]
 
             };
 
@@ -562,8 +551,8 @@ namespace NanPlannerTests
             var trip = Planner.FindTrip(A, D, MinimumDistance, AllTransports);
             var legs = new List<ILegDTO>
             {
-                CreatedLegs[new Key(alitalia,A,B)],
-                CreatedLegs[new Key(alitalia,B,D)],
+                CreatedLegs[new Key(trenord,A,B)],
+                CreatedLegs[new Key(alitalia,B,D)]
 
             };
             MakeAssertions(A, D, trip, legs);
@@ -578,7 +567,7 @@ namespace NanPlannerTests
             var legs = new List<ILegDTO>
             {
                 CreatedLegs[new Key(trenord,A,B)],
-                CreatedLegs[new Key(trenord,B,D)],
+                CreatedLegs[new Key(trenord,B,D)]
 
             };
             MakeAssertions(A, D, trip, legs);
@@ -620,7 +609,7 @@ namespace NanPlannerTests
             var trip = Planner.FindTrip(A, F, MinimumDistance, AllTransports);
             var legs = new List<ILegDTO>
                 {
-                    CreatedLegs[new Key(alitalia, A, B)],
+                    CreatedLegs[new Key(trenord, A, B)],
                     CreatedLegs[new Key(alitalia, B, D)],
                     CreatedLegs[new Key(costa, D, F)]
                 };
@@ -669,7 +658,7 @@ namespace NanPlannerTests
             var legs = new List<ILegDTO>
             {
                 CreatedLegs[new Key(costa, A, F)],
-                CreatedLegs[new Key(costa, F, D)],
+                CreatedLegs[new Key(costa, F, D)]
                 
             };
 
@@ -684,7 +673,7 @@ namespace NanPlannerTests
             var legs = new List<ILegDTO>
             {
                 CreatedLegs[new Key(costa, A, F)],
-                CreatedLegs[new Key(costa, F, D)],
+                CreatedLegs[new Key(costa, F, D)]
 
             };
 
@@ -700,7 +689,7 @@ namespace NanPlannerTests
             var legs = new List<ILegDTO>
             {
                 CreatedLegs[new Key(costa, A, F)],
-                CreatedLegs[new Key(costa, F, D)],
+                CreatedLegs[new Key(costa, F, D)]
 
             };
 

@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_TravelCompanyInterface;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Utilities
 {
     public static class LegUtilities
     {

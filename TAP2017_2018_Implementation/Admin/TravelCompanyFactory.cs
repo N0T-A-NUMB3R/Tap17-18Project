@@ -1,10 +1,11 @@
 ﻿using System.Linq;
+using TAP2017_2018_Implementation.Broker;
+using TAP2017_2018_Implementation.Persistent_Layer;
+using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
-using static TAP2017_2018_Implementation.Checker;
-using static TAP2017_2018_Implementation.LegUtilities;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Admin
 {
     public class TravelCompanyFactory : ITravelCompanyFactory
     {
@@ -15,7 +16,7 @@ namespace TAP2017_2018_Implementation
         /// <param name="connectionstring"></param>
         public TravelCompanyFactory(string connectionstring)
         {
-            CheckConnectionString(connectionstring);
+            Checker.CheckConnectionString(connectionstring);
             _brokerconnectionstring = connectionstring;
             
         }
@@ -27,10 +28,10 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public ITravelCompany CreateNew(string travelCompanyConnectionString, string name) 
         {
-            CheckConnectionString(travelCompanyConnectionString);
-            CheckConnectionString(_brokerconnectionstring);
-            CheckTwoConnString(travelCompanyConnectionString,_brokerconnectionstring);
-            CheckString(name);
+            Checker.CheckConnectionString(travelCompanyConnectionString);
+            Checker.CheckConnectionString(_brokerconnectionstring);
+            Checker.CheckTwoConnString(travelCompanyConnectionString,_brokerconnectionstring);
+            Checker.CheckString(name);
 
             TravelCompanyBroker broker = new TravelCompanyBroker(_brokerconnectionstring);
             if (broker.KnownTravelCompanies().Contains(name)) 
@@ -41,7 +42,7 @@ namespace TAP2017_2018_Implementation
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
                 
-                if (c.TravelCompanies.Any(EqualsCsExp(travelCompanyConnectionString)))
+                if (c.TravelCompanies.Any(LegUtilities.EqualsCsExp(travelCompanyConnectionString)))
                     throw new SameConnectionStringException(); //todo
                 
                 
@@ -72,10 +73,10 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public ITravelCompany Get(string name)
         {
-            CheckString(name);
+            Checker.CheckString(name);
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
-                var travelAgency = c.TravelCompanies.SingleOrDefault(EqualsNameExp(name));
+                var travelAgency = c.TravelCompanies.SingleOrDefault(LegUtilities.EqualsNameExp(name));
                 if (travelAgency == null)
                     throw new NonexistentTravelCompanyException();
                 return new TravelCompany(travelAgency.ConnectionString, name);

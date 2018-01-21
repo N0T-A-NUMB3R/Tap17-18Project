@@ -3,9 +3,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using TAP2017_2018_TravelCompanyInterface;
-using static TAP2017_2018_Implementation.LegUtilities;
-using static TAP2017_2018_Implementation.Checker;
-
+using static TAP2017_2018_Implementation.Utilities.LegUtilities;
+using static TAP2017_2018_Implementation.Utilities.Checker;
+using System.Collections.Generic;
+using TAP2017_2018_Implementation.Persistent_Layer;
 
 namespace TAP2017_2018_Implementation
 {
@@ -76,7 +77,16 @@ namespace TAP2017_2018_Implementation
         ///  Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
         /// <returns></returns>
-        public override int GetHashCode() => base.GetHashCode();
+        public override int GetHashCode()
+        {
+            var hashCode = -127364199;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_tconnectionstring);
+            return hashCode;
+        }
+
        
+
+
     }
 }

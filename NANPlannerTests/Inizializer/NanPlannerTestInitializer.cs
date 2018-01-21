@@ -1,12 +1,12 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using Ninject;
+using NUnit.Framework;
 using TAP2017_2018_PlannerInterface;
 
 namespace NanPlannerTests
 {
 
-    [TestFixture()]
+    [TestFixture]
     public class NANTestInitializer
     {
         protected IPlannerFactory plannerFactory;

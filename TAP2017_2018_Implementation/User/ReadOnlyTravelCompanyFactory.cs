@@ -1,8 +1,9 @@
 ﻿using System.Linq;
+using TAP2017_2018_Implementation.Persistent_Layer;
+using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
-using static TAP2017_2018_Implementation.Checker;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.User
 {
     public class ReadOnlyTravelCompanyFactory : IReadOnlyTravelCompanyFactory
     {
@@ -14,7 +15,7 @@ namespace TAP2017_2018_Implementation
         /// <param name="dBconnection"></param>
         public ReadOnlyTravelCompanyFactory(string dBconnection)
         {
-            CheckConnectionString(dBconnection);
+            Checker.CheckConnectionString(dBconnection);
             _brokerconnectionstring = dBconnection;
         }
        
@@ -25,7 +26,7 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public IReadOnlyTravelCompany Get(string name)
         {
-            CheckString(name);
+            Checker.CheckString(name);
             //todo andrebbe fatto il controllo se esiste la corrisponte TC
             using (var c = new BrokerContext(_brokerconnectionstring))
             {

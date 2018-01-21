@@ -1,9 +1,8 @@
-﻿using System.Data;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.Persistent_Layer
 {
     public class BrokerContext : DbContext
     {

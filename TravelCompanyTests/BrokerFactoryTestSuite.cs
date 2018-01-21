@@ -1,7 +1,5 @@
-﻿using Ninject;
+﻿using System;
 using NUnit.Framework;
-using System;
-
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 

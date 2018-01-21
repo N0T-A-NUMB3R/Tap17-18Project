@@ -1,6 +1,4 @@
-﻿using Ninject;
-using NUnit.Framework;
-using TAP2017_2018_TravelCompanyInterface;
+﻿using NUnit.Framework;
 
 namespace TAP2017_2018_TravelCompanyTests
 {

@@ -117,7 +117,7 @@ namespace TAP2017_2018_PlannerImplementation
                 return new Trip(source, destination, new List<ILegDTO>().AsReadOnly(), 0, 0);
 
             previous[source] = null;
-            distance[source] = 0; //// We know the distance in source is 0 by definition
+            distance[source] = 0; // We know the distance in source is 0 by definition
             previous[destination] = null;
             distance[destination] = int.MaxValue; // We know the distance from source->destination is infinite by definition
 
