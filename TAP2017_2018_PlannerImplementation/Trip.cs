@@ -7,6 +7,7 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Trip : ITrip
     {
+
         /// <summary>
         /// A trip is represented as a list of subsequent hops between cities, a cost and a distance.
         /// </summary>
@@ -15,12 +16,9 @@ namespace TAP2017_2018_PlannerImplementation
         /// <param name="path"></param>
         /// <param name="totalCost"></param>
         /// <param name="totalDistance"></param>
-        public Trip(string @from, string to, ReadOnlyCollection<ILegDTO> path, int totalCost, int totalDistance)
+        public Trip(string from, string to, ReadOnlyCollection<ILegDTO> path, int totalCost, int totalDistance)
         {
-            Utilities.Checker.CheckString(to);
-            Utilities.Checker.CheckString(from);
-            //todo
-            From = @from;
+            From = from;
             To = to;
             Path = path;
             TotalCost = totalCost;

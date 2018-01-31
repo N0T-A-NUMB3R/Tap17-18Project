@@ -155,6 +155,16 @@ namespace TAP2017_2018_Implementation.Utilities
                 throw new ArgumentException();
         }
         /// <summary>
+        ///  Auxiliary method that controls  if the id isn't negative
+        /// </summary>
+        /// <param name="legId"></param>
+        public static void CheckNegativeId(int legId)
+        {
+            if (legId < 0)
+                throw new NonexistentObjectException();
+        }
+        
+        /// <summary>
         /// Auxiliary method that controls  if the objects are null
         /// </summary>
         /// <param name="objects"></param>

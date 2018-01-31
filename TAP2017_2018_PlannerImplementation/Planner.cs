@@ -129,7 +129,7 @@ namespace TAP2017_2018_PlannerImplementation
                 // remove best vertex (that is, connection with minimum distance)
                 nodes.Remove(min);
 
-                if (min == destination || distance[min] == int.MaxValue) break; //todo probably useless.
+              //  if (min == destination || distance[min] == int.MaxValue) break; //todo probably useless.
 
                 // Search (with  GetNeigbors) and loop all connected nodes
                 foreach (var neigh in _companies.GetNeighborsDtos(min, allowedTransportTypes))

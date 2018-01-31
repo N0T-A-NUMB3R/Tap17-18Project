@@ -1,27 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
-using TAP2017_2018_TravelCompanyInterface;
-using static TAP2017_2018_Implementation.Utilities.LegUtilities;
-using static TAP2017_2018_Implementation.Utilities.Checker;
-using System.Collections.Generic;
 using TAP2017_2018_Implementation.Persistent_Layer;
+using TAP2017_2018_Implementation.Utilities;
+using TAP2017_2018_TravelCompanyInterface;
+using static TAP2017_2018_Implementation.Utilities.Checker;
 
-namespace TAP2017_2018_Implementation
+namespace TAP2017_2018_Implementation.User
 {
     /// <summary>
     /// USER LAYER
     /// </summary>
     public class ReadOnlyTravelCompany : IReadOnlyTravelCompany
     {
-        public string Name { get; set; }
+        public string Name { get; }
         private readonly string _tconnectionstring;
-       
+
         /// <summary>
         ///  Initializes a new instance of the ReadOnlyTravelCompany 
         /// </summary>
         /// <param name="connectionString"></param>
+        /// <param name="name"></param>
         public ReadOnlyTravelCompany(string connectionString,string name)
         {
             CheckConnectionString(connectionString);
@@ -50,7 +51,7 @@ namespace TAP2017_2018_Implementation
             CheckNullExp(predicate);
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
-                var legs = c.Legs.Select(CastToLegDtoExp).AsEnumerable().Where(predicate.Compile());
+                var legs = c.Legs.Select(LegUtilities.CastToLegDtoExp).AsEnumerable().Where(predicate.Compile());
                 CheckNull(legs);
                 return legs.ToList().AsReadOnly();
             }
@@ -67,7 +68,7 @@ namespace TAP2017_2018_Implementation
             CheckDepartures(from, allowedTransportTypes);
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
-                var legsFound = c.Legs.Where(EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(CastToLegDtoExp);
+                var legsFound = c.Legs.Where(LegUtilities.EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(LegUtilities.CastToLegDtoExp);
                 CheckNull(legsFound);
                 return legsFound.ToList().AsReadOnly();
             }
@@ -83,8 +84,6 @@ namespace TAP2017_2018_Implementation
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_tconnectionstring);
             return hashCode;
         }
-
-       
 
 
     }

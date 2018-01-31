@@ -4,8 +4,8 @@ using System.Linq;
 using TAP2017_2018_Implementation.Admin;
 using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_Implementation.User;
-using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
+using static TAP2017_2018_Implementation.Utilities.Checker;
 
 namespace TAP2017_2018_Implementation.Broker
 {
@@ -34,7 +34,7 @@ namespace TAP2017_2018_Implementation.Broker
         /// <param name="dbConnection"></param>
         public TravelCompanyBroker(string dbConnection)
         {
-            Checker.CheckConnectionString(dbConnection);
+            CheckConnectionString(dbConnection);
             _brokerconnectionstring = dbConnection;
         }
         /// <summary>
@@ -46,7 +46,7 @@ namespace TAP2017_2018_Implementation.Broker
         public ITravelCompanyFactory GetTravelCompanyFactory()
         {
             return new TravelCompanyFactory(_brokerconnectionstring);
-            // todo ?? perchè non singleton ?
+          
         }
 
         /// <summary>

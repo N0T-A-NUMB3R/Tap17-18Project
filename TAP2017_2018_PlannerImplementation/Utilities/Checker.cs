@@ -8,7 +8,6 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
 {
     internal class Checker 
     {
-
         /// <summary>
         /// Auxiliary method that controls  if the companies is null
         /// </summary>
@@ -17,10 +16,6 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         {
             if (companies == null)
                 throw new ArgumentNullException();
-            /*
-            if ((companies.Select(c => c.GetType()).Distinct().Count() != 1))
-                throw new ArgumentException();
-            */
         }
         /// <summary>
         /// Auxiliary method that controls  if the dictionary is null
@@ -28,7 +23,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         /// <param name="previousDictionary"></param>
         public static void CheckDictionary(Dictionary<string, ILegDTO> previousDictionary)
         {
-            if (previousDictionary== null)
+            if (previousDictionary == null)
                 throw new ArgumentException();
         }
         /// <summary>

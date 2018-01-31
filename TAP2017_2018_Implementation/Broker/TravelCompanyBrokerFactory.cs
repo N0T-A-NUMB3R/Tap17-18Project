@@ -1,8 +1,8 @@
 ﻿using System.Data.Entity;
 using TAP2017_2018_Implementation.Persistent_Layer;
-using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
+using static TAP2017_2018_Implementation.Utilities.Checker;
 
 namespace TAP2017_2018_Implementation.Broker
 {
@@ -17,11 +17,9 @@ namespace TAP2017_2018_Implementation.Broker
         public ITravelCompanyBroker CreateNewBroker(string dbConnectionString)
         {        
             
-            Checker.CheckConnectionString(dbConnectionString);
+            CheckConnectionString(dbConnectionString);
             if (Database.Exists(dbConnectionString))
                 Database.Delete(dbConnectionString);
-           
-            // todo ma fai la stessa cosa in due modi diversi ?
             
             using (var c = new BrokerContext(dbConnectionString))
             {   
@@ -40,7 +38,7 @@ namespace TAP2017_2018_Implementation.Broker
         /// <returns></returns>
         public ITravelCompanyBroker GetBroker(string dbConnectionString)
         {
-            Checker.CheckConnectionString(dbConnectionString);
+            CheckConnectionString(dbConnectionString);
             if (Database.Exists(dbConnectionString)) 
                 return new TravelCompanyBroker(dbConnectionString);
             throw new NonexistentObjectException();

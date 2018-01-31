@@ -80,7 +80,7 @@ namespace TAP2017_2018_Implementation.Admin
         /// <param name="legToBeRemovedId"></param>
         public void DeleteLeg(int legToBeRemovedId)
         {
-            CheckNegative(legToBeRemovedId);  // todo ???
+            CheckNegative(legToBeRemovedId); 
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 var legToDelete = c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legToBeRemovedId));
