@@ -21,7 +21,8 @@ namespace TAP2017_2018_Implementation.Broker
             if (Database.Exists(dbConnectionString))
                 Database.Delete(dbConnectionString);
            
-
+            // todo ma fai la stessa cosa in due modi diversi ?
+            
             using (var c = new BrokerContext(dbConnectionString))
             {   
                 c.Database.Create();
@@ -40,7 +41,7 @@ namespace TAP2017_2018_Implementation.Broker
         public ITravelCompanyBroker GetBroker(string dbConnectionString)
         {
             Checker.CheckConnectionString(dbConnectionString);
-            if (Database.Exists(dbConnectionString))
+            if (Database.Exists(dbConnectionString)) 
                 return new TravelCompanyBroker(dbConnectionString);
             throw new NonexistentObjectException();
         }

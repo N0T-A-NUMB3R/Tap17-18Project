@@ -15,43 +15,12 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
         {
             modelBuilder.Entity<LegEntity>()
                 .ToTable("Leg")
-                .HasKey(l => l.Id); //rindondante per via della convenzione.
-            // .HasIndex(l => new {l.From, l.To,l.Distance,l.Cost,l.Type}).IsUnique(); 
-            //non ha senso perchè il campo Id mi fa si che non possono esistere Leg uguali
+                .HasKey(l => l.Id);
+            modelBuilder.Entity<LegEntity>()
+                .Property(l => l.From).IsRequired();
+            modelBuilder.Entity<LegEntity>()
+                .Property(l => l.To).IsRequired();
         }
-
-        /*
-        public override int SaveChanges()
-        {
-            try
-            {
-                return base.SaveChanges();
-            }
-            catch (DbUpdateException e)
-            {
-                if (e.InnerException != null && e.InnerException.InnerException != null &&
-                    e.InnerException.InnerException is SqlException sqlException && sqlException.Number == 2601)
-                {
-             
-                            if (sqlException.Message.Contains(GlobalRequirementClass.GetCompanyNameIndex()))
-                            {
-                                throw new TapDuplicatedObjectException(e.Message);
-                            }
-                            else if (sqlException.Message.Contains(GlobalRequirementClass
-                                .GetCompanyConnectionStringIndex()))
-                            {
-                                throw new SameConnectionStringException(e.Message);
-                            }
-                   
-                
-
-                throw e;
-
-            }
-
-        }
-    }
-}
-*/
+       
     }
 }

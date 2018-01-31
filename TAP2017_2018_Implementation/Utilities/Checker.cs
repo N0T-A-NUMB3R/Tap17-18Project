@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_TravelCompanyInterface;
@@ -32,7 +33,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckTwoConnString(string cs1, string cs2)
         {
             if (cs1 == cs2)
-                throw new SameConnectionStringException(nameof(cs1));
+                throw new SameConnectionStringException();
         }
         /// <summary>
         /// Auxiliary method that controls  if two  string(from, to, Tc names) are equal 
@@ -80,7 +81,7 @@ namespace TAP2017_2018_Implementation.Utilities
         /// Auxiliary method that controls  if the string is null, empty, alphanumerics or does not respect the constraints
         /// </summary>
         /// <param name="s"></param>
-        public static void CheckString(string s)
+        public static void CheckName(string s)
         {
             if (s == null)
                 throw new ArgumentNullException();
@@ -129,8 +130,8 @@ namespace TAP2017_2018_Implementation.Utilities
         private static void CheckTwoString(string from, string to)
         {
             CheckTwoStringEquals(@from, to);
-            CheckString(@from);
-            CheckString(to);
+            CheckName(@from);
+            CheckName(to);
         }
         /// <summary>
         /// Auxiliary method that controls  if the strings are null, empty, alphanumerics or does not respect the constraints and and trasport
@@ -140,11 +141,19 @@ namespace TAP2017_2018_Implementation.Utilities
         /// <param name="allowedTransportTypes"></param>
         public static void CheckDepartures(string from, TransportType allowedTransportTypes)
         {
-            CheckString(@from);
+            CheckName(@from);
             if (allowedTransportTypes == TransportType.None)
                 throw new ArgumentException();
         }
-
+        /// <summary>
+        ///  Auxiliary method that controls  if the Exp are null
+        /// </summary>
+        /// <param name="predicate"></param>
+        public static void CheckNullExp(Expression<Func<ILegDTO, bool>> predicate)
+        {
+            if(predicate == null)
+                throw new ArgumentException();
+        }
         /// <summary>
         /// Auxiliary method that controls  if the objects are null
         /// </summary>
@@ -153,7 +162,7 @@ namespace TAP2017_2018_Implementation.Utilities
         {
             if (objects.Any(o => o == null))
             {
-                throw new ArgumentNullException();
+                throw new NonexistentObjectException();
             }
         }
     }

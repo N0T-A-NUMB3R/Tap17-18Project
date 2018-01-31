@@ -104,6 +104,7 @@ namespace TAP2017_2018_PlannerImplementation
         /// <param name="options"></param>
         /// <param name="allowedTransportTypes"></param>
         /// <returns></returns>
+        
         public ITrip FindTrip(string source, string destination, FindOptions options,
             TransportType allowedTransportTypes)
         {

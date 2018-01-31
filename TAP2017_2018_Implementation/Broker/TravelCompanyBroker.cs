@@ -46,6 +46,7 @@ namespace TAP2017_2018_Implementation.Broker
         public ITravelCompanyFactory GetTravelCompanyFactory()
         {
             return new TravelCompanyFactory(_brokerconnectionstring);
+            // todo ?? perchè non singleton ?
         }
 
         /// <summary>

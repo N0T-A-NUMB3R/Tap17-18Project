@@ -22,10 +22,11 @@ namespace TAP2017_2018_Implementation
         ///  Initializes a new instance of the ReadOnlyTravelCompany 
         /// </summary>
         /// <param name="connectionString"></param>
-        public ReadOnlyTravelCompany(string connectionString)
+        public ReadOnlyTravelCompany(string connectionString,string name)
         {
             CheckConnectionString(connectionString);
             _tconnectionstring = connectionString;
+            Name = name;
         }
         /// <summary>
         /// Determines whether the specified object is equal to the current object
@@ -46,13 +47,11 @@ namespace TAP2017_2018_Implementation
         /// <returns></returns>
         public ReadOnlyCollection<ILegDTO> FindLegs(Expression<Func<ILegDTO, bool>> predicate)
         {
-            CheckNull(predicate);
-
+            CheckNullExp(predicate);
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legs = c.Legs.Select(CastToLegDtoExp).AsEnumerable().Where(predicate.Compile());
- 
-                // todo controllare legs?
+                CheckNull(legs);
                 return legs.ToList().AsReadOnly();
             }
         }
@@ -69,7 +68,7 @@ namespace TAP2017_2018_Implementation
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legsFound = c.Legs.Where(EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(CastToLegDtoExp);
-
+                CheckNull(legsFound);
                 return legsFound.ToList().AsReadOnly();
             }
         }

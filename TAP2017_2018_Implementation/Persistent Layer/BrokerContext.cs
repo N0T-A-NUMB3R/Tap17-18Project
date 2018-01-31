@@ -1,5 +1,7 @@
-﻿using System.Data.Entity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Infrastructure.Annotations;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
 namespace TAP2017_2018_Implementation.Persistent_Layer
@@ -7,39 +9,53 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
     public class BrokerContext : DbContext
     {
         public BrokerContext(string connectionString) : base(connectionString)
-        { 
-            
+        {
+
         }
+
         public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            
+
             modelBuilder.Entity<TravelCompanyEntity>()
                 .ToTable("TravelCompany")
-                .HasKey(t => t.Name) 
-                .HasIndex(t => new { t.ConnectionString}).IsUnique(); 
-        
+                .Property(t => t.ConnectionString).IsRequired();
+                /*
+                .HasColumnAnnotation(
+                    "ConnectionString",
+                    new IndexAnnotation(new IndexAttribute("ConnectionString") { IsUnique = true }));
+                */
+
+            modelBuilder.Entity<TravelCompanyEntity>()
+                .Property(t => t.Name).IsRequired();
+            /*
+            .HasColumnAnnotation(
+                "Name",
+                new IndexAnnotation(new IndexAttribute("Name") {IsUnique = true}));
+            */
         }
-        public override int SaveChanges() //Todo controllare bene i save changes
+
+
+        public override int SaveChanges() 
         {
             try
             {
                 return base.SaveChanges();
             }
-            catch (DbConnectionException)
-            {
-                throw new DbConnectionException();
-            }
-            catch (DbUpdateException)
-            {
 
-                //creati due test in cui ricrei la situazione che porta all'errore
-                //controlla l'eccezione lanciata per capire come distinguere un caso dall'altro
-                //implementalo
-                throw new TapDuplicatedObjectException();
+            catch (DbUpdateException error)
+            {
+                if (error.InnerException?.InnerException != null && (error.InnerException != null && error.InnerException.InnerException.Message.Contains("Name")))
+                    throw new TapDuplicatedObjectException();
+                else if (error.InnerException?.InnerException != null && (error.InnerException != null && error.InnerException.InnerException.Message.Contains("ConnectionString")))
+                    throw new SameConnectionStringException();
+
+                throw new DbConnectionException("",error);
             }
+            // catch di exceptionm
             
         }
+
     }
 }

@@ -8,13 +8,15 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
         
         public int Id { set; get; }
 
-        [Required]
+        [MaxLength(DomainConstraints.NameMaxLength)]
+        [MinLength(DomainConstraints.NameMinLength)]
         public string From { set; get; }
 
-        [Required]
+        [MaxLength(DomainConstraints.NameMaxLength)]
+        [MinLength(DomainConstraints.NameMinLength)]
         public string To { set; get; }
 
-        //todo ?
+        
         public int Distance { set; get; }
 
         public int Cost { set; get; }

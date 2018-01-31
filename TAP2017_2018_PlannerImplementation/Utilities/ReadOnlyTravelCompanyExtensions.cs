@@ -19,7 +19,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         {
             var readOnlyTravelCompanies = companies.ToList();
             CheckList(readOnlyTravelCompanies);
-            CheckString(from); //superflui perchè questo extension method è usato solo in FindTrip con input gia puliti dal chiamante
+            CheckString(from); 
             CheckTransportType(allowedTransportTypes);
 
             foreach (var company in readOnlyTravelCompanies)

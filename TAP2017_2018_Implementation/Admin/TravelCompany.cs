@@ -4,6 +4,7 @@ using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
+using static TAP2017_2018_Implementation.Utilities.Checker;
 
 namespace TAP2017_2018_Implementation.Admin
 {
@@ -22,8 +23,8 @@ namespace TAP2017_2018_Implementation.Admin
         /// <param name="agencyName"></param>
         public TravelCompany(string connectionString, string agencyName)
         {
-            Checker.CheckConnectionString(connectionString);
-            Checker.CheckString(agencyName);
+            CheckConnectionString(connectionString);
+            CheckName(agencyName);
 
             _tcConnectionstring = connectionString;
             Name = agencyName;
@@ -52,7 +53,7 @@ namespace TAP2017_2018_Implementation.Admin
         /// <returns></returns>
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
-            Checker.CheckLeg(from, to, cost, distance, transportType);
+            CheckLeg(from, to, cost, distance, transportType);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 if (c.Legs.Any(LegUtilities.EqualsLegExp(from,to,cost,distance,transportType)))
@@ -79,7 +80,7 @@ namespace TAP2017_2018_Implementation.Admin
         /// <param name="legToBeRemovedId"></param>
         public void DeleteLeg(int legToBeRemovedId)
         {
-            Checker.CheckNegative(legToBeRemovedId);
+            CheckNegative(legToBeRemovedId);  // todo ???
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 var legToDelete = c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legToBeRemovedId));
@@ -95,13 +96,13 @@ namespace TAP2017_2018_Implementation.Admin
         /// <returns></returns>
         public ILegDTO GetLegDTOFromId(int legId)
         {
-            Checker.CheckNegative(legId);
+            CheckNegative(legId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                Checker.CheckLegEntity(c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legId))); 
-                //todo da mettere su linea unica
+                CheckLegEntity(c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legId))); 
+               
                 var leg = c.Legs.Find(legId);
-                Checker.CheckNull(leg);
+               CheckNull(leg);
                return LegUtilities.CastToLegDtoExp.Compile()(leg);
             }
         }
@@ -121,9 +122,4 @@ namespace TAP2017_2018_Implementation.Admin
 
     }
 }
-
-/*
- *  class DbConnectionException Thrown to notify connection errors • class NonexistentObjectException Thrown if the code try to access a nonexistent object • class NonexistentTravelCompanyException Thrown if the code try to get a nonexistent (read only) travel company • class SameConnectionStringException Thrown to notify that the connection string is already in use for a different purpose • class TapDuplicatedObjectException Thrown to notify the attempt to create two instances of the same object • class TapException Superclass of most exceptions for the component
-   
- */
 
