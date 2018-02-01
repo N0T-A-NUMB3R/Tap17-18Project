@@ -55,11 +55,6 @@ namespace TAP2017_2018_Implementation.Admin
             CheckLeg(from, to, cost, distance, transportType);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                /*
-                if (c.Legs.Any(EqualsLegExp(from,to,cost,distance,transportType)))
-                    throw new TapDuplicatedObjectException();
-                */
-               
                 var legtoAdd = new LegEntity()
                 {
                     From = from,
