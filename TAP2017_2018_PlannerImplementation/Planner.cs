@@ -148,7 +148,7 @@ namespace TAP2017_2018_PlannerImplementation
             distance[destination] = int.MaxValue; // We know the distance from source->destination is infinite by definition
 
             //----------------------------------------------------------------------------------------------------------------
-            //-------------------------------Implementation of Dijktra algorithm----------------------------------------------
+            //-------------------------------Implementation of Dijktra Algorithm----------------------------------------------
             //----------------------------------------------------------------------------------------------------------------
 
             while (nodes.Count > 0)
@@ -177,7 +177,7 @@ namespace TAP2017_2018_PlannerImplementation
                             int.MaxValue);
                         nodes.Add(neigh.From);
                     }
-                    //check the option of the trip, BY DEFAULT IT'S MINHOP
+                    //check the option of the trip, --> BY DEFAULT IT'S MINHOP
                     var weight = 1;
                     switch (options)
                     {
@@ -195,7 +195,8 @@ namespace TAP2017_2018_PlannerImplementation
                         distance[neigh.To] = newDist;
                         previous[neigh.To] = neigh;
                     }
-                    if (min == destination) break; // If we're at the target node? Ok break
+                    if (min == destination) break;
+                    // If we're at the target node? Ok break
                 }
             }
             return GetTheShortestTrip(destination, source, previous);

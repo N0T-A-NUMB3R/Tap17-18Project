@@ -57,6 +57,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Persistent Layer\BrokerConfiguration.cs" />
+    <Compile Include="Persistent Layer\TravelCompanyConfiguration.cs" />
     <Compile Include="Utilities\LegUtilities.cs" />
     <Compile Include="Persistent Layer\BrokerContext.cs" />
     <Compile Include="Persistent Layer\TravelCompanyEntity.cs" />

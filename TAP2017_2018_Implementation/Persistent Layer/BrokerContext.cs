@@ -14,11 +14,7 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<TravelCompanyEntity>()
-                .ToTable("TravelCompany");
-            modelBuilder.Entity<TravelCompanyEntity>()
-                .Property(t => t.ConnectionString)
-                .HasColumnName("TCConnectionString");
+            modelBuilder.Configurations.Add(new BrokerConfiguration());
         }
 
 

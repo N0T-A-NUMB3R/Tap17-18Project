@@ -3,8 +3,7 @@ using System.Data.Entity.Infrastructure;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
 namespace TAP2017_2018_Implementation.Persistent_Layer
-{
-
+{ 
     public class TravelCompanyContext : DbContext
     {
         public TravelCompanyContext(string connectionString) : base(connectionString)
@@ -15,8 +14,7 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<LegEntity>()
-                .ToTable("Legs");
+            modelBuilder.Configurations.Add(new TravelCompanyConfiguration());
         }
 
 
@@ -31,8 +29,6 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
             {
                 if (error.InnerException?.InnerException != null && (error.InnerException != null && error.InnerException.InnerException.Message.Contains("Leg")))
                     throw new TapDuplicatedObjectException();
-                
-
                 throw new DbConnectionException("", error);
             }
 

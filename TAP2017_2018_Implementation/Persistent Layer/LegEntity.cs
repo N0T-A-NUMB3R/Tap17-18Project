@@ -6,7 +6,6 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
 {
     public class LegEntity
     {
-        
         public int Id { set; get; }
 
         [Required, MaxLength(DomainConstraints.NameMaxLength), MinLength(DomainConstraints.NameMinLength)]
