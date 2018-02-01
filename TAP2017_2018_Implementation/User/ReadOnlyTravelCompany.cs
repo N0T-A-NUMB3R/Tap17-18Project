@@ -4,9 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 using TAP2017_2018_Implementation.Persistent_Layer;
-using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using static TAP2017_2018_Implementation.Utilities.Checker;
+using static TAP2017_2018_Implementation.Utilities.LegUtilities;
 
 namespace TAP2017_2018_Implementation.User
 {
@@ -51,7 +51,7 @@ namespace TAP2017_2018_Implementation.User
             CheckNullExp(predicate);
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
-                var legs = c.Legs.Select(LegUtilities.CastToLegDtoExp).AsEnumerable().Where(predicate.Compile());
+                var legs = c.Legs.Select(CastToLegDtoExp).AsEnumerable().Where(predicate.Compile());
                 CheckNull(legs);
                 return legs.ToList().AsReadOnly();
             }
@@ -68,7 +68,7 @@ namespace TAP2017_2018_Implementation.User
             CheckDepartures(from, allowedTransportTypes);
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
-                var legsFound = c.Legs.Where(LegUtilities.EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(LegUtilities.CastToLegDtoExp);
+                var legsFound = c.Legs.Where(EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(CastToLegDtoExp);
                 CheckNull(legsFound);
                 return legsFound.ToList().AsReadOnly();
             }

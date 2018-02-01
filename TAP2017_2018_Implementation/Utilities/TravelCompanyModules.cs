@@ -6,6 +6,7 @@ using TAP2017_2018_TravelCompanyInterface;
 
 namespace TAP2017_2018_Implementation.Utilities
 {
+    /// <inheritdoc />
     /// <summary>
     /// This binding means that whenever Ninject encounters a dependency on IReadOnlyTravelCompanyFactory, it will resolve an instance of 
     /// ReadOnlyTravelCompanyFactory and inject it.
@@ -14,6 +15,7 @@ namespace TAP2017_2018_Implementation.Utilities
     {
         public override void Load() => Bind<IReadOnlyTravelCompanyFactory>().To<ReadOnlyTravelCompanyFactory>();
     }
+    /// <inheritdoc />
     /// <summary>
     /// his binding means that whenever Ninject encounters a dependency on ITravelCompanybrokerFactory,
     ///  it will resolve an instance of TravelCompanyBrokerFactory and inject it.
@@ -22,6 +24,7 @@ namespace TAP2017_2018_Implementation.Utilities
     {
         public override void Load() => Bind<ITravelCompanyBrokerFactory>().To<TravelCompanyBrokerFactory>();
     }
+    /// <inheritdoc />
     /// <summary>
     /// his binding means that whenever Ninject encounters a dependency on ITravelCompanyFactory,
     ///  it will resolve an instance of TravelCompanyFactory and inject it.

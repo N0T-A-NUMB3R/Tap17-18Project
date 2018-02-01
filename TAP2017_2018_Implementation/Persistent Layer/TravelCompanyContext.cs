@@ -1,4 +1,6 @@
 ﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using TAP2017_2018_TravelCompanyInterface.Exceptions;
 
 namespace TAP2017_2018_Implementation.Persistent_Layer
 {
@@ -14,13 +16,28 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LegEntity>()
-                .ToTable("Leg")
-                .HasKey(l => l.Id);
-            modelBuilder.Entity<LegEntity>()
-                .Property(l => l.From).IsRequired();
-            modelBuilder.Entity<LegEntity>()
-                .Property(l => l.To).IsRequired();
+                .ToTable("Legs");
         }
-       
+
+
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+
+            catch (DbUpdateException error)
+            {
+                if (error.InnerException?.InnerException != null && (error.InnerException != null && error.InnerException.InnerException.Message.Contains("Leg")))
+                    throw new TapDuplicatedObjectException();
+                
+
+                throw new DbConnectionException("", error);
+            }
+
+
+        }
+
     }
 }

@@ -20,17 +20,29 @@ namespace TAP2017_2018_PlannerImplementation
             CheckList(companies);
             _companies = companies;
         }
+        /// <summary>
+        ///  Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is Planner planner &&
                    EqualityComparer<List<IReadOnlyTravelCompany>>.Default.Equals(_companies, planner._companies);
         }
-
+        /// <summary>
+        /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             return -2132568303 + EqualityComparer<List<IReadOnlyTravelCompany>>.Default.GetHashCode(_companies);
         }
+        /// <summary>
+        /// Adds a travel company destination the collection of those destination be used for the planning.
 
+        /// </summary>
+        /// <param name="readonlyTravelCompany"></param>
         public void AddTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             CheckTc(readonlyTravelCompany);
@@ -39,7 +51,10 @@ namespace TAP2017_2018_PlannerImplementation
             _companies.Add(readonlyTravelCompany);
 
         }
-
+        /// <summary>
+        /// Removes a travel company from the collection of those destination be used for the planning
+        /// </summary>
+        /// <param name="readonlyTravelCompany"></param>
         public void RemoveTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             CheckTc(readonlyTravelCompany);
@@ -47,19 +62,29 @@ namespace TAP2017_2018_PlannerImplementation
 
             _companies.Remove(readonlyTravelCompany);
         }
-
+        /// <summary>
+        /// Veriﬁes if the travel company in the collection of those in use by the planner
+        /// </summary>
+        /// <param name="readonlyTravelCompany"></param>
+        /// <returns></returns>
         public bool ContainsTravelCompany(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             CheckTc(readonlyTravelCompany);
             return _companies.Contains(readonlyTravelCompany);
         }
-
+        /// <summary>
+        /// Aux method for AddTravelCompany, for check Execption
+        /// </summary>
+        /// <param name="readonlyTravelCompany"></param>
         private void ContainsToAdd(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             if (ContainsTravelCompany(readonlyTravelCompany))
                 throw new TapDuplicatedObjectException();
         }
-
+        /// <summary>
+        ///  Aux method for RemoveTravelCompany, for check Execption
+        /// </summary>
+        /// <param name="readonlyTravelCompany"></param>
         private void ContainsToRemove(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             if (!ContainsTravelCompany(readonlyTravelCompany))
@@ -122,14 +147,15 @@ namespace TAP2017_2018_PlannerImplementation
             previous[destination] = null;
             distance[destination] = int.MaxValue; // We know the distance from source->destination is infinite by definition
 
-            //Implementation of Dijktra algorithm
+            //----------------------------------------------------------------------------------------------------------------
+            //-------------------------------Implementation of Dijktra algorithm----------------------------------------------
+            //----------------------------------------------------------------------------------------------------------------
+
             while (nodes.Count > 0)
             {
                 var min = nodes.OrderBy(n => distance[n]).First();
                 // remove best vertex (that is, connection with minimum distance)
                 nodes.Remove(min);
-
-              //  if (min == destination || distance[min] == int.MaxValue) break; //todo probably useless.
 
                 // Search (with  GetNeigbors) and loop all connected nodes
                 foreach (var neigh in _companies.GetNeighborsDtos(min, allowedTransportTypes))
@@ -151,7 +177,7 @@ namespace TAP2017_2018_PlannerImplementation
                             int.MaxValue);
                         nodes.Add(neigh.From);
                     }
-                    //check the option of the trip, by default it is minHop
+                    //check the option of the trip, BY DEFAULT IT'S MINHOP
                     var weight = 1;
                     switch (options)
                     {

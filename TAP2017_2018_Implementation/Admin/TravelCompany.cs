@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using TAP2017_2018_Implementation.Persistent_Layer;
-using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.Utilities.Checker;
+using static TAP2017_2018_Implementation.Utilities.LegUtilities;
 
 namespace TAP2017_2018_Implementation.Admin
 {
@@ -48,7 +48,6 @@ namespace TAP2017_2018_Implementation.Admin
         /// <param name="to"></param>
         /// <param name="cost"></param>
         /// <param name="distance"></param>
-        
         /// <param name="transportType"></param>
         /// <returns></returns>
         public int CreateLeg(string from, string to, int cost, int distance, TransportType transportType)
@@ -56,9 +55,11 @@ namespace TAP2017_2018_Implementation.Admin
             CheckLeg(from, to, cost, distance, transportType);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                if (c.Legs.Any(LegUtilities.EqualsLegExp(from,to,cost,distance,transportType)))
+                /*
+                if (c.Legs.Any(EqualsLegExp(from,to,cost,distance,transportType)))
                     throw new TapDuplicatedObjectException();
-
+                */
+               
                 var legtoAdd = new LegEntity()
                 {
                     From = from,
@@ -83,7 +84,7 @@ namespace TAP2017_2018_Implementation.Admin
             CheckNegative(legToBeRemovedId); 
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                var legToDelete = c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legToBeRemovedId));
+                var legToDelete = c.Legs.SingleOrDefault(EqualsIdExp(legToBeRemovedId));
                 c.Legs.Remove(legToDelete ?? throw new NonexistentObjectException());
                 c.SaveChanges();
             }
@@ -99,11 +100,11 @@ namespace TAP2017_2018_Implementation.Admin
             CheckNegative(legId);
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
-                CheckLegEntity(c.Legs.SingleOrDefault(LegUtilities.EqualsIdExp(legId))); 
+               CheckLegEntity(c.Legs.SingleOrDefault(EqualsIdExp(legId))); 
                
-                var leg = c.Legs.Find(legId);
+               var leg = c.Legs.Find(legId);
                CheckNull(leg);
-               return LegUtilities.CastToLegDtoExp.Compile()(leg);
+               return CastToLegDtoExp.Compile()(leg);
             }
         }
         /// <summary>

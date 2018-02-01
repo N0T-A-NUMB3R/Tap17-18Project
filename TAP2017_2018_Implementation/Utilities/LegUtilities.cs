@@ -100,7 +100,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static Expression<Func<LegEntity, bool>> EqualsLegExp(string from, string to, int cost, int distance, TransportType transportType)
         {
             return tc =>
-                tc.From == @from && 
+                tc.From == from && 
                 tc.To == to && 
                 tc.Cost == cost && 
                 tc.Distance == distance &&

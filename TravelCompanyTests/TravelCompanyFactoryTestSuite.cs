@@ -108,6 +108,9 @@ namespace TAP2017_2018_TravelCompanyTests
             Assert.Throws<ArgumentException>(() => travelCompanyFactory.Get(new string('a',DomainConstraints.NameMaxLength+1)));
         }
 
+       
+        }
+
 
     }
-}
+

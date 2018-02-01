@@ -106,7 +106,7 @@ namespace TAP2017_2018_Implementation.Utilities
         /// <param name="transportType"></param>
         public static void CheckLeg(string from, string to, int cost, int distance, TransportType transportType)
         {
-            CheckTwoString(@from, to);
+            CheckTwoString(from, to);
             if (CheckNegative(cost) || CheckNegative(distance))
                 throw new ArgumentException();
             if (transportType == TransportType.None)
@@ -129,8 +129,8 @@ namespace TAP2017_2018_Implementation.Utilities
         /// <param name="to"></param>
         private static void CheckTwoString(string from, string to)
         {
-            CheckTwoStringEquals(@from, to);
-            CheckName(@from);
+            CheckTwoStringEquals(from, to);
+            CheckName(from);
             CheckName(to);
         }
         /// <summary>
@@ -141,7 +141,7 @@ namespace TAP2017_2018_Implementation.Utilities
         /// <param name="allowedTransportTypes"></param>
         public static void CheckDepartures(string from, TransportType allowedTransportTypes)
         {
-            CheckName(@from);
+            CheckName(from);
             if (allowedTransportTypes == TransportType.None)
                 throw new ArgumentException();
         }

@@ -50,8 +50,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Inizialiazer\BasicTestInitializer.cs" />
-    <Compile Include="BrokerFactoryTestSuiteNan.cs" />
-    <Compile Include="BrokerTCTestsuiteNAN.cs" />
     <Compile Include="Inizialiazer\BrokerTestInitializer.cs" />
     <Compile Include="Inizialiazer\TravelCompanyTestInizializerNan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

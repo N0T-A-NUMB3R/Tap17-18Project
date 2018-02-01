@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using TAP2017_2018_Implementation.Persistent_Layer;
-using TAP2017_2018_Implementation.Utilities;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
 using static TAP2017_2018_Implementation.Utilities.Checker;
+using static TAP2017_2018_Implementation.Utilities.LegUtilities;
 
 namespace TAP2017_2018_Implementation.Admin
 {
@@ -65,7 +65,7 @@ namespace TAP2017_2018_Implementation.Admin
             CheckName(name);
             using (var c = new BrokerContext(_brokerconnectionstring))
             {
-                var travelAgency = c.TravelCompanies.SingleOrDefault(LegUtilities.EqualsNameExp(name));
+                var travelAgency = c.TravelCompanies.SingleOrDefault(EqualsNameExp(name));
                 if (travelAgency == null)
                     throw new NonexistentTravelCompanyException();
                 return new TravelCompany(travelAgency.ConnectionString, name);

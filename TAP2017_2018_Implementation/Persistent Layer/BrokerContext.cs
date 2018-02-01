@@ -8,30 +8,17 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
     {
         public BrokerContext(string connectionString) : base(connectionString)
         {
-
         }
 
         public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-
             modelBuilder.Entity<TravelCompanyEntity>()
-                .ToTable("TravelCompany")
-                .Property(t => t.ConnectionString).IsRequired();
-                /*
-                .HasColumnAnnotation(
-                    "ConnectionString",
-                    new IndexAnnotation(new IndexAttribute("ConnectionString") { IsUnique = true }));
-                */
-
+                .ToTable("TravelCompany");
             modelBuilder.Entity<TravelCompanyEntity>()
-                .Property(t => t.Name).IsRequired();
-            /*
-            .HasColumnAnnotation(
-                "Name",
-                new IndexAnnotation(new IndexAttribute("Name") {IsUnique = true}));
-            */
+                .Property(t => t.ConnectionString)
+                .HasColumnName("TCConnectionString");
         }
 
 
@@ -51,7 +38,7 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
 
                 throw new DbConnectionException("",error);
             }
-            // catch di exceptionm
+            
             
         }
 
