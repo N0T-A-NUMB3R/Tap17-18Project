@@ -134,7 +134,7 @@ namespace TAP2017_2018_Implementation.Utilities
         /// </summary>
         /// <param name="cs"></param>
         /// <returns></returns>
-        public static Expression<Func<TravelCompanyEntity, bool>> EqualsCsExp(String cs)
+        public static Expression<Func<TravelCompanyEntity, bool>> EqualsCsExp(string cs)
         {
             return tc =>
                 tc.ConnectionString == cs;
@@ -145,7 +145,7 @@ namespace TAP2017_2018_Implementation.Utilities
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static Expression<Func<TravelCompanyEntity, bool>> EqualsNameExp(String name)
+        public static Expression<Func<TravelCompanyEntity, bool>> EqualsNameExp(string name)
         {
             return tc =>
                 tc.Name == name;

@@ -80,7 +80,7 @@ namespace TAP2017_2018_Implementation.Admin
             using (var c = new TravelCompanyContext(_tcConnectionstring))
             {
                 var legToDelete = c.Legs.SingleOrDefault(EqualsIdExp(legToBeRemovedId));
-                c.Legs.Remove(legToDelete ?? throw new NonexistentObjectException());
+                c.Legs.Remove(legToDelete ?? throw new NonexistentObjectException("leg to delete not exist!"));
                 c.SaveChanges();
             }
         }

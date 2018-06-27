@@ -19,11 +19,11 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckConnectionString(string cs)
         {
             if (cs == null)
-                throw new ArgumentNullException();
-            if (cs == String.Empty)
-                throw new ArgumentException();
+                throw new ArgumentNullException($"Argument {0} cannot be null",nameof(cs));
+            if (cs == string.Empty)
+                throw new ArgumentException($"Argument {0} cannot be empty", nameof(cs));
             if (cs.Length < DomainConstraints.ConnectionStringMinLength || cs.Length > DomainConstraints.ConnectionStringMaxLength)
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0}cannot be too long or too short", nameof(cs));
         }
         /// <summary>
         /// Auxiliary method that controls  if two connection string are equal 
@@ -33,7 +33,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckTwoConnString(string cs1, string cs2)
         {
             if (cs1 == cs2)
-                throw new SameConnectionStringException();
+                throw new SameConnectionStringException($"Two connection strings are equal");
         }
         /// <summary>
         /// Auxiliary method that controls  if two  string(from, to, Tc names) are equal 
@@ -43,7 +43,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckTwoStringEquals(string s1, string s2)
         {
             if (s1 == s2)
-                throw new ArgumentException();
+                throw new ArgumentException($"From and to are equal");
         }
         /// <summary>
         /// Auxiliary method that controls  if the catalog of connection string is alphanumeric
@@ -56,7 +56,7 @@ namespace TAP2017_2018_Implementation.Utilities
             Regex r = new Regex("^[a-zA-Z0-9]*$");
 
             if (!r.IsMatch(initialCatalog))
-                throw new ArgumentException();
+                throw new ArgumentException(nameof(cs));
         }
         /// <summary>
         /// Auxiliary method that controls  if the input integer is negative
@@ -84,15 +84,15 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckName(string s)
         {
             if (s == null)
-                throw new ArgumentNullException();
-            if (s == String.Empty)
-                throw new ArgumentException();
+                throw new ArgumentNullException($"Argument{0} is null", nameof(s));
+            if (s == string.Empty)
+                throw new ArgumentException($"Argument {0} is empty", nameof(s));
             if (!IsAlphaNumeric(s))
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0} isn't alphanumerics", nameof(s));
             if (s.Length < DomainConstraints.NameMinLength)
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0} length less than the minimum length allowed", nameof(s));
             if (s.Length > DomainConstraints.NameMaxLength)
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0} length over than the maximum length allowed", nameof(s));
         }
 
         /// <summary>
@@ -108,9 +108,9 @@ namespace TAP2017_2018_Implementation.Utilities
         {
             CheckTwoString(from, to);
             if (CheckNegative(cost) || CheckNegative(distance))
-                throw new ArgumentException();
+                throw new ArgumentException($"Cost or distance are < 0");
             if (transportType == TransportType.None)
-                throw new ArgumentException();
+                throw new ArgumentException($"Trasport Type is .None");
         }
         /// <summary>
         /// Auxiliary method that controls  if the LegEntity is null
@@ -119,7 +119,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckLegEntity(LegEntity leg)
         {
             if (leg == null)
-                throw new NonexistentObjectException();
+                throw new NonexistentObjectException($"Leg is null");
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace TAP2017_2018_Implementation.Utilities
         {
             CheckName(from);
             if (allowedTransportTypes == TransportType.None)
-                throw new ArgumentException();
+                throw new ArgumentException($"Trasport Type is .None");
         }
         /// <summary>
         ///  Auxiliary method that controls  if the Exp are null
@@ -152,7 +152,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckNullExp(Expression<Func<ILegDTO, bool>> predicate)
         {
             if(predicate == null)
-                throw new ArgumentException();
+                throw new ArgumentException($"Expression is null");
         }
         /// <summary>
         ///  Auxiliary method that controls  if the id isn't negative
@@ -161,7 +161,7 @@ namespace TAP2017_2018_Implementation.Utilities
         public static void CheckNegativeId(int legId)
         {
             if (legId < 0)
-                throw new NonexistentObjectException();
+                throw new NonexistentObjectException($"Leg id < 0");
         }
         
         /// <summary>

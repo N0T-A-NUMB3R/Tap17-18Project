@@ -7,7 +7,6 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Trip : ITrip
     {
-
         /// <summary>
         /// A trip is represented as a list of subsequent hops between cities, a cost and a distance.
         /// </summary>

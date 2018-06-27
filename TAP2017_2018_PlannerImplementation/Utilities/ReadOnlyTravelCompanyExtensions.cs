@@ -5,7 +5,7 @@ using static TAP2017_2018_PlannerImplementation.Utilities.Checker;
 
 namespace TAP2017_2018_PlannerImplementation.Utilities
 {
-   public static class ReadOnlyTravelCompanyExtensions
+    public static class ReadOnlyTravelCompanyExtensions
     {
         /// <summary>
         /// Using a method of the IreadOnlyTravelCompany interface called FindDePartures 
@@ -15,11 +15,12 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         /// <param name="from"></param>
         /// <param name="allowedTransportTypes"></param>
         /// <returns></returns>
-        public static IEnumerable<ILegDTO> GetNeighborsDtos(this IEnumerable<IReadOnlyTravelCompany> companies, string from, TransportType allowedTransportTypes)
+        public static IEnumerable<ILegDTO> GetNeighborsDtos(this IEnumerable<IReadOnlyTravelCompany> companies,
+            string from, TransportType allowedTransportTypes)
         {
             var readOnlyTravelCompanies = companies.ToList();
             CheckList(readOnlyTravelCompanies);
-            CheckString(from); 
+            CheckString(from);
             CheckTransportType(allowedTransportTypes);
 
             foreach (var company in readOnlyTravelCompanies)
@@ -32,3 +33,5 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         }
     }
 }
+
+

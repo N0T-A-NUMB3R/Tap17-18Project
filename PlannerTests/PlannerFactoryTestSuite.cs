@@ -10,7 +10,7 @@ namespace TAP2017_2018_PlannerTests
         {
             var anObject = plannerFactory.CreateNew();
             Assert.IsEmpty(anObject.KnownTravelCompanies());
-            
+      
         }
 
 

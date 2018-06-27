@@ -41,7 +41,7 @@ namespace TAP2017_2018_Implementation.Broker
             CheckConnectionString(dbConnectionString);
             if (Database.Exists(dbConnectionString)) 
                 return new TravelCompanyBroker(dbConnectionString);
-            throw new NonexistentObjectException();
+            throw new NonexistentObjectException("db not exists");
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TAP2017_2018_PlannerImplementation.Utilities;
 using TAP2017_2018_PlannerInterface;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
@@ -79,7 +78,7 @@ namespace TAP2017_2018_PlannerImplementation
         private void ContainsToAdd(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             if (ContainsTravelCompany(readonlyTravelCompany))
-                throw new TapDuplicatedObjectException();
+                throw new TapDuplicatedObjectException("TravelCompany has already been added");
         }
         /// <summary>
         ///  Aux method for RemoveTravelCompany, for check Execption
@@ -88,7 +87,7 @@ namespace TAP2017_2018_PlannerImplementation
         private void ContainsToRemove(IReadOnlyTravelCompany readonlyTravelCompany)
         {
             if (!ContainsTravelCompany(readonlyTravelCompany))
-                throw new NonexistentTravelCompanyException();
+                throw new NonexistentTravelCompanyException("TravelCompany not exist");
         }
 
         public IEnumerable<IReadOnlyTravelCompany> KnownTravelCompanies() => _companies.Select(tc => tc);
@@ -118,6 +117,7 @@ namespace TAP2017_2018_PlannerImplementation
             return !path.Any() ? null : new Trip(source, destination, path.ToList().AsReadOnly(), cost, distance);
 
         }
+
         /// <summary>
         /// Finds the best trip source source destination destination , according destination options , using only transport of a type ﬂagged in 
         /// allowedTransportTyp, this method was built using the famous Dijktra algorithm, 
@@ -129,14 +129,14 @@ namespace TAP2017_2018_PlannerImplementation
         /// <param name="options"></param>
         /// <param name="allowedTransportTypes"></param>
         /// <returns></returns>
-        
+
         public ITrip FindTrip(string source, string destination, FindOptions options,
             TransportType allowedTransportTypes)
         {
             CheckTrip(source, destination, allowedTransportTypes);
             var distance = new Dictionary<string, int>();
             var previous = new Dictionary<string, ILegDTO>();
-            var nodes = new List<string>() { source, destination };
+            var nodes = new List<string>() {source, destination};
 
             // A city is always considered connected destination itself, so an empty trip is returned when source and destination coincide
             if (source == destination)
@@ -145,7 +145,8 @@ namespace TAP2017_2018_PlannerImplementation
             previous[source] = null;
             distance[source] = 0; // We know the distance in source is 0 by definition
             previous[destination] = null;
-            distance[destination] = int.MaxValue; // We know the distance from source->destination is infinite by definition
+            distance[destination] =
+                int.MaxValue; // We know the distance from source->destination is infinite by definition
 
             //----------------------------------------------------------------------------------------------------------------
             //-------------------------------Implementation of Dijktra Algorithm----------------------------------------------
@@ -157,49 +158,59 @@ namespace TAP2017_2018_PlannerImplementation
                 // remove best vertex (that is, connection with minimum distance)
                 nodes.Remove(min);
 
-                // Search (with  GetNeigbors) and loop all connected nodes
-                foreach (var neigh in _companies.GetNeighborsDtos(min, allowedTransportTypes))
+                foreach (var company in _companies)
                 {
-                    // the loop is the only problem according to the teacher but 
-                    // isnt possible (i hope) because I keep track of the nodes visited in the dictionary, which I never delete.
-                    if (!previous.ContainsKey(neigh.To))
+                    var legs = company.FindDepartures(min, allowedTransportTypes);
+
+                    foreach (var neighbour in legs)
                     {
-                        // if they arent present, I add them in 2 dictionaries 
-                        previous.Add(neigh.To, null);
-                        distance.Add(neigh.To, int.MaxValue);
-                        nodes.Add(neigh.To);
+                        // the loop is the only problem according to the teacher but 
+                        // isnt possible (i hope) because I keep track of the nodes visited in the dictionary, which I never delete.
+                        if (!previous.ContainsKey(neighbour.To))
+                        {
+                            // if they arent present, I add them in 2 dictionaries 
+                            previous.Add(neighbour.To, null);
+                            distance.Add(neighbour.To, int.MaxValue);
+                            nodes.Add(neighbour.To);
+                        }
+
+                        //same thing for the from...
+                        if (!previous.ContainsKey(neighbour.From))
+                        {
+                            previous.Add(neighbour.From, null);
+                            distance.Add(neighbour.From,
+                                int.MaxValue);
+                            nodes.Add(neighbour.From);
+                        }
+
+                        //check the option of the trip, --> BY DEFAULT IT'S MINHOP
+                        var weight = 1;
+                        switch (options)
+                        {
+                            case FindOptions.MinimumCost:
+                                weight = neighbour.Cost;
+                                break;
+                            case FindOptions.MinimumDistance:
+                                weight = neighbour.Distance;
+                                break;
+                        }
+
+                        // The positive distance between node and it's neighbor, added to the distance of the current node
+                        var newDist = distance[min] + weight;
+                        if (newDist < distance[neighbour.To])
+                        {
+                            distance[neighbour.To] = newDist;
+                            previous[neighbour.To] = neighbour;
+                        }
+
+                        if (min == destination) break;
+                        // If we're at the target node? Ok break
                     }
-                    //same thing for the from...
-                    if (!previous.ContainsKey(neigh.From))
-                    {
-                        previous.Add(neigh.From, null);
-                        distance.Add(neigh.From,
-                            int.MaxValue);
-                        nodes.Add(neigh.From);
-                    }
-                    //check the option of the trip, --> BY DEFAULT IT'S MINHOP
-                    var weight = 1;
-                    switch (options)
-                    {
-                        case FindOptions.MinimumCost:
-                            weight = neigh.Cost;
-                            break;
-                        case FindOptions.MinimumDistance:
-                            weight = neigh.Distance;
-                            break;
-                    }
-                    // The positive distance between node and it's neighbor, added to the distance of the current node
-                    var newDist = distance[min] + weight;
-                    if (newDist < distance[neigh.To])
-                    {
-                        distance[neigh.To] = newDist;
-                        previous[neigh.To] = neigh;
-                    }
-                    if (min == destination) break;
-                    // If we're at the target node? Ok break
                 }
             }
+
             return GetTheShortestTrip(destination, source, previous);
-        }
+       }
+        
     }
 }

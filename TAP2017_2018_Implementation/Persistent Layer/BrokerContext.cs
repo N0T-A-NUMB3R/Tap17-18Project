@@ -24,7 +24,6 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
             {
                 return base.SaveChanges();
             }
-
             catch (DbUpdateException error)
             {
                 if (error.InnerException?.InnerException != null && (error.InnerException != null && error.InnerException.InnerException.Message.Contains("Name")))

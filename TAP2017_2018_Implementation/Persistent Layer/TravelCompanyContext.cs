@@ -17,7 +17,6 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
             modelBuilder.Configurations.Add(new TravelCompanyConfiguration());
         }
 
-
         public override int SaveChanges()
         {
             try

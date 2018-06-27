@@ -15,7 +15,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         public static void CheckList(List<IReadOnlyTravelCompany> companies)
         {
             if (companies == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException($"The list of Companies is null");
         }
         /// <summary>
         /// Auxiliary method that controls  if the dictionary is null
@@ -24,7 +24,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         public static void CheckDictionary(Dictionary<string, ILegDTO> previousDictionary)
         {
             if (previousDictionary == null)
-                throw new ArgumentException();
+                throw new ArgumentException($"The Dictionary is null");
         }
         /// <summary>
         /// Auxiliary method that controls  if the the list is null
@@ -33,11 +33,8 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         public static void CheckList(IEnumerable<IReadOnlyTravelCompany> companies)
         {
             if (companies == null)
-                throw new ArgumentNullException();
-            /*
-            if ((companies.Select(c => c.GetType()).Distinct().Count() != 1))
-                throw new ArgumentException();
-            */
+                throw new ArgumentNullException($"The list of Companies is null");
+            
         }
         public static Boolean IsAlphaNumeric(string strToCheck)
         {
@@ -52,15 +49,16 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         public static void CheckString(string s)
         {
             if (s == null)
-                throw new ArgumentNullException();
-            if (s == String.Empty)
-                throw new ArgumentException();
+                throw new ArgumentNullException($"Argument {0} is null", nameof(s));
+            if (s == string.Empty)
+                throw new ArgumentException($"Argument {0} is empty", nameof(s));
             if (!IsAlphaNumeric(s))
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0} isn't alphanumerics", nameof(s));
             if (s.Length < DomainConstraints.NameMinLength)
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0} length less than the minimum length allowed", nameof(s));
             if (s.Length > DomainConstraints.NameMaxLength)
-                throw new ArgumentException();
+                throw new ArgumentException($"Argument {0} length over than the maximum length allowed", nameof(s));
+           
         }
         /// <summary>
         /// Auxiliary method that controls  if the company is null
@@ -69,7 +67,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         public static void CheckTc(IReadOnlyTravelCompany company)
         {
             if (company == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException($"ROTC is null");
         }
 
         /// <summary>
@@ -79,7 +77,7 @@ namespace TAP2017_2018_PlannerImplementation.Utilities
         public static void CheckTransportType(TransportType transportType)
         {
             if (transportType == TransportType.None)
-                throw new ArgumentException();
+                throw new ArgumentException($"Trasporttype is .None");
         }
 
         /// <summary>

@@ -50,7 +50,6 @@ namespace TAP2017_2018_Implementation.Admin
                 c.Database.Create();
                
             }
-
             return new TravelCompany(travelCompanyConnectionString, name);
         }
 
@@ -67,7 +66,7 @@ namespace TAP2017_2018_Implementation.Admin
             {
                 var travelAgency = c.TravelCompanies.SingleOrDefault(EqualsNameExp(name));
                 if (travelAgency == null)
-                    throw new NonexistentTravelCompanyException();
+                    throw new NonexistentTravelCompanyException("Travel Agency not exist");
                 return new TravelCompany(travelAgency.ConnectionString, name);
 
             }
