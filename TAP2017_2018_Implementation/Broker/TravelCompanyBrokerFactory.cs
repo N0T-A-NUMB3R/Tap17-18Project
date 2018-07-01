@@ -29,7 +29,6 @@ namespace TAP2017_2018_Implementation.Broker
             return new TravelCompanyBroker(dbConnectionString);
         }
 
-
         /// <summary>
         /// Load an existing broker for travel companies. 
         /// The database denoted by dbConnectionString must be already initialized.

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
@@ -15,6 +14,7 @@ namespace TAP2017_2018_Implementation.User
     /// </summary>
     public class ReadOnlyTravelCompany : IReadOnlyTravelCompany
     {
+        
         public string Name { get; }
         private readonly string _tconnectionstring;
 
@@ -29,17 +29,7 @@ namespace TAP2017_2018_Implementation.User
             _tconnectionstring = connectionString;
             Name = name;
         }
-        /// <summary>
-        /// Determines whether the specified object is equal to the current object
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj) 
-        {
-            if (!(obj is ReadOnlyTravelCompany other))
-                return false;
-            return _tconnectionstring == other._tconnectionstring && Name == other.Name;
-        }
+
         /// <summary>
         /// Finds all legs that satisfy the predicate.
         /// (it will be LINQ-to-object, meaning that all objects matching the original query will have to be loaded into memory from the database)
@@ -69,9 +59,43 @@ namespace TAP2017_2018_Implementation.User
             using (var c = new TravelCompanyContext(_tconnectionstring))
             {
                 var legsFound = c.Legs.Where(EqualsTypeAndFromExp(from, allowedTransportTypes)).Select(CastToLegDtoExp);
+                    
                 CheckNull(legsFound);
                 return legsFound.ToList().AsReadOnly();
             }
+        }
+        
+        //------------------------------------ EQUALITY MEMBERS---------------------------------------------
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((ReadOnlyTravelCompany)obj);
+        }
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        protected bool Equals(ReadOnlyTravelCompany other)
+        {
+            return string.Equals(_tconnectionstring, other._tconnectionstring) && string.Equals(Name, other.Name);
+        }
+
+        public static bool operator ==(ReadOnlyTravelCompany left, ReadOnlyTravelCompany right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(ReadOnlyTravelCompany left, ReadOnlyTravelCompany right)
+        {
+            return !Equals(left, right);
         }
         /// <summary>
         ///  Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
@@ -79,10 +103,10 @@ namespace TAP2017_2018_Implementation.User
         /// <returns></returns>
         public override int GetHashCode()
         {
-            var hashCode = -127364199;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_tconnectionstring);
-            return hashCode;
+            unchecked
+            {
+                return ((_tconnectionstring != null ? _tconnectionstring.GetHashCode() : 0) * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+            }
         }
 
 

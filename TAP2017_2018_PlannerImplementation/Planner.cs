@@ -26,16 +26,38 @@ namespace TAP2017_2018_PlannerImplementation
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is Planner planner &&
-                   EqualityComparer<List<IReadOnlyTravelCompany>>.Default.Equals(_companies, planner._companies);
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Planner) obj);
         }
+        /// <summary>
+        ///  Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        protected bool Equals(Planner other)
+        {
+            return Equals(_companies, other._companies);
+        }
+
+        public static bool operator ==(Planner left, Planner right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Planner left, Planner right)
+        {
+            return !Equals(left, right);
+        }
+
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return -2132568303 + EqualityComparer<List<IReadOnlyTravelCompany>>.Default.GetHashCode(_companies);
+            return (_companies != null ? _companies.GetHashCode() : 0);
         }
         /// <summary>
         /// Adds a travel company destination the collection of those destination be used for the planning.
@@ -213,4 +235,5 @@ namespace TAP2017_2018_PlannerImplementation
        }
         
     }
+
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using TAP2017_2018_PlannerInterface;
 using TAP2017_2018_TravelCompanyInterface;
 
@@ -7,7 +6,7 @@ namespace TAP2017_2018_PlannerImplementation
 {
     public class Trip : ITrip
     {
-        /// <summary>
+       /// <summary>
         /// A trip is represented as a list of subsequent hops between cities, a cost and a distance.
         /// </summary>
         /// <param name="from"></param>
@@ -36,14 +35,29 @@ namespace TAP2017_2018_PlannerImplementation
         /// <returns></returns>
         public override bool Equals(object obj)
         {
-            return obj is Trip trip &&
-                   From == trip.From &&
-                   To == trip.To &&
-                   EqualityComparer<ReadOnlyCollection<ILegDTO>>.Default.Equals(Path, trip.Path) &&
-                   TotalCost == trip.TotalCost &&
-                   TotalDistance == trip.TotalDistance;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((Trip) obj);
+        }
+        // <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// <param name="other"></param>
+        /// <returns></returns>
+        protected bool Equals(Trip other)
+        {
+            return string.Equals(From, other.From) && string.Equals(To, other.To) && Equals(Path, other.Path) && TotalCost == other.TotalCost && TotalDistance == other.TotalDistance;
         }
 
+        public static bool operator ==(Trip left, Trip right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Trip left, Trip right)
+        {
+            return !Equals(left, right);
+        }
 
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
@@ -51,13 +65,15 @@ namespace TAP2017_2018_PlannerImplementation
         /// <returns></returns>
         public override int GetHashCode()
         {
-            var hashCode = 1548407081;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(From);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(To);
-            hashCode = hashCode * -1521134295 + EqualityComparer<ReadOnlyCollection<ILegDTO>>.Default.GetHashCode(Path);
-            hashCode = hashCode * -1521134295 + TotalCost.GetHashCode();
-            hashCode = hashCode * -1521134295 + TotalDistance.GetHashCode();
-            return hashCode;
+            unchecked
+            {
+                var hashCode = (From != null ? From.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (To != null ? To.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ (Path != null ? Path.GetHashCode() : 0);
+                hashCode = (hashCode * 397) ^ TotalCost;
+                hashCode = (hashCode * 397) ^ TotalDistance;
+                return hashCode;
+            }
         }
 
     }

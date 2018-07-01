@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using TAP2017_2018_Implementation.Admin;
 using TAP2017_2018_Implementation.Persistent_Layer;
@@ -15,18 +14,6 @@ namespace TAP2017_2018_Implementation.Broker
     public class TravelCompanyBroker : ITravelCompanyBroker
     {
         private readonly string _brokerconnectionstring;
-
-        /// <summary>
-        /// Determines whether the specified object is equal to the current object
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            if (!(obj is TravelCompanyBroker other))
-                return false;
-            return _brokerconnectionstring == other._brokerconnectionstring;
-        }
 
         /// <summary>
         /// Initializes a new instance of the TravelCompany Broker
@@ -74,13 +61,49 @@ namespace TAP2017_2018_Implementation.Broker
                 return travelCompanyNames.ToList().AsReadOnly();
             }
         }
+
+        //------------------------------------ EQUALITY MEMBERS---------------------------------------------
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((TravelCompanyBroker)obj);
+        }
+        /// <summary>
+        /// Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        protected bool Equals(TravelCompanyBroker other)
+        {
+            return string.Equals(_brokerconnectionstring, other._brokerconnectionstring);
+        }
+
+        public static bool operator ==(TravelCompanyBroker left, TravelCompanyBroker right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(TravelCompanyBroker left, TravelCompanyBroker right)
+        {
+            return !Equals(left, right);
+        }
+
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return -472179866 + EqualityComparer<string>.Default.GetHashCode(_brokerconnectionstring);
+            return (_brokerconnectionstring != null ? _brokerconnectionstring.GetHashCode() : 0);
         }
+
     }
 }

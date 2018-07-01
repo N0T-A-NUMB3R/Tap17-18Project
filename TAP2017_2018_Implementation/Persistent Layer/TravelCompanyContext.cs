@@ -10,7 +10,7 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
         {
         }
 
-        public virtual DbSet<LegEntity> Legs { get; set; }
+        public DbSet<LegEntity> Legs { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

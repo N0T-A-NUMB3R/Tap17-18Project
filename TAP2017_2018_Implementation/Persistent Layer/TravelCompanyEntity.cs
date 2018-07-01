@@ -1,19 +1,19 @@
-﻿using TAP2017_2018_TravelCompanyInterface;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using static TAP2017_2018_TravelCompanyInterface.DomainConstraints;
 
 namespace TAP2017_2018_Implementation.Persistent_Layer
 {
     public class TravelCompanyEntity
     {
-        public int Id { get; set; }
+        public  int Id { get; set; }
 
-        [Required][MaxLength(DomainConstraints.NameMaxLength)][MinLength(DomainConstraints.NameMinLength)]
+        [Required][MaxLength(NameMaxLength)][MinLength(NameMinLength)]
         [Index("Name", IsUnique = true)]
-        public string Name { set; get; }
+        public  string Name { set; get; }
 
-        [Required][MaxLength(DomainConstraints.ConnectionStringMaxLength)][MinLength(DomainConstraints.ConnectionStringMinLength)]
+        [Required][MaxLength(ConnectionStringMaxLength)][MinLength(ConnectionStringMinLength)]
         [Index("ConnectionString", IsUnique = true)]
-        public string ConnectionString { set; get; }
+        public  string ConnectionString { set; get; }
     }
 }

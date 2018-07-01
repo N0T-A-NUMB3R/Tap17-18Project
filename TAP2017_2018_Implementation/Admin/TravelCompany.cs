@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_TravelCompanyInterface;
 using TAP2017_2018_TravelCompanyInterface.Exceptions;
@@ -29,17 +28,7 @@ namespace TAP2017_2018_Implementation.Admin
             _tcConnectionstring = connectionString;
             Name = agencyName;
         }
-        /// <summary>
-        ///  Determines whether the specified object is equal to the current object
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            if (!(obj is TravelCompany other))
-                return false;
-            return _tcConnectionstring == other._tcConnectionstring && Name == other.Name;
-        }
+        
 
         /// <summary>
         /// Creates an ILeg which connects two cities. 
@@ -102,16 +91,51 @@ namespace TAP2017_2018_Implementation.Admin
                return CastToLegDtoExp.Compile()(leg);
             }
         }
+
+        //------------------------------------ EQUALITY MEMBERS---------------------------------------------
+
+        /// <summary>
+        ///  Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((TravelCompany)obj);
+        }
+        /// <summary>
+        ///  Determines whether the specified object is equal to the current object
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        protected bool Equals(TravelCompany other)
+        {
+            return string.Equals(_tcConnectionstring, other._tcConnectionstring) && string.Equals(Name, other.Name);
+        }
+
+        public static bool operator ==(TravelCompany left, TravelCompany right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(TravelCompany left, TravelCompany right)
+        {
+            return !Equals(left, right);
+        }
+
         /// <summary>
         /// Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
         /// </summary>
         /// <returns></returns>
         public override int GetHashCode()
         {
-            var hashCode = 1386540176;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_tcConnectionstring);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            return hashCode;
+            unchecked
+            {
+                return ((_tcConnectionstring != null ? _tcConnectionstring.GetHashCode() : 0) * 397) ^ (Name != null ? Name.GetHashCode() : 0);
+            }
         }
 
         

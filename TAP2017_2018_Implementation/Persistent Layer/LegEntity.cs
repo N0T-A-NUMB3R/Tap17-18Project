@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using TAP2017_2018_TravelCompanyInterface;
+using static TAP2017_2018_TravelCompanyInterface.DomainConstraints;
 
 namespace TAP2017_2018_Implementation.Persistent_Layer
 {
@@ -8,11 +9,11 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
     {
         public int Id { set; get; }
 
-        [Required, MaxLength(DomainConstraints.NameMaxLength), MinLength(DomainConstraints.NameMinLength)]
+        [Required, MaxLength(NameMaxLength), MinLength(NameMinLength)]
         [Index("Leg", 1, IsUnique = true)]
         public string From { set; get; }
 
-        [Required, MaxLength(DomainConstraints.NameMaxLength), MinLength(DomainConstraints.NameMinLength)]
+        [Required, MaxLength(NameMaxLength), MinLength(NameMinLength)]
         [Index("Leg", 2, IsUnique = true)]
         public string To { set; get; }
 

@@ -10,13 +10,12 @@ namespace TAP2017_2018_Implementation.Persistent_Layer
         {
         }
 
-        public virtual DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
+        public DbSet<TravelCompanyEntity> TravelCompanies { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new BrokerConfiguration());
         }
-
 
         public override int SaveChanges() 
         {

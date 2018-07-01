@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using TAP2017_2018_Implementation.Persistent_Layer;
 using TAP2017_2018_TravelCompanyInterface;
@@ -15,7 +14,6 @@ namespace TAP2017_2018_Implementation.Utilities
         /// </summary>
         public class LegDto : ILegDTO
         {
-           
             public string From { get; set; }
 
             public string To { get; set; }
@@ -26,6 +24,7 @@ namespace TAP2017_2018_Implementation.Utilities
 
             public TransportType Type { get; set; }
 
+            //------------------------------------ EQUALITY MEMBERS---------------------------------------------
 
             /// <summary>
             ///  Determines whether the specified object is equal to the current object
@@ -34,13 +33,24 @@ namespace TAP2017_2018_Implementation.Utilities
             /// <returns></returns>
             public override bool Equals(object obj)
             {
-                if (!(obj is LegDto other))
-                    return false;
-                return From == other.From
-                       && To == other.To
-                       && Distance == other.Distance
-                       && Cost == other.Cost
-                       && Type == other.Type;
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != GetType()) return false;
+                return Equals((LegDto) obj);
+            }
+            protected bool Equals(LegDto other)
+            {
+                return string.Equals(From, other.From) && string.Equals(To, other.To) && Distance == other.Distance && Cost == other.Cost && Type == other.Type;
+            }
+
+            public static bool operator ==(LegDto left, LegDto right)
+            {
+                return Equals(left, right);
+            }
+
+            public static bool operator !=(LegDto left, LegDto right)
+            {
+                return !Equals(left, right);
             }
             /// <summary>
             ///  Serves as a hash function for a particular type, suitable for use in hashing algorithms and data structures like a hash table.
@@ -48,16 +58,16 @@ namespace TAP2017_2018_Implementation.Utilities
             /// <returns></returns>
             public override int GetHashCode()
             {
-                var hashCode = 807214720;
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(From);
-                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(To);
-                hashCode = hashCode * -1521134295 + Distance.GetHashCode();
-                hashCode = hashCode * -1521134295 + Cost.GetHashCode();
-                hashCode = hashCode * -1521134295 + Type.GetHashCode();
-                return hashCode;
+                unchecked
+                {
+                    var hashCode = (From != null ? From.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ (To != null ? To.GetHashCode() : 0);
+                    hashCode = (hashCode * 397) ^ Distance;
+                    hashCode = (hashCode * 397) ^ Cost;
+                    hashCode = (hashCode * 397) ^ (int) Type;
+                    return hashCode;
+                }
             }
-
-          
 
         }
         /// <summary>
