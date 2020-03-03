@@ -7,5 +7,5 @@ components:
 Travel Company is a provider of point-to-point legs;
 - the Planner Component, which uses Travel Companies to plan a multi-hops trips between cities.
 
-
+![Test Image](https://github.com/N0T-A-NUMB3R/Tap17-18Project/blob/master/Tap17.JPG)
 
