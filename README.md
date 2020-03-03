@@ -1,6 +1,11 @@
-# TapProjectKickOff
-Interfaces and Tests for the project
-- TAP2017_2018_Travel.dll contains the interfaces to be implemented by your Travel Company Component
-- TravelCompanyTestSources.zip contains the source files to create your own test project for your implementation of Travel Company Component
-- TAP2017_2018_PlannerInterface.dll contains the interfaces to be implemented by your Planner Component
-- PlannerTestSources.zip contains the source files to create your own test project for your implementation of Planner Component
+
+**This project was part of the "Advanced programming techniques" (aka TAP) exam at the University of Genoa for the 2017.**
+
+The project is a toy solution to the problem of planning trips between cities, and consists of two related
+components:
+• the Travel Company Component, which is used to manage confederations of Travel Companies, where any
+Travel Company is a provider of point-to-point legs;
+• the Planner Component, which uses Travel Companies to plan a multi-hops trips between cities.
+
+
+
